@@ -16,7 +16,7 @@ class MainViewController: UIViewController {
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-        label.text = "Hello,Team Mainboard!"
+        label.text = "Goodluck,Team2 Mainboard!"
         label.textAlignment = .center
         label.textColor = .yellow
         
