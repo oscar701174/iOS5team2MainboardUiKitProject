@@ -1,14 +1,14 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    
+
     let label = UILabel()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setLabel()
     }
-    
+
     func setLabel() {
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -19,6 +19,5 @@ class MainViewController: UIViewController {
         label.text = "Goodluck,Team2 Mainboard!"
         label.textAlignment = .center
         label.textColor = .yellow
-        
     }
 }
