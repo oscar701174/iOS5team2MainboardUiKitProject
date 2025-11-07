@@ -1,0 +1,7 @@
+line_length:
+  warning: 120                      #  경고 임계값: 한 줄이 120자 초과하면 "경고"로 표시
+  error: 200                        #  에러 임계값: 한 줄이 200자 초과하면 "에러"로 표시 (빌드 실패로 다루기도 함)
+  ignores_comments: true            # 주석 줄은 길이 검사에서 제외 (//, /* */ 등)
+  ignores_urls: true                # URL이 포함된 라인은 제외 (긴 URL 때문에 불필요한 경고 방지)
+  ignores_function_declarations: true  # 함수 선언부의 긴 시그니처(파라미터 많을 때)는 제외
+  ignores_interpolated_strings: true   # 문자열 보간("...\(value)...")으로 길어진 라인은 제외
