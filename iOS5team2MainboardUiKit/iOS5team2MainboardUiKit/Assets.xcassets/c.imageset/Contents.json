@@ -5,7 +5,11 @@
       "scale" : "1x"
     },
     {
+<<<<<<< Updated upstream
       "filename" : "c.png",
+=======
+      "filename" : "letter-c.png",
+>>>>>>> Stashed changes
       "idiom" : "universal",
       "scale" : "2x"
     },
