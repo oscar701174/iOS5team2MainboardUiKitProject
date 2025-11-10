@@ -22,7 +22,7 @@ enum AppColor {
         light: .rgb(0, 0, 0),
         dark: .rgb(255, 255, 255)
     )
-    
+
     static let menuIcon: UIColor = .dynamic( // 메뉴 아이콘 섹상
         light: .rgb(79, 194, 186),
         dark: .rgb(79, 194, 186)
@@ -30,11 +30,11 @@ enum AppColor {
 }
 
 private extension UIColor {
-    static func rgb(_ r: Int, _ g: Int, _ b: Int, alpha: CGFloat = 1.0) -> UIColor {
+    static func rgb(_ red: Int, _ green: Int, _ blue: Int, alpha: CGFloat = 1.0) -> UIColor {
         UIColor(
-            red: CGFloat(r) / 255,
-            green: CGFloat(g) / 255,
-            blue: CGFloat(b) / 255,
+            red: CGFloat(red) / 255,
+            green: CGFloat(green) / 255,
+            blue: CGFloat(blue) / 255,
             alpha: alpha
         )
     }
