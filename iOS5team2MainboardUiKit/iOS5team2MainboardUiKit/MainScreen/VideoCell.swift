@@ -1,0 +1,75 @@
+//
+//  VideoCell.swift
+//  iOS5team2MainboardUiKit
+//
+//  Created by Cheon on 11/9/25.
+//
+
+import UIKit
+
+class VideoCell: UICollectionViewCell {
+    static let reuseID = "VideoCell"
+
+    let thumbImageView = UIImageView()
+    let titleLabel = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        contentView.addSubview(thumbImageView)
+        contentView.addSubview(titleLabel)
+
+        thumbImageView.contentMode = .scaleAspectFill
+        thumbImageView.clipsToBounds = true
+
+        titleLabel.numberOfLines = 0
+        titleLabel.textAlignment = .left
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+
+        contentView.preservesSuperviewLayoutMargins = false
+        contentView.directionalLayoutMargins = .zero
+
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        thumbImageView.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: widthAnchor),
+
+            thumbImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+            thumbImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
+            thumbImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
+            thumbImageView.heightAnchor.constraint(equalTo: thumbImageView.widthAnchor, multiplier: 9 / 16),
+
+            titleLabel.topAnchor.constraint(equalTo: thumbImageView.bottomAnchor, constant: 0),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
+        ])
+
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        thumbImageView.image = nil
+        titleLabel.text = nil
+    }
+
+    func configure(thumbnail image: UIImage?, title: String) {
+        thumbImageView.image = image
+        titleLabel.text = title
+    }
+}
+
+#Preview {
+    MainViewController()
+}
