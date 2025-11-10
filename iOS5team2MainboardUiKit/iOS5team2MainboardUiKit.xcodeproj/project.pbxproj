@@ -56,7 +56,6 @@
 				DB7AA9E9F0F35A514DFECBD6 /* Pods-iOS5team2MainboardUiKit.debug.xcconfig */,
 				71B8858733A582A94CE22120 /* Pods-iOS5team2MainboardUiKit.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -168,9 +167,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS5team2MainboardUiKit/Pods-iOS5team2MainboardUiKit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS5team2MainboardUiKit/Pods-iOS5team2MainboardUiKit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -214,7 +217,7 @@
 /* Begin PBXTargetDependency section */
 		251A16C32EBD80EC005083EC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 251A16C22EBD80EC005083EC /* plugin:SwiftLintBuildToolPlugin */;
+			productRef = 251A16C22EBD80EC005083EC /* SwiftLintBuildToolPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -441,7 +444,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		251A16C22EBD80EC005083EC /* plugin:SwiftLintBuildToolPlugin */ = {
+		251A16C22EBD80EC005083EC /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 251A16C12EBD80D4005083EC /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";

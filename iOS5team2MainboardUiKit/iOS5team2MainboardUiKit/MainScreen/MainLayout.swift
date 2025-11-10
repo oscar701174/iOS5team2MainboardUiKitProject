@@ -10,29 +10,6 @@ import UIKit
 import AVFoundation
 import DropDown
 
-class PlayerView: UIView {
-    override class var layerClass: AnyClass {
-        AVPlayerLayer.self
-    }
-
-    var playerLayer: AVPlayerLayer {
-        guard let layer = layer as? AVPlayerLayer else {
-            preconditionFailure("Expected AVPlayerLayer, got \(type(of: layer))")
-        }
-
-        return layer
-    }
-
-    var player: AVPlayer? {
-        get {
-            playerLayer.player
-        }
-        set {
-            playerLayer.player = newValue
-        }
-    }
-}
-
 class MainLayout: UIView {
 
     let start = UILabel()
@@ -76,13 +53,10 @@ class MainLayout: UIView {
         }
 
         let anchor = languageButton
-        let anchorFrameInWindow = anchor.convert(anchor.bounds, to: nil)
-        let minWidth: CGFloat = 160
-        let anchorW = anchor.bounds.width
         dropdown.width = max(160, anchor.bounds.width)
         dropdown.direction = .bottom
 
-        let cgX = max(0,anchor.bounds.width - max(160, anchor.bounds.width)) + 24
+        let cgX = max(0, anchor.bounds.width - max(160, anchor.bounds.width)) + 24
         dropdown.bottomOffset = CGPoint(x: cgX, y: anchor.bounds.height)
     }
 
@@ -102,7 +76,7 @@ class MainLayout: UIView {
         ])
 
         languageButton.setTitle("Swift", for: .normal)
-        languageButton.setImage(UIImage(named: "Swift")?.resized(to: .init(width: 34, height: 34)), for: .normal)
+        languageButton.setImage(UIImage(named: "Swift2")?.resized(to: .init(width: 34, height: 34)), for: .normal)
         languageButton.titleEdgeInsets.left = 10
         languageButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         languageButton.setTitleColor(.main, for: .normal)
@@ -123,7 +97,7 @@ class MainLayout: UIView {
         dropdown.anchorView = languageButton
         dropdown.textFont = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
 
-        dropdown.selectionAction = { [weak self] (index,item) in
+        dropdown.selectionAction = { [weak self] (index, item) in
             guard let self = self else { return }
             self.languageButton.setTitle(item, for: .normal)
             let name = self.itemList[index]
@@ -176,7 +150,6 @@ class MainLayout: UIView {
         start.textColor = AppColor.menuIcon
         end.textColor = AppColor.menuIcon
 
-
         addSubview(progressSlider)
         addSubview(start)
         addSubview(end)
@@ -205,7 +178,7 @@ class MainLayout: UIView {
     }
 
     func setVideoButton() {
-        let playButtons: [UIButton] = [forward15sButton, playButton, rewind15sButton]
+        let playButtons: [UIButton] = [rewind15sButton, playButton, forward15sButton]
 
         let forward15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
@@ -339,7 +312,6 @@ class MainLayout: UIView {
             bottomButtonStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 15)
         ])
     }
-
 }
 
 #Preview {
