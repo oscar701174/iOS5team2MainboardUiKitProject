@@ -9,7 +9,7 @@ class MainViewController: UIViewController {
     var player: AVPlayer?
     var timeObserver: Any?
     var didReachEnd = false
-
+    var playingVideoURL: URL?
     let mainView = MainLayout()
 
     override func loadView() {
@@ -19,26 +19,8 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let url = URL(string: "https://kxc.blob.core.windows.net/est2/video.mp4") {
-            let playerItem = AVPlayerItem(url: url)
-            let player = AVPlayer(playerItem: playerItem)
-
-            self.player = player
-            mainView.playerView.player = player
-
-            addProgressObserver(to: player)
-            addPlayEndObserver()
-
-            playerItem.asset.creationDate?.loadValuesAsynchronously(forKeys: ["duration"]) {
-                DispatchQueue.main.async {
-                    let durationSeconds = CMTimeGetSeconds(playerItem.asset.duration)
-                    if durationSeconds.isFinite && durationSeconds > 0 {
-                        self.mainView.end.text = TimeFormatter.timeFormat(durationSeconds)
-                    }
-                }
-            }
-        }
-
+        startPlayback(with: playingVideoURL)
+        
         mainView.setHeader()
         mainView.configureLanguageMenu()
         mainView.setTopVideo()
@@ -52,12 +34,16 @@ class MainViewController: UIViewController {
         mainView.collectionView.dataSource = self
         mainView.searchBar.delegate = self
 
+
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
         mainView.languageButton.addTarget(self, action: #selector(dropdownClick(_:)), for: .touchUpInside)
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
+        mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)
+        mainView.tagButton.addTarget(self, action: #selector(pushTagScreen(_:)), for: .touchUpInside)
+        mainView.settingButton.addTarget(self, action: #selector(pushSettingScreen(_:)), for: .touchUpInside)
 
     }
 
@@ -79,5 +65,5 @@ class MainViewController: UIViewController {
 
 
 #Preview(){
-    MainViewController()
+    UINavigationController(rootViewController: MainViewController())
 }

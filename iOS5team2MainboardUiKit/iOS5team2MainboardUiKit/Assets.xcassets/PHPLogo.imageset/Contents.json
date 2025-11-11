@@ -1,18 +1,11 @@
 {
   "images" : [
     {
-<<<<<<< HEAD
       "filename" : "PHPLogo.png",
-=======
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-<<<<<<< HEAD
-=======
-      "filename" : "PHPLogo.png",
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "2x"
     },

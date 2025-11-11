@@ -319,11 +319,11 @@ class MainLayout: UIView {
             bottomBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             bottomBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomBarView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            bottomBarView.heightAnchor.constraint(equalToConstant: 64),
+            bottomBarView.heightAnchor.constraint(equalToConstant: 80),
 
             bottomButtonStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             bottomButtonStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            bottomButtonStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 15)
+            bottomButtonStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
     }
 
@@ -337,6 +337,8 @@ class MainLayout: UIView {
         searchBar.backgroundColor = .clear
         searchBar.searchTextField.backgroundColor = .clear
         searchBar.isHidden = true
+
+        keyboardLayoutGuide.followsUndockedKeyboard = true
 
         searchBar.setImage(
             UIImage(systemName: "xmark")?.withTintColor(.gray, renderingMode: .alwaysOriginal),

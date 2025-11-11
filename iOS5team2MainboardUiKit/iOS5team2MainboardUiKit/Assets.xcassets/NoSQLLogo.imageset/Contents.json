@@ -1,18 +1,11 @@
 {
   "images" : [
     {
-<<<<<<< HEAD
       "filename" : "NoSQLLogo.png",
-=======
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-<<<<<<< HEAD
-=======
-      "filename" : "NoSQLLogo.png",
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "2x"
     },

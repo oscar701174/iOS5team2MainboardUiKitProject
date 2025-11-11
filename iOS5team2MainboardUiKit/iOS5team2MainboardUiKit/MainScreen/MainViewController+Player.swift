@@ -10,6 +10,40 @@ import UIKit
 
 extension MainViewController {
 
+
+    func startPlayback(with urlOverride: URL? = nil) {
+
+        let defaultURL = URL(string: "https://kxc.blob.core.windows.net/est2/video.mp4")
+        guard let url = urlOverride ?? playingVideoURL ?? defaultURL else {
+            print("❌ 유효한 재생 URL이 없습니다.")
+            return
+        }
+
+            playingVideoURL = url
+
+            let playerItem = AVPlayerItem(url: url)
+            let player = AVPlayer(playerItem: playerItem)
+
+            self.player = player
+            mainView.playerView.player = player
+
+            addProgressObserver(to: player)
+            addPlayEndObserver()
+
+            Task {
+                do {
+                    let duration = try await playerItem.asset.load(.duration)
+                    let durationSeconds = CMTimeGetSeconds(duration)
+
+                    if durationSeconds.isFinite && durationSeconds > 0 {
+                        self.mainView.end.text = TimeFormatter.timeFormat(durationSeconds)
+                    }
+                } catch {
+                    print("Failed to load duration:", error)
+                }
+            }
+        }
+
     func addProgressObserver(to player: AVPlayer) {
         let interval = CMTime(seconds: 0.2, preferredTimescale: 600)
 
@@ -60,4 +94,8 @@ extension MainViewController {
         let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
         player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
+}
+
+#Preview {
+    MainViewController()
 }
