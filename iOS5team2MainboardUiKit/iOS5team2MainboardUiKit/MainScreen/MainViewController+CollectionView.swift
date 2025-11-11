@@ -29,4 +29,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
                                                         withReuseIdentifier: "footer", for: indexPath)
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedCell = collectionView.cellForItem(at: indexPath)
+        //playingVideoURL = selectedCell
+    }
+
 }

@@ -1,18 +1,11 @@
 {
   "images" : [
     {
-<<<<<<< HEAD
       "filename" : "DockerLogo.png",
-=======
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-<<<<<<< HEAD
-=======
-      "filename" : "DockerLogo.png",
->>>>>>> origin/feat/search-button-toggle
       "idiom" : "universal",
       "scale" : "2x"
     },

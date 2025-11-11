@@ -70,4 +70,22 @@ extension MainViewController {
         }
     }
 
+    @objc func pushMyClipScreen(_ sender: UIButton) {
+        let temp = UIViewController()
+        temp.view.backgroundColor = AppColor.background
+        navigationController?.pushViewController(temp, animated: true)
+    }
+
+    @objc func pushTagScreen(_ sender: UIButton) {
+        let temp = UIViewController()
+        temp.view.backgroundColor = AppColor.background
+        navigationController?.pushViewController(temp, animated: true)
+    }
+
+    @objc func pushSettingScreen(_ sender: UIButton) {
+        let temp = UIViewController()
+        temp.view.backgroundColor = AppColor.background
+        navigationController?.pushViewController(temp, animated: true)
+    }
+
 }
