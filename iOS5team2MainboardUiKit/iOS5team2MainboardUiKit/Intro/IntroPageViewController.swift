@@ -34,7 +34,7 @@ final class IntroPageViewController: UIPageViewController {
     private func configurePages() {
         pages = IntroModel.pages.map { model in
             let uvc = UIViewController()
-            uvc.view.backgroundColor = model.background
+            uvc.view.backgroundColor = model.backgroundColor
 
             let icon = UIImageView(image: UIImage(systemName: model.icon))
             icon.contentMode = .scaleAspectFit
@@ -194,5 +194,5 @@ extension IntroPageViewController: UIPageViewControllerDelegate, UIPageViewContr
 }
 
 #Preview(){
-    MainViewController()
+    IntroPageViewController()
 }

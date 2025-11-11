@@ -36,6 +36,6 @@ struct IntroModel {
               backgroundColor: .systemIndigo)
     ]
 // 취향 선택에 사용할 언어목록
-    static let languages: ["Swift", "Kotlin", "Python", "JavaScript", "C++",
-                           "테스트", "안녕하세요", "반갑습니다"]
+    static let languages: [String] = ["Swift", "Kotlin", "Python", "JavaScript", "C++",
+                                      "테스트", "안녕하세요", "반갑습니다"]
 }
