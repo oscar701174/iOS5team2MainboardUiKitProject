@@ -1,9 +1,3 @@
-//
-//  MainLayout.swift
-//  iOS5team2MainboardUiKit
-//
-//  Created by Cheon on 11/10/25.
-//
 
 import Foundation
 import UIKit
