@@ -33,8 +33,8 @@ final class IntroPageViewController: UIPageViewController {
 
     private func configurePages() {
         pages = IntroModel.pages.map { model in
-            let vc = UIViewController()
-            vc.view.backgroundColor = model.background
+            let uvc = UIViewController()
+            uvc.view.backgroundColor = model.background
 
             let icon = UIImageView(image: UIImage(systemName: model.icon))
             icon.contentMode = .scaleAspectFit
@@ -54,16 +54,16 @@ final class IntroPageViewController: UIPageViewController {
             stack.axis = .vertical
             stack.spacing = 20
             stack.translatesAutoresizingMaskIntoConstraints = false
-            vc.view.addSubview(stack)
+            uvc.view.addSubview(stack)
 
             NSLayoutConstraint.activate([
                 icon.heightAnchor.constraint(equalToConstant: 120),
-                stack.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
-                stack.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: 24),
-                stack.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: -24)
+                stack.centerYAnchor.constraint(equalTo: uvc.view.centerYAnchor),
+                stack.leadingAnchor.constraint(equalTo: uvc.view.leadingAnchor, constant: 24),
+                stack.trailingAnchor.constraint(equalTo: uvc.view.trailingAnchor, constant: -24)
             ])
 
-            return vc
+            return uvc
         }
 
         let langVC = UIViewController()
@@ -171,14 +171,14 @@ final class IntroPageViewController: UIPageViewController {
 extension IntroPageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let i = pages.firstIndex(of: viewController), i > 0 else { return nil }
-        return pages[i - 1]
+        guard let pageIndex = pages.firstIndex(of: viewController), pageIndex > 0 else { return nil }
+        return pages[pageIndex - 1]
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let i = pages.firstIndex(of: viewController), i < pages.count - 1 else { return nil }
-        return pages[i + 1]
+        guard let pageIndex = pages.firstIndex(of: viewController), pageIndex < pages.count - 1 else { return nil }
+        return pages[pageIndex + 1]
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -191,4 +191,8 @@ extension IntroPageViewController: UIPageViewControllerDelegate, UIPageViewContr
         else { return }
         indicator.currentPage = index
     }
+}
+
+#Preview(){
+    MainViewController()
 }
