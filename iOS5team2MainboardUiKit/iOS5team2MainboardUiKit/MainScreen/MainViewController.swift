@@ -6,11 +6,11 @@ class MainViewController: UIViewController {
 
     var isSearchButtonActive = true
 
-    private var player: AVPlayer?
-    private var timeObserver: Any?
-    private var didReachEnd = false
+    var player: AVPlayer?
+    var timeObserver: Any?
+    var didReachEnd = false
 
-    private let mainView = MainLayout()
+    let mainView = MainLayout()
 
     override func loadView() {
         self.view = mainView
@@ -68,131 +68,6 @@ class MainViewController: UIViewController {
         view.backgroundColor = AppColor.background
     }
 
-    func addProgressObserver(to player: AVPlayer) {
-        let interval = CMTime(seconds: 0.2, preferredTimescale: 600)
-
-        if let obs = timeObserver {
-            player.removeTimeObserver(obs)
-            timeObserver = nil
-        }
-
-        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {[weak self] _ in
-            guard let self, let item = player.currentItem else {
-                return
-            }
-
-            let duration = item.duration.seconds
-            guard duration.isFinite, duration > 0 else {
-                return
-            }
-
-            mainView.progressSlider.value = max(0, min(1, Float(player.currentTime().seconds / item.duration.seconds)))
-            mainView.start.text = TimeFormatter.timeFormat(player.currentTime().seconds)
-
-        }
-    }
-
-    func addPlayEndObserver() {
-        guard let playerItem = player?.currentItem else {
-            return
-        }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(handlePlayEnd), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
-    }
-
-    func skipForwardSeconds(player: AVPlayer) {
-        guard let duration = player.currentItem?.duration else { return }
-        let durationSeconds = CMTimeGetSeconds(duration)
-        guard durationSeconds.isFinite else { return }
-
-        let currentTime = player.currentTime().seconds
-        let newTime = min(currentTime + 15, durationSeconds - 0.1)
-        let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
-        player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
-    }
-
-    func skipRewindSeconds(player: AVPlayer) {
-        let currentTime = player.currentTime().seconds
-        let newTime = max(currentTime - 15, 0)
-
-        let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
-        player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
-    }
-
-    func showSearchBar() {
-        mainView.searchBar.becomeFirstResponder()
-        mainView.searchBar.isHidden = false
-        isSearchButtonActive = false
-        mainView.searchBar.setShowsCancelButton(true, animated: true)
-    }
-
-    func hideSearchBar() {
-        mainView.searchBar.resignFirstResponder()
-        mainView.searchBar.text = ""
-        mainView.searchBar.isHidden = true
-        isSearchButtonActive = true
-        mainView.searchBar.setShowsCancelButton(true, animated: true)
-    }
-
-    @objc func playButtonTapped(_ sender: UIButton) {
-        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-
-        if didReachEnd == true {
-            didReachEnd = false
-            player?.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero)
-        }
-        if mainView.playerView.player?.timeControlStatus == .paused {
-            mainView.playButton.setImage(UIImage(systemName: "pause.fill",
-                                        withConfiguration: playButtonCFG), for: .normal)
-            mainView.playerView.player?.play()
-        } else if mainView.playerView.player?.timeControlStatus == .playing {
-            mainView.playerView.player?.pause()
-            mainView.playButton.setImage(UIImage(systemName: "play.fill",
-                                        withConfiguration: playButtonCFG), for: .normal)
-        }
-    }
-
-    @objc func forward15sButtonTapped(_ sender: UIButton) {
-        guard let player else {
-            return
-        }
-        skipForwardSeconds(player: player)
-    }
-
-    @objc func rewind15sButtonTapped(_ sender: UIButton) {
-        guard let player else {
-            return
-        }
-        skipRewindSeconds(player: player)
-    }
-
-    @objc func dropdownClick(_ sender: UIButton) {
-        mainView.dropdown.show()
-    }
-
-    @objc func searchButtonTapped(_ sender: UIButton) {
-
-        if isSearchButtonActive == true {
-           showSearchBar()
-
-        } else if isSearchButtonActive == false {
-            hideSearchBar()
-        }
-    }
-
-    @objc func handlePlayEnd() {
-        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        player?.pause()
-        didReachEnd = true
-        mainView.playButton.setImage(UIImage(systemName: "play.fill",
-                                            withConfiguration: playButtonCFG), for: .normal)
-        mainView.progressSlider.value = 1
-
-        if let duration = player?.currentItem?.duration.seconds, duration.isFinite {
-            mainView.start.text = TimeFormatter.timeFormat(duration)
-        }
-    }
-
     deinit {
         if let obs = timeObserver {
             player?.removeTimeObserver(obs)
@@ -202,49 +77,6 @@ class MainViewController: UIViewController {
     }
 }
 
-extension UIImage {
-    func resized(to size: CGSize) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: size))
-        }
-    }
-}
-
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10 // 데이터 개수
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let raw = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.reuseID, for: indexPath)
-        guard let cell = raw as? VideoCell else { return raw }
-        cell.configure( thumbnail: UIImage(named: "sample"),
-                        title: "이것은 테스트를 위한 임시 문구 입니다. \(indexPath.item)"
-        )
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        viewForSupplementaryElementOfKind kind: String,
-                        at indexPath: IndexPath) -> UICollectionReusableView {
-        collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                        withReuseIdentifier: "footer", for: indexPath)
-    }
-
-}
-
-extension MainViewController: UISearchBarDelegate {
-
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        hideSearchBar()
-    }
-
-    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-    }
-}
 
 #Preview(){
     MainViewController()
