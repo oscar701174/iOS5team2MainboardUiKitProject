@@ -4,6 +4,8 @@ import DropDown
 
 class MainViewController: UIViewController {
 
+    var isSearchButtonActive = true
+
     private var player: AVPlayer?
     private var timeObserver: Any?
     private var didReachEnd = false
@@ -17,9 +19,6 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        mainView.setHeader()
-        mainView.configureLanguageMenu()
-        mainView.setTopVideo()
         if let url = URL(string: "https://kxc.blob.core.windows.net/est2/video.mp4") {
             let playerItem = AVPlayerItem(url: url)
             let player = AVPlayer(playerItem: playerItem)
@@ -39,18 +38,26 @@ class MainViewController: UIViewController {
                 }
             }
         }
+
+        mainView.setHeader()
+        mainView.configureLanguageMenu()
+        mainView.setTopVideo()
         mainView.setProgressSlider()
         mainView.setVideoButton()
         mainView.setVideoCollection()
         mainView.setBottomMenu()
+        mainView.setSeachBar()
 
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
+        mainView.searchBar.delegate = self
 
+        mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
         mainView.languageButton.addTarget(self, action: #selector(dropdownClick(_:)), for: .touchUpInside)
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
+        mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
 
     }
 
@@ -112,7 +119,22 @@ class MainViewController: UIViewController {
         player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
-    @objc private func playButtonTapped(_ sender: UIButton) {
+    func showSearchBar() {
+        mainView.searchBar.becomeFirstResponder()
+        mainView.searchBar.isHidden = false
+        isSearchButtonActive = false
+        mainView.searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    func hideSearchBar() {
+        mainView.searchBar.resignFirstResponder()
+        mainView.searchBar.text = ""
+        mainView.searchBar.isHidden = true
+        isSearchButtonActive = true
+        mainView.searchBar.setShowsCancelButton(true, animated: true)
+    }
+
+    @objc func playButtonTapped(_ sender: UIButton) {
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
 
         if didReachEnd == true {
@@ -130,27 +152,36 @@ class MainViewController: UIViewController {
         }
     }
 
-    @objc private func forward15sButtonTapped(_ sender: UIButton) {
+    @objc func forward15sButtonTapped(_ sender: UIButton) {
         guard let player else {
             return
         }
         skipForwardSeconds(player: player)
     }
 
-    @objc private func rewind15sButtonTapped(_ sender: UIButton) {
+    @objc func rewind15sButtonTapped(_ sender: UIButton) {
         guard let player else {
             return
         }
         skipRewindSeconds(player: player)
     }
 
-    @objc private func dropdownClick(_ sender: UIButton) {
+    @objc func dropdownClick(_ sender: UIButton) {
         mainView.dropdown.show()
     }
 
-    @objc private func handlePlayEnd() {
+    @objc func searchButtonTapped(_ sender: UIButton) {
+
+        if isSearchButtonActive == true {
+           showSearchBar()
+
+        } else if isSearchButtonActive == false {
+            hideSearchBar()
+        }
+    }
+
+    @objc func handlePlayEnd() {
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-       // player?.seek(to: .zero)
         player?.pause()
         didReachEnd = true
         mainView.playButton.setImage(UIImage(systemName: "play.fill",
@@ -202,6 +233,17 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
                                                         withReuseIdentifier: "footer", for: indexPath)
     }
 
+}
+
+extension MainViewController: UISearchBarDelegate {
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        hideSearchBar()
+    }
+
+    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+    }
 }
 
 #Preview(){

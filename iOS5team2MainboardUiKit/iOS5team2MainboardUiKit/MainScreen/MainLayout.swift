@@ -36,10 +36,15 @@ class MainLayout: UIView {
 
     let bottomBarView = UIView()
     let dropView = UIView()
+
     let progressSlider = UISlider()
 
+    var bottomToBottomMenu: NSLayoutConstraint!
+    var bottomToKeyboard: NSLayoutConstraint!
+
+    let searchBar = UISearchBar()
     let dropdown = DropDown()
-    let itemList = ["Swift", "Kotlin", "PHP"]
+    let itemList = ["Angular", "C", "Django", "Docker", "Java", "JavaScript", "Kotlin", "Kubernetes", "Swift", "PHP"]
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -69,15 +74,19 @@ class MainLayout: UIView {
 
         NSLayoutConstraint.activate([
             languageButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
-            languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: -10),
-            languageButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.3),
+            languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            languageButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.4),
             searchButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
-            searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10)
+            searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
         ])
 
         languageButton.setTitle("Swift", for: .normal)
-        languageButton.setImage(UIImage(named: "Swift2")?.resized(to: .init(width: 34, height: 34)), for: .normal)
-        languageButton.titleEdgeInsets.left = 10
+
+        languageButton.setImage(UIImage(named: "SwiftLogo")?.resized(to: .init(width: 34, height: 34)), for: .normal)
+
+        languageButton.contentHorizontalAlignment = .leading
+        languageButton.titleEdgeInsets.left = 5
+        languageButton.titleLabel?.lineBreakMode = .byTruncatingTail
         languageButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         languageButton.setTitleColor(.main, for: .normal)
         languageButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
@@ -96,13 +105,24 @@ class MainLayout: UIView {
         dropdown.dataSource = itemList
         dropdown.anchorView = languageButton
         dropdown.textFont = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
+        dropdown.direction = .bottom
+
+        dropdown.willShowAction = { [weak self] in
+            guard let self, self.languageButton.window != nil else { return }
+            self.languageButton.layoutIfNeeded() // 최신 크기 반영
+            self.dropdown.width = self.languageButton.bounds.width
+            self.dropdown.bottomOffset = CGPoint(
+                x: 0,
+                y: self.languageButton.bounds.height + 6
+            )
+        }
 
         dropdown.selectionAction = { [weak self] (index, item) in
             guard let self = self else { return }
             self.languageButton.setTitle(item, for: .normal)
             let name = self.itemList[index]
             self.languageButton.setImage(
-                UIImage(named: name)?.resized(to: .init(width: 34, height: 34)),
+                UIImage(named: "\(name)Logo")?.resized(to: .init(width: 34, height: 34)),
                 for: .normal
             )
         }
@@ -129,7 +149,7 @@ class MainLayout: UIView {
         NSLayoutConstraint.activate([
             playerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             playerView.topAnchor
-                .constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 70),
+                .constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 55),
             playerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             playerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
             playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9.0/16.0)
@@ -311,6 +331,36 @@ class MainLayout: UIView {
             bottomButtonStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             bottomButtonStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 15)
         ])
+    }
+
+    func setSeachBar() {
+        searchBar.placeholder = "검색"
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.barTintColor = .clear
+        searchBar.backgroundImage = UIImage()
+        searchBar.showsBookmarkButton = true
+        searchBar.showsCancelButton = true
+        searchBar.backgroundColor = .clear
+        searchBar.searchTextField.backgroundColor = .clear
+        searchBar.isHidden = true
+
+        searchBar.setImage(
+            UIImage(systemName: "xmark")?.withTintColor(.gray, renderingMode: .alwaysOriginal),
+            for: .bookmark,
+            state: .normal
+        )
+        addSubview(searchBar)
+
+        bottomToBottomMenu = searchBar.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor)
+        bottomToBottomMenu.isActive = true
+        bottomToBottomMenu.priority = .defaultHigh
+
+        NSLayoutConstraint.activate([
+            searchBar.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            searchBar.bottomAnchor.constraint(lessThanOrEqualTo: keyboardLayoutGuide.topAnchor)
+        ])
+
     }
 }
 
