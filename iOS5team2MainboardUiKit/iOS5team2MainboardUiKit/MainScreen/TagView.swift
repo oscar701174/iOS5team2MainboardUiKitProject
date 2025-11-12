@@ -164,7 +164,7 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
 }
 
-//Preview용 (김대현)
+// Preview용 (김대현)
 struct TagView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> CategoryViewController {
         return CategoryViewController()
