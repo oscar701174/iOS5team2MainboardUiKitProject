@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI // Preview용(김대현)
 
 // MARK: - 데이터 구조
 struct Category {
@@ -73,11 +74,11 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
         Category(name: "PHP", iconName: "PHPLogo"),
         Category(name: "Node.js", iconName: "NoSQLLogo"),
         Category(name: "Java", iconName: "JavaLogo"),
-        Category(name: "C", iconName: "cLogo"),
+        Category(name: "C", iconName: "CLogo"),
         Category(name: "Docker", iconName: "DockerLogo"),
         Category(name: "JavaScript", iconName: "JavaScriptLogo"),
         Category(name: "Angular", iconName: "AngularLogo"),
-        Category(name: "Swift", iconName: "swiftLogo"),
+        Category(name: "Swift", iconName: "SwiftLogo"),
         Category(name: "Django", iconName: "DjangoLogo"),
         Category(name: "Kubernetes", iconName: "KubernetesLogo"),
         Category(name: "Spring", iconName: "SpringLogo"),
@@ -161,4 +162,17 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
         let selected = categories[indexPath.item]
         print("✅ 선택된 아이콘: \(selected.name)")
     }
+}
+
+//Preview용 (김대현)
+struct TagView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> CategoryViewController {
+        return CategoryViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: CategoryViewController, context: Context) {
+    }
+}
+#Preview {
+    TagView()
 }
