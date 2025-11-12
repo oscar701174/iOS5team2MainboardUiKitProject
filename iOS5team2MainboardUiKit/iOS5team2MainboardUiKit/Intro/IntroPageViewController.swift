@@ -11,174 +11,257 @@ final class IntroPageViewController: UIPageViewController {
 
     private var pages: [UIViewController] = []
     private let indicator = UIPageControl()
-    private let prefKey = "preferredLanguages"
     private var selectedLanguages = Set<String>()
+    private var isSetupComplete = false
 
     static func shouldShowIntro() -> Bool {
-        return !UserDefaults.standard.bool(forKey: IntroModel.introSeenKey)
-    }
-
-    private func markIntroAsSeen() {
-        UserDefaults.standard.set(true, forKey: IntroModel.introSeenKey)
+        !UserDefaults.standard.bool(forKey: IntroModel.introSeenKey)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
         dataSource = self
-        configurePages()
-        configureIndicator()
-        setViewControllers([pages.first!], direction: .forward, animated: false)
+        view.backgroundColor = .systemBackground
+        setupIndicator()
     }
 
-    private func configurePages() {
-        pages = IntroModel.pages.map { model in
-            let uvc = UIViewController()
-            uvc.view.backgroundColor = model.backgroundColor
-
-            let icon = UIImageView(image: UIImage(systemName: model.icon))
-            icon.contentMode = .scaleAspectFit
-
-            let title = UILabel()
-            title.text = model.title
-            title.font = .systemFont(ofSize: 28, weight: .bold)
-            title.textAlignment = .center
-
-            let desc = UILabel()
-            desc.text = model.description
-            desc.font = .systemFont(ofSize: 16)
-            desc.numberOfLines = 0
-            desc.textAlignment = .center
-
-            let stack = UIStackView(arrangedSubviews: [icon, title, desc])
-            stack.axis = .vertical
-            stack.spacing = 20
-            stack.translatesAutoresizingMaskIntoConstraints = false
-            uvc.view.addSubview(stack)
-
-            NSLayoutConstraint.activate([
-                icon.heightAnchor.constraint(equalToConstant: 120),
-                stack.centerYAnchor.constraint(equalTo: uvc.view.centerYAnchor),
-                stack.leadingAnchor.constraint(equalTo: uvc.view.leadingAnchor, constant: 24),
-                stack.trailingAnchor.constraint(equalTo: uvc.view.trailingAnchor, constant: -24)
-            ])
-
-            return uvc
-        }
-
-        let langVC = UIViewController()
-        langVC.view.backgroundColor = .systemGray6
-        langVC.view.addSubview(languageSelectionView)
-        NSLayoutConstraint.activate([
-            languageSelectionView.centerYAnchor.constraint(equalTo: langVC.view.centerYAnchor),
-            languageSelectionView.leadingAnchor.constraint(equalTo: langVC.view.leadingAnchor, constant: 24),
-            languageSelectionView.trailingAnchor.constraint(equalTo: langVC.view.trailingAnchor, constant: -24)
-        ])
-        pages.append(langVC)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !isSetupComplete else { return }
+        setupPages()
+        if let first = pages.first { setViewControllers([first], direction: .forward, animated: false) }
+        isSetupComplete = true
     }
 
-    private func configureIndicator() {
-        indicator.numberOfPages = pages.count
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        view.bringSubviewToFront(indicator)
+    }
+
+    private func setupPages() {
+        pages = IntroModel.pages.map(makeIntroPage)
+        pages.append(makeLanguagePage())
+    }
+
+    private func setupIndicator() {
+        indicator.numberOfPages = IntroModel.pages.count + 1
         indicator.pageIndicatorTintColor = .systemGray3
         indicator.currentPageIndicatorTintColor = .systemBlue
         indicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(indicator)
         NSLayoutConstraint.activate([
             indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            indicator.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -18)
         ])
     }
 
-    private lazy var languageSelectionView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
+    private func makeIntroPage(from model: IntroModel.IntPage) -> UIViewController {
+        let page = UIViewController()
+        page.view.backgroundColor = model.backgroundColor
+
+        let icon = UIImageView(image: UIImage(systemName: model.icon))
+        icon.tintColor = model.fontColor
+        icon.contentMode = .scaleAspectFit
+        icon.translatesAutoresizingMaskIntoConstraints = false
 
         let title = UILabel()
-        title.text = "선호 언어를 최대 3개 선택하세요"
-        title.font = .systemFont(ofSize: 18, weight: .medium)
+        title.text = model.title
+        title.font = model.titleFont
+        title.textColor = model.fontColor
         title.textAlignment = .center
+        title.numberOfLines = 1
+        title.translatesAutoresizingMaskIntoConstraints = false
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.showsVerticalScrollIndicator = true
-        scrollView.alwaysBounceVertical = true
+        let desc = UILabel()
+        desc.text = model.description
+        desc.font = model.descriptionFont
+        desc.textColor = model.fontColor.withAlphaComponent(0.9)
+        desc.textAlignment = .center
+        desc.numberOfLines = 0
+        desc.translatesAutoresizingMaskIntoConstraints = false
 
-        let buttonStack = UIStackView(arrangedSubviews: IntroModel.languages.map(createLanguageButton))
-        buttonStack.axis = .vertical
-        buttonStack.spacing = 10
-        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        let stack = UIStackView(arrangedSubviews: [icon, title, desc])
+        stack.axis = .vertical
+        stack.spacing = 16
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
 
-        scrollView.addSubview(buttonStack)
+        page.view.addSubview(stack)
         NSLayoutConstraint.activate([
-            buttonStack.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            buttonStack.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            buttonStack.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            buttonStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            buttonStack.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+            icon.heightAnchor.constraint(equalToConstant: 140),
+            icon.widthAnchor.constraint(equalToConstant: 140),
+            stack.centerYAnchor.constraint(equalTo: page.view.centerYAnchor, constant: -20),
+            stack.leadingAnchor.constraint(equalTo: page.view.leadingAnchor, constant: 28),
+            stack.trailingAnchor.constraint(equalTo: page.view.trailingAnchor, constant: -28)
         ])
+
+        return page
+    }
+
+    private func makeLanguagePage() -> UIViewController {
+        let page = UIViewController()
+        page.view.backgroundColor = .systemGray6
+
+        let title = UILabel()
+        title.text = "프로그래밍 언어를 최대 3개 선택하세요!"
+        title.font = .systemFont(ofSize: 18, weight: .semibold)
+        title.textColor = .label
+        title.textAlignment = .center
+        title.translatesAutoresizingMaskIntoConstraints = false
+
+        let scroll = UIScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.alwaysBounceVertical = true
+        scroll.showsVerticalScrollIndicator = true
+
+        let grid = UIStackView()
+        grid.axis = .vertical
+        grid.spacing = 14
+        grid.translatesAutoresizingMaskIntoConstraints = false
+        scroll.addSubview(grid)
+
+        NSLayoutConstraint.activate([
+            grid.topAnchor.constraint(equalTo: scroll.topAnchor, constant: 8),
+            grid.leadingAnchor.constraint(equalTo: scroll.leadingAnchor),
+            grid.trailingAnchor.constraint(equalTo: scroll.trailingAnchor),
+            grid.bottomAnchor.constraint(equalTo: scroll.bottomAnchor),
+            grid.widthAnchor.constraint(equalTo: scroll.widthAnchor)
+        ])
+
+        populateLanguages(in: grid)
 
         let start = UIButton(type: .system)
-        start.setTitle("시작", for: .normal)
-        start.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        start.setTitle("시작하기", for: .normal)
+        start.titleLabel?.font = .boldSystemFont(ofSize: 18)
         start.backgroundColor = .systemBlue
         start.tintColor = .white
-        start.layer.cornerRadius = 10
+        start.layer.cornerRadius = 12
+        start.layer.masksToBounds = true
+        start.translatesAutoresizingMaskIntoConstraints = false
+        start.heightAnchor.constraint(equalToConstant: 55).isActive = true
         start.addTarget(self, action: #selector(startTapped), for: .touchUpInside)
 
-        let container = UIStackView(arrangedSubviews: [title, scrollView, start])
-        container.axis = .vertical
-        container.spacing = 30
-        container.translatesAutoresizingMaskIntoConstraints = false
+        [title, scroll, start].forEach { page.view.addSubview($0) }
 
-        view.addSubview(container)
         NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            container.topAnchor.constraint(equalTo: view.topAnchor),
-            container.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        return view
-    }()
+            title.topAnchor.constraint(equalTo: page.view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            title.leadingAnchor.constraint(equalTo: page.view.leadingAnchor, constant: 16),
+            title.trailingAnchor.constraint(equalTo: page.view.trailingAnchor, constant: -16),
 
-    private func createLanguageButton(for name: String) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle(name, for: .normal)
-        button.layer.cornerRadius = 8
+            scroll.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 24),
+            scroll.leadingAnchor.constraint(equalTo: page.view.leadingAnchor, constant: 24),
+            scroll.trailingAnchor.constraint(equalTo: page.view.trailingAnchor, constant: -24),
+            scroll.bottomAnchor.constraint(equalTo: start.topAnchor, constant: -40),
+
+            start.centerXAnchor.constraint(equalTo: page.view.centerXAnchor),
+            start.bottomAnchor.constraint(equalTo: page.view.safeAreaLayoutGuide.bottomAnchor, constant: -70),
+            start.widthAnchor.constraint(equalToConstant: 180)
+        ])
+        return page
+    }
+
+    private func populateLanguages(in grid: UIStackView) {
+        grid.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        let columns = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
+        let buttons = IntroModel.languages.map(makeLanguageButton)
+
+        stride(from: 0, to: buttons.count, by: columns).forEach { start in
+            var row = Array(buttons[start..<min(start + columns, buttons.count)]) as [UIView]
+            while row.count < columns { row.append(makeSpacer()) }
+
+            let rowStack = UIStackView(arrangedSubviews: row)
+            rowStack.axis = .horizontal
+            rowStack.spacing = 14
+            rowStack.distribution = .fillEqually
+
+            row.forEach { $0.heightAnchor.constraint(equalToConstant: 90).isActive = true }
+            grid.addArrangedSubview(rowStack)
+        }
+    }
+
+    private func makeLanguageButton(for title: String) -> UIButton {
+        var config = UIButton.Configuration.plain()
+        if let image = UIImage(named: "\(title)Logo") {
+            let smaller = image.preparingThumbnail(of: CGSize(width: 26, height: 26))
+            config.image = smaller?.withRenderingMode(.alwaysOriginal)
+        }
+        config.imagePlacement = .leading
+        config.imagePadding = 10
+        config.baseForegroundColor = .label
+        config.background.backgroundColor = .systemGray6
+        config.cornerStyle = .medium
+        config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 18, bottom: 14, trailing: 18)
+        let attributedTitle = AttributedString(title, attributes: AttributeContainer([
+            .font: UIFont.systemFont(ofSize: 16, weight: .semibold),
+            .kern: -0.5
+        ]))
+        config.attributedTitle = attributedTitle
+
+        let button = UIButton(configuration: config)
+        button.titleLabel?.adjustsFontSizeToFitWidth = false
+        button.contentHorizontalAlignment = .leading
         button.layer.borderWidth = 1
+        button.layer.cornerRadius = 12
         button.layer.borderColor = UIColor.systemGray3.cgColor
-        button.addTarget(self, action: #selector(languageTapped(_:)), for: .touchUpInside)
+
+        button.configurationUpdateHandler = { button in
+            guard let name = button.configuration?.title else { return }
+            if self.selectedLanguages.contains(name) {
+                button.configuration?.background.backgroundColor = .systemBlue
+                button.layer.borderColor = UIColor.systemBlue.cgColor
+                button.configuration?.baseForegroundColor = .white
+            } else {
+                button.configuration?.background.backgroundColor = .systemGray6
+                button.layer.borderColor = UIColor.systemGray3.cgColor
+                button.configuration?.baseForegroundColor = .label
+            }
+        }
+
+        button.addAction(UIAction { [weak self] _ in
+            self?.toggleLanguage(for: button)
+        }, for: .touchUpInside)
         return button
     }
 
-    @objc private func languageTapped(_ sender: UIButton) {
-        guard let name = sender.title(for: .normal) else { return }
-        if selectedLanguages.contains(name) {
+    private func toggleLanguage(for button: UIButton) {
+        guard let name = button.configuration?.title else { return }
+        let isSelected = selectedLanguages.contains(name)
+        if isSelected {
             selectedLanguages.remove(name)
-            sender.backgroundColor = .clear
+            button.configuration?.baseBackgroundColor = .systemGray6
+            button.layer.borderColor = UIColor.systemGray3.cgColor
         } else if selectedLanguages.count < 3 {
             selectedLanguages.insert(name)
-            sender.backgroundColor = .systemBlue.withAlphaComponent(0.15)
+            button.configuration?.baseBackgroundColor = .systemBlue
+            button.layer.borderColor = UIColor.systemBlue.cgColor
         }
-        UserDefaults.standard.set(Array(selectedLanguages), forKey: prefKey)
+        UserDefaults.standard.set(Array(selectedLanguages), forKey: "preferredLanguages")
     }
 
     @objc private func startTapped() {
-        markIntroAsSeen()
+        UserDefaults.standard.set(true, forKey: IntroModel.introSeenKey)
         dismiss(animated: true)
+    }
+
+    private func makeSpacer() -> UIView {
+        let spacer = UIView()
+        spacer.alpha = 0
+        return spacer
     }
 }
 
 extension IntroPageViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let pageIndex = pages.firstIndex(of: viewController), pageIndex > 0 else { return nil }
-        return pages[pageIndex - 1]
+        guard let index = pages.firstIndex(of: viewController), index > 0 else { return nil }
+        return pages[index - 1]
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let pageIndex = pages.firstIndex(of: viewController), pageIndex < pages.count - 1 else { return nil }
-        return pages[pageIndex + 1]
+        guard let index = pages.firstIndex(of: viewController), index < pages.count - 1 else { return nil }
+        return pages[index + 1]
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
@@ -187,12 +270,11 @@ extension IntroPageViewController: UIPageViewControllerDelegate, UIPageViewContr
                             transitionCompleted completed: Bool) {
         guard completed,
               let current = viewControllers?.first,
-              let index = pages.firstIndex(of: current)
-        else { return }
+              let index = pages.firstIndex(of: current) else { return }
         indicator.currentPage = index
     }
 }
 
-#Preview(){
+#Preview {
     IntroPageViewController()
 }
