@@ -20,7 +20,6 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 
         startPlayback(with: playingVideoURL)
-        
         mainView.setHeader()
         mainView.configureLanguageMenu()
         mainView.setTopVideo()
@@ -33,7 +32,6 @@ class MainViewController: UIViewController {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
         mainView.searchBar.delegate = self
-
 
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
@@ -50,6 +48,7 @@ class MainViewController: UIViewController {
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
+        mainView.updateFooterView(for: traitCollection)
         mainView.dropdown.reloadAllComponents()
         view.backgroundColor = AppColor.background
     }
@@ -62,7 +61,6 @@ class MainViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 }
-
 
 #Preview(){
     UINavigationController(rootViewController: MainViewController())

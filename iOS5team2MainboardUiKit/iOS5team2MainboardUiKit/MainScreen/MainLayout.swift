@@ -46,7 +46,7 @@ class MainLayout: UIView {
             let width = collectionView.bounds.width
             if flow.itemSize.width != width {
                 flow.itemSize = CGSize(width: width, height: width * 0.68)
-                flow.footerReferenceSize = CGSize(width: width, height: width * 0.08)
+                flow.footerReferenceSize = CGSize(width: width, height: width * 0.12)
                 flow.invalidateLayout()
             }
         }
@@ -67,10 +67,10 @@ class MainLayout: UIView {
         searchButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            languageButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
+            languageButton.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             languageButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.4),
-            searchButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
+            searchButton.topAnchor.constraint(equalTo: topAnchor, constant: 62),
             searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
         ])
 
@@ -143,10 +143,10 @@ class MainLayout: UIView {
         NSLayoutConstraint.activate([
             playerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             playerView.topAnchor
-                .constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 55),
+                .constraint(equalTo: topAnchor, constant: 110),
             playerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             playerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9.0/16.0)
+            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9/16)
         ])
 
         playerView.playerLayer.videoGravity = .resizeAspect
@@ -173,7 +173,7 @@ class MainLayout: UIView {
         end.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             progressSlider.centerXAnchor.constraint(equalTo: centerXAnchor),
-            progressSlider.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 30),
+            progressSlider.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 10),
             progressSlider.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             progressSlider.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
             start.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: -3),
@@ -282,6 +282,14 @@ class MainLayout: UIView {
         collectionView.layoutIfNeeded()
     }
 
+    func updateFooterView(for traits: UITraitCollection) {
+        guard let flow = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        let width = collectionView.bounds.width
+        if traits.userInterfaceIdiom == .pad {
+            flow.footerReferenceSize = CGSize(width: width, height: width * 0.07)
+        }
+    }
+
     func setBottomMenu() {
         let bottomButtons: [UIButton] = [tagButton, clipButton, bottomSearchButton, settingButton]
         let cfg = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
@@ -323,7 +331,7 @@ class MainLayout: UIView {
 
             bottomButtonStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             bottomButtonStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            bottomButtonStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 0)
+            bottomButtonStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 40)
         ])
     }
 
