@@ -1,9 +1,3 @@
-//
-//  MyClipViewController.swift
-//  
-//
-//  Created by OscarKim on 11/12/25.
-//
 
 import UIKit
 
