@@ -15,7 +15,7 @@ extension MainViewController {
 
         let defaultURL = URL(string: "https://kxc.blob.core.windows.net/est2/video.mp4")
         guard let url = urlOverride ?? playingVideoURL ?? defaultURL else {
-            print("❌ 유효한 재생 URL이 없습니다.")
+            print(" 유효한 재생 URL이 없습니다.")
             return
         }
 
