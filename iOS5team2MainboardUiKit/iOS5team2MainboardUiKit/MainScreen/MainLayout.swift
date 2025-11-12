@@ -1,4 +1,3 @@
-
 import Foundation
 import UIKit
 import AVFoundation
@@ -13,6 +12,7 @@ class MainLayout: UIView {
 
     let languageButton = UIButton()
     let searchButton = UIButton()
+    let fullScreenButton = UIButton()
     let forward15sButton = UIButton()
     let playButton = UIButton()
     let rewind15sButton = UIButton()
@@ -137,20 +137,31 @@ class MainLayout: UIView {
     }
 
     func setTopVideo() {
-        addSubview(playerView)
-        playerView.translatesAutoresizingMaskIntoConstraints = false
+        let cfg = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+        let img = UIImage(named: "FullScreen")?
+            .resized(to: CGSize(width: 24, height: 24))
+            .withRenderingMode(.alwaysTemplate)
 
+        addSubview(playerView)
+        addSubview(fullScreenButton)
+
+        playerView.translatesAutoresizingMaskIntoConstraints = false
+        fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
+
+        fullScreenButton.setImage(img, for: .normal)
+        fullScreenButton.tintColor = .white
         NSLayoutConstraint.activate([
             playerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             playerView.topAnchor
                 .constraint(equalTo: topAnchor, constant: 110),
             playerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             playerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9/16)
+            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9/16),
+
+            fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
+            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
         ])
-
         playerView.playerLayer.videoGravity = .resizeAspect
-
     }
 
     func setProgressSlider() {
@@ -364,7 +375,6 @@ class MainLayout: UIView {
             searchBar.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             searchBar.bottomAnchor.constraint(lessThanOrEqualTo: keyboardLayoutGuide.topAnchor)
         ])
-
     }
 }
 

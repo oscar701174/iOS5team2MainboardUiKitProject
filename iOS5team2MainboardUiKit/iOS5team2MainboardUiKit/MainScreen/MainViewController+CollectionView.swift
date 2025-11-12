@@ -31,7 +31,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedCell = collectionView.cellForItem(at: indexPath)
-        //playingVideoURL = selectedCell
+        // playingVideoURL = selectedCell
     }
 
 }
