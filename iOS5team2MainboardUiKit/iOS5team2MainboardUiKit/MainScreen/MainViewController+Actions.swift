@@ -83,9 +83,12 @@ extension MainViewController {
     }
 
     @objc func pushSettingScreen(_ sender: UIButton) {
-        let temp = UIViewController()
-        temp.view.backgroundColor = AppColor.background
-        navigationController?.pushViewController(temp, animated: true)
+        let settingVC = SettingViewController()
+        if let nav = navigationController {
+            nav.pushViewController(settingVC, animated: true)
+        } else {
+            present(UINavigationController(rootViewController: settingVC), animated: true)
+        }
     }
 
     @objc func scrubBegan(_ sender: UISlider) {

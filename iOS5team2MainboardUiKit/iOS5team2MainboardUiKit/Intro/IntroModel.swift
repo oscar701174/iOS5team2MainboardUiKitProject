@@ -41,7 +41,7 @@ struct IntroModel {
         .init(
             icon: "swift",
             title: "페이지1",
-            description: "테스트1 학교종이 땡땡땡",
+            description: "테스트1 가나다라",
             backgroundColor: .systemMint,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
@@ -50,7 +50,7 @@ struct IntroModel {
         .init(
             icon: "star",
             title: "페이지2",
-            description: "테스트2 어서모이자",
+            description: "테스트2 마바사아",
             backgroundColor: .systemYellow,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
@@ -59,7 +59,7 @@ struct IntroModel {
         .init(
             icon: "lock",
             title: "페이지3",
-            description: "테스트3 선생님이 우리를",
+            description: "테스트3 자차카타",
             backgroundColor: .systemTeal,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
@@ -68,7 +68,7 @@ struct IntroModel {
         .init(
             icon: "bolt",
             title: "페이지4",
-            description: "테스트4 기다리신다",
+            description: "테스트4 파하",
             backgroundColor: .systemIndigo,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
