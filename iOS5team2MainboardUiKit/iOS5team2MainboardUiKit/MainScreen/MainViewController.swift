@@ -8,7 +8,12 @@ class MainViewController: UIViewController {
 
     var player: AVPlayer?
     var timeObserver: Any?
+
     var didReachEnd = false
+    var isScrubbing = false
+    var wasPlayingBeforeScrub = false
+    var wasPlayingBeforeFullScreen = false
+
     var playingVideoURL: URL?
     let mainView = MainLayout()
 
@@ -36,15 +41,24 @@ class MainViewController: UIViewController {
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
         mainView.languageButton.addTarget(self, action: #selector(dropdownClick(_:)), for: .touchUpInside)
+        mainView.fullScreenButton.addTarget(self, action: #selector(goFullScreen(_:)), for: .touchUpInside)
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)
         mainView.tagButton.addTarget(self, action: #selector(pushTagScreen(_:)), for: .touchUpInside)
         mainView.settingButton.addTarget(self, action: #selector(pushSettingScreen(_:)), for: .touchUpInside)
+        mainView.progressSlider.addTarget(self, action: #selector(scrubBegan(_:)), for: .touchDown)
+        mainView.progressSlider.addTarget(self, action: #selector(scrubChanged(_:)), for: .valueChanged)
+        mainView.progressSlider.addTarget(self, action: #selector(scrubEnded(_:)), for: .touchUpInside)
 
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        resumePlayBackAfterFullScreen()
+    }
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)

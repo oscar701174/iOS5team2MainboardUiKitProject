@@ -6,10 +6,10 @@
 //
 
 import AVFoundation
+import AVKit
 import UIKit
 
-extension MainViewController {
-
+extension MainViewController: AVPlayerViewControllerDelegate {
 
     func startPlayback(with urlOverride: URL? = nil) {
 
@@ -45,7 +45,7 @@ extension MainViewController {
         }
 
     func addProgressObserver(to player: AVPlayer) {
-        let interval = CMTime(seconds: 0.2, preferredTimescale: 600)
+        let interval = CMTime(seconds: 0.25, preferredTimescale: 600)
 
         if let obs = timeObserver {
             player.removeTimeObserver(obs)
@@ -53,7 +53,8 @@ extension MainViewController {
         }
 
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {[weak self] _ in
-            guard let self, let item = player.currentItem else {
+            guard let self else { return }
+            guard !self.isScrubbing, let item = player.currentItem else {
                 return
             }
 
@@ -94,6 +95,42 @@ extension MainViewController {
         let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
         player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
+
+    func presentFullScreenPlayer(from viewCon: UIViewController, player: AVPlayer) {
+        let pvc = AVPlayerViewController()
+
+        pvc.player = player
+        pvc.delegate = self
+        pvc.showsPlaybackControls = true
+        pvc.allowsPictureInPicturePlayback = true
+        pvc.entersFullScreenWhenPlaybackBegins = false
+        pvc.exitsFullScreenWhenPlaybackEnds = true
+        pvc.modalPresentationStyle = .fullScreen
+
+        if player.timeControlStatus == .playing || player.rate > 0 {
+            wasPlayingBeforeFullScreen = true
+        }
+        viewCon.present(pvc, animated: true) {
+            player.play()
+        }
+    }
+
+    func resumePlayBackAfterFullScreen() {
+        guard wasPlayingBeforeFullScreen else { return }
+        guard let player = self.player else { return }
+
+        player.automaticallyWaitsToMinimizeStalling = true
+        player.currentItem?.preferredForwardBufferDuration = 2
+
+        player.playImmediately(atRate: 1.0)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            if self.player?.timeControlStatus != .playing {
+                self.player?.play()
+            }
+        }
+        wasPlayingBeforeFullScreen = false
+    }
+
 }
 
 #Preview {
