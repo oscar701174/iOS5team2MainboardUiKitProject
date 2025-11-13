@@ -5,3 +5,7 @@ line_length:
   ignores_urls: true                # URL이 포함된 라인은 제외 (긴 URL 때문에 불필요한 경고 방지)
   ignores_function_declarations: true  # 함수 선언부의 긴 시그니처(파라미터 많을 때)는 제외
   ignores_interpolated_strings: true   # 문자열 보간("...\(value)...")으로 길어진 라인은 제외
+
+type_body_length:
+  warning: 300   
+  error: 400

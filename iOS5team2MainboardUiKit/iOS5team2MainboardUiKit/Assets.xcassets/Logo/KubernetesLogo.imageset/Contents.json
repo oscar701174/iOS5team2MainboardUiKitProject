@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "KubernetesLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "KubernetesLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

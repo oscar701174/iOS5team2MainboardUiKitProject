@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "VuejsLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "VuejsLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

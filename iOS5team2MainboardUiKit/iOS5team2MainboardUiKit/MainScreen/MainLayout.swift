@@ -213,7 +213,6 @@ class MainLayout: UIView {
 
         airPlayButton.setImage(UIImage(systemName: "airplay.video",
                                        withConfiguration: airplayButtonCFG), for: .normal)
-        airPlayButton.tintColor = AppColor.menuIcon
 
         forward15sButton.setImage(UIImage(systemName: "15.arrow.trianglehead.clockwise",
                                           withConfiguration: forward15sButtonCFG), for: .normal)
@@ -231,7 +230,6 @@ class MainLayout: UIView {
                                         withConfiguration: ellipsisButtonCFG), for: .normal)
         ellipsisButton.tintColor = AppColor.menuIcon
 
-        addSubview(airPlayButton)
         addSubview(middleButtonStackView)
         addSubview(ellipsisButton)
 
@@ -245,7 +243,6 @@ class MainLayout: UIView {
         }
 
         middleButtonStackView.translatesAutoresizingMaskIntoConstraints = false
-        airPlayButton.translatesAutoresizingMaskIntoConstraints = false
         ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
 
         middleButtonStackView.setContentHuggingPriority(.required, for: .horizontal)
@@ -257,9 +254,6 @@ class MainLayout: UIView {
         NSLayoutConstraint.activate([
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
             middleButtonStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-
-            airPlayButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            airPlayButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22),
 
             ellipsisButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22)

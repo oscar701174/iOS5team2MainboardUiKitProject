@@ -56,7 +56,7 @@ final class IntroPageViewController: UIPageViewController {
         ])
     }
 
-    private func makeIntroPage(from model: IntroModel.IntPage) -> UIViewController {
+    private func makeIntroPage(from model: IntroModel.IntroPage) -> UIViewController {
         let page = UIViewController()
         page.view.backgroundColor = model.backgroundColor
 

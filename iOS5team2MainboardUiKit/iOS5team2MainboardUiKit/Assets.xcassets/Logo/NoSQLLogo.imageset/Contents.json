@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "NoSQLLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "NoSQLLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

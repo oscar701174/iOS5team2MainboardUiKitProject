@@ -8,7 +8,7 @@
 import UIKit
 
 struct IntroModel {
-    struct IntPage {
+    struct IntroPage {
         let icon: String
         let title: String
         let description: String
@@ -37,7 +37,7 @@ struct IntroModel {
         }
     }
 
-    static let pages: [IntPage] = [
+    static let pages: [IntroPage] = [
         .init(
             icon: "swift",
             title: "페이지1",
