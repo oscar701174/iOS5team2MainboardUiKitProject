@@ -39,12 +39,12 @@ extension ClipPlayerController: AVPlayerViewControllerDelegate {
 
 extension ClipPlayerController {
     private func removeFromParentIfNeeded() {
-        guard let vc = playerViewControllerIfLoaded else { return }
+        guard let pvc = playerViewControllerIfLoaded else { return }
         // 이미 어떤 부모에 붙어 있으면 떼어낸다
-        if vc.parent != nil {
-            vc.willMove(toParent: nil)
-            vc.view.removeFromSuperview()
-            vc.removeFromParent()
+        if pvc.parent != nil {
+            pvc.willMove(toParent: nil)
+            pvc.view.removeFromSuperview()
+            pvc.removeFromParent()
         }
     }
     
@@ -90,11 +90,11 @@ struct ClipPlayerViewControllerRepresentable: UIViewControllerRepresentable {
     
 }
 
-#Preview {
-    ClipPlayerViewControllerRepresentable()
-    
-}
-
+//#Preview {
+//    ClipPlayerViewControllerRepresentable()
+//    
+//}
+//
 
 
 
