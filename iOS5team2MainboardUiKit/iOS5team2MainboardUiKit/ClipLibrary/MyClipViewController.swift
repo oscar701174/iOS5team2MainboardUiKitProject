@@ -151,7 +151,7 @@ extension MyClipViewController: ClipPlayerViewDelegate {
     }
 }
 
-struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
+struct MyClipViewController02Representable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> MyClipViewController{
         MyClipViewController()
     }
@@ -161,6 +161,6 @@ struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
 }
 
 #Preview {
-    MyClipViewController_v02Representable()
+    MyClipViewController02Representable()
 }
 
