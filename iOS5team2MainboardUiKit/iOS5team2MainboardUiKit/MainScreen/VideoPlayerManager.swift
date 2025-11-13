@@ -24,6 +24,8 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
 
     var onPlayEnded: (() -> Void)?
 
+    var onPlayStateChanged: ((Bool) -> Void)?
+
     deinit {
         if let obs = timeObserver, let player {
             player.removeTimeObserver(obs)
@@ -152,8 +154,10 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
 
             if wasPlaying {
                 player.play()
+                self.onPlayStateChanged?(true)
             } else {
                 player.pause()
+                self.onPlayStateChanged?(false)
             }
         }
     }

@@ -80,6 +80,18 @@ class MainViewController: UIViewController {
         playerManager.onDurationLoaded = { [weak self] durationText in
             self?.mainView.end.text = durationText
         }
+
+        playerManager.onPlayStateChanged = { [weak self] isPlaying in
+            guard let self else { return }
+
+            let cfg = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+            let symbolName = isPlaying ? "pause.fill" : "play.fill"
+
+            self.mainView.playButton.setImage(
+                UIImage(systemName: symbolName, withConfiguration: cfg),
+                for: .normal
+            )
+        }
     }
 
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
