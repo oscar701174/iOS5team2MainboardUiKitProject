@@ -8,22 +8,16 @@ class ClipPlayerController: UIViewController {
     private var playerViewControllerIfLoaded: AVPlayerViewController?
     private var player: AVPlayer?
     private(set) var status: Status = []
-    
     private func loadPlayerViewControllerIfNeeded() {
         if playerViewControllerIfLoaded == nil {
             playerViewControllerIfLoaded = AVPlayerViewController()
         }
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
-
     }
-    
 }
-
 extension AVPlayerViewController {
     func hasContent(fromVideo video: VideoModel) -> Bool {
         // player의 현재 재생 중인 아이템의 URL과
@@ -36,7 +30,7 @@ extension AVPlayerViewController {
 }
 
 extension ClipPlayerController: AVPlayerViewControllerDelegate {
-    
+
 }
 
 extension ClipPlayerController {
@@ -49,8 +43,7 @@ extension ClipPlayerController {
             vc.removeFromParent()
         }
     }
-    
-    func embedInline(in parent: UIViewController, container: UIView,video:VideoModel) {
+    func embedInline(in parent: UIViewController, container: UIView, video: VideoModel) {
         loadPlayerViewControllerIfNeeded()
         guard let playerViewController = playerViewControllerIfLoaded,
               playerViewController.parent != parent else { return }
@@ -70,39 +63,28 @@ extension ClipPlayerController {
         ])
 
         playerViewController.didMove(toParent: parent)
-    
         if !playerViewController.hasContent(fromVideo: video) {
             let playerItem = AVPlayerItem(url: video.filePath)
             let player = AVPlayer(playerItem: playerItem)
             playerViewController.player = player
             player.play()
         }
-        
     }
-    
-    
 }
 
 struct ClipPlayerViewControllerRepresentable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> ClipPlayerController {
         ClipPlayerController()
     }
-    
     func updateUIViewController(_ uiViewController: ClipPlayerController, context: Context) {}
-    
 }
 
 #Preview {
     ClipPlayerViewControllerRepresentable()
-    
 }
-
-
-
 
 struct Status: OptionSet {
     let rawValue: Int
-    
     // 개별 상태 플래그 정의
     static let readyForDisplay   = Status(rawValue: 1 << 0)  // 플레이어가 표시 준비 완료
     static let fullScreenActive  = Status(rawValue: 1 << 1)  // 전체화면 재생 중
@@ -110,6 +92,4 @@ struct Status: OptionSet {
     static let pictureInPictureActive = Status(rawValue: 1 << 3) // PiP(화면 속 화면) 활성화 중
     static let beingPresented    = Status(rawValue: 1 << 4)  // 전체화면 전환 중
     static let beingDismissed    = Status(rawValue: 1 << 5)  // 전체화면 종료 중
-    
 }
-

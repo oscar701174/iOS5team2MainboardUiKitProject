@@ -1,4 +1,3 @@
-
 import Foundation
 import AVFoundation
 
@@ -7,7 +6,6 @@ struct ClipModel: Decodable {
     let filePath: URL
     let start: String
     let end: String
-    
     var asset: AVURLAsset {
         AVURLAsset(url: filePath)
     }
@@ -19,4 +17,3 @@ struct VideoModel: Decodable {
     let filePath: URL
     let clips: [ClipModel]?
 }
-

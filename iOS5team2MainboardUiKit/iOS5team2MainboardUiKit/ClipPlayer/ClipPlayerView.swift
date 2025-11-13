@@ -17,7 +17,6 @@ class ClipPlayerView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     private func setupUI() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
@@ -28,13 +27,12 @@ class ClipPlayerView: UIView {
             containerView.heightAnchor.constraint(equalTo: heightAnchor)
         ])
     }
-    
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         if let clipVC = delegate as? UIViewController {
             clipPlayer.embedInline(in: clipVC, container: containerView, video: video)
         } else {
-            print(self,#function,"delegate is not UIViewController")
+            print(self, #function, "delegate is not UIViewController")
         }
     }
 }
@@ -43,18 +41,19 @@ protocol ClipPlayerViewDelegate: AnyObject {
     func clipPlayerViewDidAttach(_ view: ClipPlayerView, container: UIView)
 }
 
-// MARK: - SwiftUI Preview
-//struct ClipPlayerViewRepresentable: UIViewRepresentable {
-//    func makeUIView(context: Context) -> ClipPlayerView {
-//        return ClipPlayerView(video: Video(title: "sample", hlsUrl: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8")!))
-//    }
-//
-//    func updateUIView(_ uiView: ClipPlayerView, context: Context) {
-//        // 상태 업데이트가 필요할 경우 여기에 작성
-//    }
-//}
-//
-//#Preview {
-//    ClipPlayerViewRepresentable()
-//        .frame(width: 200, height: 200)
-//}
+/* MARK: - SwiftUI Preview
+struct ClipPlayerViewRepresentable: UIViewRepresentable {
+    func makeUIView(context: Context) -> ClipPlayerView {
+        return ClipPlayerView(video: Video(title: "sample", hlsUrl: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8")!))
+    }
+
+    func updateUIView(_ uiView: ClipPlayerView, context: Context) {
+        // 상태 업데이트가 필요할 경우 여기에 작성
+    }
+}
+
+#Preview {
+    ClipPlayerViewRepresentable()
+        .frame(width: 200, height: 200)
+}
+*/
