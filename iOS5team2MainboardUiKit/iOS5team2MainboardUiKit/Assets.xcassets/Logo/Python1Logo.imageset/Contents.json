@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "Python1Logo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Python1Logo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

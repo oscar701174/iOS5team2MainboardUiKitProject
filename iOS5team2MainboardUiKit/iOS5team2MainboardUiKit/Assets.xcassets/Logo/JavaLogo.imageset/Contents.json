@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "JavaLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "JavaLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

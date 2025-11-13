@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "KotlinLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "KotlinLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

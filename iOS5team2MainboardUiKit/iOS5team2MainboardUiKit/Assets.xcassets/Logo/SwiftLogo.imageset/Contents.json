@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "swiftLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "swiftLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

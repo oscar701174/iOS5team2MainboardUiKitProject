@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "DockerLogo.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "DockerLogo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
