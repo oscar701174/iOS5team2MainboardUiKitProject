@@ -19,7 +19,7 @@ class VideoCell: UICollectionViewCell {
         contentView.addSubview(thumbImageView)
         contentView.addSubview(titleLabel)
 
-        thumbImageView.contentMode = .scaleAspectFill
+        // thumbImageView.contentMode = .scaleAspectFill
         thumbImageView.clipsToBounds = true
 
         titleLabel.numberOfLines = 0
@@ -28,6 +28,7 @@ class VideoCell: UICollectionViewCell {
 
         contentView.preservesSuperviewLayoutMargins = false
         contentView.directionalLayoutMargins = .zero
+        contentView.backgroundColor = .clear
 
         contentView.translatesAutoresizingMaskIntoConstraints = false
         thumbImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -42,8 +43,11 @@ class VideoCell: UICollectionViewCell {
             contentView.widthAnchor.constraint(equalTo: widthAnchor),
 
             thumbImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
+
             thumbImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
             thumbImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
+            
+            thumbImageView.widthAnchor.constraint(equalToConstant: 30),
             thumbImageView.heightAnchor.constraint(equalTo: thumbImageView.widthAnchor, multiplier: 9 / 16),
 
             titleLabel.topAnchor.constraint(equalTo: thumbImageView.bottomAnchor, constant: 0),

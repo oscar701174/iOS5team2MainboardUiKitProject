@@ -16,6 +16,7 @@ class MainViewController: UIViewController {
 
     var playingVideoURL: URL?
     let mainView = MainLayout()
+    let playerManager = VideoPlayerManager()
 
     override func loadView() {
         self.view = mainView
@@ -24,7 +25,16 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        startPlayback(with: playingVideoURL)
+        bindPlayerCallbacks()
+
+        playerManager.startPlayback()
+        
+        if let player = playerManager.player {
+            self.player = player
+            mainView.playerView.player = player
+        }
+
+
         mainView.setHeader()
         mainView.configureLanguageMenu()
         mainView.setTopVideo()
@@ -52,13 +62,32 @@ class MainViewController: UIViewController {
         mainView.progressSlider.addTarget(self, action: #selector(scrubChanged(_:)), for: .valueChanged)
         mainView.progressSlider.addTarget(self, action: #selector(scrubEnded(_:)), for: .touchUpInside)
 
+        let sliderTapGesture =  UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
+        mainView.progressSlider.addGestureRecognizer(sliderTapGesture)
+
+    }
+
+    private func bindPlayerCallbacks() {
+
+        playerManager.onPlayEnded = { [weak self] in
+            self?.handlePlayEnd()
+        }
+
+        playerManager.onProgressChanged = { [weak self] progress, currentText in
+            self?.mainView.progressSlider.value = progress
+            self?.mainView.start.text = currentText
+        }
+
+        playerManager.onDurationLoaded = { [weak self] durationText in
+            self?.mainView.end.text = durationText
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        resumePlayBackAfterFullScreen()
     }
+
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
@@ -67,13 +96,6 @@ class MainViewController: UIViewController {
         view.backgroundColor = AppColor.background
     }
 
-    deinit {
-        if let obs = timeObserver {
-            player?.removeTimeObserver(obs)
-            timeObserver = nil
-        }
-        NotificationCenter.default.removeObserver(self)
-    }
 }
 
 #Preview(){

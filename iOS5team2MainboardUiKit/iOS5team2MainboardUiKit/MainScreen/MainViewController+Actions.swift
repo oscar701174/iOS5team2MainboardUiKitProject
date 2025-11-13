@@ -33,14 +33,27 @@ extension MainViewController {
         guard let player else {
             return
         }
-        skipForwardSeconds(player: player)
+        playerManager.skipForwardSeconds(player: player)
     }
 
     @objc func rewind15sButtonTapped(_ sender: UIButton) {
         guard let player else {
             return
         }
-        skipRewindSeconds(player: player)
+        playerManager.skipRewindSeconds(player: player)
+    }
+
+    @objc func handlePlayEnd() {
+        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+        player?.pause()
+        didReachEnd = true
+        mainView.playButton.setImage(UIImage(systemName: "play.fill",
+                                             withConfiguration: playButtonCFG), for: .normal)
+        mainView.progressSlider.value = 1
+
+        if let duration = player?.currentItem?.duration.seconds, duration.isFinite {
+            mainView.start.text = TimeFormatter.timeFormat(duration)
+        }
     }
 
     @objc func dropdownClick(_ sender: UIButton) {
@@ -54,19 +67,6 @@ extension MainViewController {
 
         } else if isSearchButtonActive == false {
             hideSearchBar()
-        }
-    }
-
-    @objc func handlePlayEnd() {
-        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        player?.pause()
-        didReachEnd = true
-        mainView.playButton.setImage(UIImage(systemName: "play.fill",
-                                             withConfiguration: playButtonCFG), for: .normal)
-        mainView.progressSlider.value = 1
-
-        if let duration = player?.currentItem?.duration.seconds, duration.isFinite {
-            mainView.start.text = TimeFormatter.timeFormat(duration)
         }
     }
 
@@ -154,6 +154,41 @@ extension MainViewController {
             return
         }
 
-        presentFullScreenPlayer(from: self, player: player)
+        playerManager.presentFullScreenPlayer(from: self, player: player)
+    }
+
+    @objc func progressSliderTapped(_ gesture: UITapGestureRecognizer) {
+        let slider = mainView.progressSlider
+        let point = gesture.location(in: slider)
+
+        isScrubbing = true
+
+        let ratio = max(0, min(1, point.x / slider.bounds.width))
+        let newValue = slider.minimumValue + Float(ratio) * (slider.maximumValue - slider.minimumValue)
+
+        slider.setValue(newValue, animated: false)
+
+        guard let item = playerManager.player?.currentItem else {
+            isScrubbing = false
+            return
+        }
+
+        let duration = item.duration.seconds
+        guard duration.isFinite, duration > 0 else {
+            isScrubbing = false
+            return
+        }
+
+        let targetSeconds = Double(newValue) * duration
+        let targetTime = CMTime(seconds: targetSeconds, preferredTimescale: 600)
+
+        mainView.start.text = TimeFormatter.timeFormat(targetSeconds)
+
+        item.cancelPendingSeeks()
+        item.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+            guard let self else { return }
+
+            self.isScrubbing = false
+        }
     }
 }
