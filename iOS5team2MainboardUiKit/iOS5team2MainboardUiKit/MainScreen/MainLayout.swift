@@ -127,13 +127,10 @@ class MainLayout: UIView {
     }
 
     func updateDropdownColors(for trait: UITraitCollection) {
-
         let backgroundColor  = AppColor.background.resolvedColor(with: trait)
         let textColor = UIColor.main
-
         dropdown.backgroundColor = backgroundColor
         dropdown.textColor = textColor
-
     }
 
     func setTopVideo() {

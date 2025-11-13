@@ -7,7 +7,7 @@ import AVFoundation
 class MyClipViewController: UIViewController {
     
     private let clipTableView = UITableView()
-    private var nowPlayingVideo: VideoModel? {
+    private var nowPlayingVideo: VideoModel?     {
         didSet {
             print("nowPlayingVideo: \(String(describing: nowPlayingVideo))")
             guard let video = nowPlayingVideo else {
