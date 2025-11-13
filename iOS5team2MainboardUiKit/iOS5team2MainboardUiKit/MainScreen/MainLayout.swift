@@ -40,6 +40,8 @@ class MainLayout: UIView {
     let dropdown = DropDown()
     let itemList = ["Angular", "C", "Django", "Docker", "Java", "JavaScript", "Kotlin", "Kubernetes", "Swift", "PHP"]
 
+    private var headerDefaultConstriants: [NSLayoutConstraint] = []
+    private var headerIPadLandscapeConstriants: [NSLayoutConstraint] = []
     private var topVideoDefaultConstraints: [NSLayoutConstraint] = []
     private var topVideoIPadLandscapeConstraints: [NSLayoutConstraint] = []
     private var progressSliderDefaultConstraints: [NSLayoutConstraint] = []
@@ -77,13 +79,26 @@ class MainLayout: UIView {
         languageButton.translatesAutoresizingMaskIntoConstraints = false
         searchButton.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
+        headerDefaultConstriants = [
             languageButton.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
-            languageButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.4),
+            languageButton.widthAnchor.constraint(equalTo: widthAnchor, constant: 30),
             searchButton.topAnchor.constraint(equalTo: topAnchor, constant: 62),
             searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
-        ])
+        ]
+
+        headerIPadLandscapeConstriants = [
+            languageButton.topAnchor.constraint(equalTo: topAnchor, constant: 15),
+            languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            languageButton.widthAnchor.constraint(
+                equalTo: safeAreaLayoutGuide.widthAnchor,
+                multiplier: 0.6
+            ),
+            languageButton.heightAnchor.constraint(equalToConstant: 90),
+            searchButton.topAnchor.constraint(equalTo: topAnchor, constant: 45),
+            searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
+        ]
+
 
         languageButton.setTitle("Swift", for: .normal)
 
@@ -116,10 +131,19 @@ class MainLayout: UIView {
             guard let self, self.languageButton.window != nil else { return }
             self.languageButton.layoutIfNeeded() // 최신 크기 반영
             self.dropdown.width = self.languageButton.bounds.width
-            self.dropdown.bottomOffset = CGPoint(
-                x: 0,
-                y: self.languageButton.bounds.height + 6
-            )
+
+            let isIPadLandscape = self.traitCollection.userInterfaceIdiom == .pad
+            && bounds.width > bounds.height
+
+            if isIPadLandscape {
+                // 아이패드 가로
+                self.dropdown.bottomOffset = CGPoint(x: 0,
+                                                     y: self.languageButton.bounds.height - 20)
+            } else {
+                // 그 외 (아이폰 / 아이패드 세로)
+                self.dropdown.bottomOffset = CGPoint(x: 0,
+                                                     y: self.languageButton.bounds.height)
+            }
         }
 
         dropdown.selectionAction = { [weak self] (index, item) in
@@ -174,11 +198,10 @@ class MainLayout: UIView {
         ]
 
         topVideoIPadLandscapeConstraints = [
-            playerView.topAnchor.constraint(equalTo: languageButton.bottomAnchor, constant: 15),
+            playerView.topAnchor.constraint(equalTo: languageButton.bottomAnchor, constant: 0),
             playerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             playerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
             playerView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.6),
-            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 12/16),
 
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
             fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
@@ -223,6 +246,7 @@ class MainLayout: UIView {
         progressSliderIPadLandscapeConstraints = [
             progressSlider.centerXAnchor.constraint(equalTo: centerXAnchor),
             progressSlider.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 10),
+
             progressSlider.leadingAnchor.constraint(equalTo: playerView.leadingAnchor),
             progressSlider.trailingAnchor.constraint(equalTo: playerView.trailingAnchor),
 
@@ -301,6 +325,7 @@ class MainLayout: UIView {
         videoButtonIPadLandscapeConstraints = [
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 5),
             middleButtonStackView.centerXAnchor.constraint(equalTo: progressSlider.centerXAnchor),
+            middleButtonStackView.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor, constant: -50),
 
             ellipsisButton.trailingAnchor.constraint(equalTo: progressSlider.trailingAnchor, constant: -10),
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15)
@@ -335,7 +360,7 @@ class MainLayout: UIView {
             collectionView.topAnchor.constraint(equalTo: playerView.topAnchor),
 
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            collectionView.bottomAnchor.constraint(equalTo: middleButtonStackView.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor, constant: -10)
         ]
 
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.reuseID)
@@ -443,12 +468,14 @@ class MainLayout: UIView {
 
         let size = containerSize ?? bounds.size
         if trait.userInterfaceIdiom == .pad &&  size.width > size.height {
+            NSLayoutConstraint.deactivate(headerDefaultConstriants)
             NSLayoutConstraint.deactivate(topVideoDefaultConstraints)
             NSLayoutConstraint.deactivate(progressSliderDefaultConstraints)
             NSLayoutConstraint.deactivate(videoButtonDefaultConstraints)
             NSLayoutConstraint.deactivate(videoCollectionDefaultConstraints)
             NSLayoutConstraint.deactivate(bottomMenuDefaultConstrains)
 
+            NSLayoutConstraint.activate(headerIPadLandscapeConstriants)
             NSLayoutConstraint.activate(topVideoIPadLandscapeConstraints)
             NSLayoutConstraint.activate(progressSliderIPadLandscapeConstraints)
             NSLayoutConstraint.activate(videoButtonIPadLandscapeConstraints
@@ -456,13 +483,17 @@ class MainLayout: UIView {
             NSLayoutConstraint.activate(videoCollectionIPadLandscapeConstraints)
             NSLayoutConstraint.activate(bottomMenuIPadLandscapeConstraints)
 
+
+
         } else {
+            NSLayoutConstraint.deactivate(headerIPadLandscapeConstriants)
             NSLayoutConstraint.deactivate(topVideoIPadLandscapeConstraints)
             NSLayoutConstraint.deactivate(progressSliderIPadLandscapeConstraints)
             NSLayoutConstraint.deactivate(videoButtonIPadLandscapeConstraints)
             NSLayoutConstraint.deactivate(videoCollectionIPadLandscapeConstraints)
             NSLayoutConstraint.deactivate(bottomMenuIPadLandscapeConstraints)
 
+            NSLayoutConstraint.activate(headerDefaultConstriants)
             NSLayoutConstraint.activate(topVideoDefaultConstraints)
             NSLayoutConstraint.activate(progressSliderDefaultConstraints)
             NSLayoutConstraint.activate(videoButtonDefaultConstraints)
@@ -473,7 +504,6 @@ class MainLayout: UIView {
         layoutIfNeeded()
     }
 }
-
 
 
 #Preview {
