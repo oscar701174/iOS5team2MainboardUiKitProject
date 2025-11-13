@@ -46,7 +46,7 @@ class VideoCell: UICollectionViewCell {
 
             thumbImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
             thumbImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
-            
+
             thumbImageView.widthAnchor.constraint(equalToConstant: 30),
             thumbImageView.heightAnchor.constraint(equalTo: thumbImageView.widthAnchor, multiplier: 9 / 16),
 

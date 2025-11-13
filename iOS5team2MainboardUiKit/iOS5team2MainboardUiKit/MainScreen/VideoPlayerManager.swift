@@ -39,8 +39,6 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
             return
         }
 
-
-
         let playerItem = AVPlayerItem(url: url)
         let player = AVPlayer(playerItem: playerItem)
 
@@ -84,7 +82,7 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
             }
 
             let current = player.currentTime().seconds
-            let progress = max(0, min(1,Float(current/duration)))
+            let progress = max(0, min(1, Float(current/duration)))
             let currentText = TimeFormatter.timeFormat(current)
             self.onProgressChanged?(progress, currentText)
 
@@ -138,7 +136,6 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
             player.play()
         }
     }
-
 
     func playerViewController(_ playerViewController: AVPlayerViewController, willEndFullScreenPresentationWithAnimationCoordinator coordinator: any UIViewControllerTransitionCoordinator) {
 

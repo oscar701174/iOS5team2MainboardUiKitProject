@@ -230,7 +230,6 @@ class MainLayout: UIView {
                                         withConfiguration: ellipsisButtonCFG), for: .normal)
         ellipsisButton.tintColor = AppColor.menuIcon
 
-
         addSubview(middleButtonStackView)
         addSubview(ellipsisButton)
 

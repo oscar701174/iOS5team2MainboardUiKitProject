@@ -28,12 +28,11 @@ class MainViewController: UIViewController {
         bindPlayerCallbacks()
 
         playerManager.startPlayback()
-        
+
         if let player = playerManager.player {
             self.player = player
             mainView.playerView.player = player
         }
-
 
         mainView.setHeader()
         mainView.configureLanguageMenu()
@@ -81,11 +80,6 @@ class MainViewController: UIViewController {
         playerManager.onDurationLoaded = { [weak self] durationText in
             self?.mainView.end.text = durationText
         }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
     }
 
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
