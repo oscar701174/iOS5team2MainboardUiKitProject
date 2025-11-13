@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 import SwiftUI
 import AVFoundation
 
-@MainActor
+
 class MyClipViewController: UIViewController {
     
     private let clipTableView = UITableView()
@@ -88,7 +88,7 @@ class MyClipViewController: UIViewController {
     }
 }
 
-extension MyClipViewController_v02: UITableViewDelegate, UITableViewDataSource {
+extension MyClipViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
@@ -106,7 +106,7 @@ extension MyClipViewController_v02: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension MyClipViewController_v02 {
+extension MyClipViewController {
     @objc func openFile() {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.movie, UTType.mpeg4Movie])
         picker.delegate = self
@@ -115,7 +115,7 @@ extension MyClipViewController_v02 {
     }
 }
 
-extension MyClipViewController_v02: UIDocumentPickerDelegate {
+extension MyClipViewController: UIDocumentPickerDelegate {
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
@@ -145,21 +145,22 @@ extension MyClipViewController_v02: UIDocumentPickerDelegate {
     }
 }
 
-extension MyClipViewController_v02: ClipPlayerViewDelegate {
+extension MyClipViewController: ClipPlayerViewDelegate {
     func clipPlayerViewDidAttach(_ view: ClipPlayerView, container: UIView) {
         // Optional: handle attachment events
     }
 }
 
 struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> MyClipViewController_v02{
-        MyClipViewController_v02()
+    func makeUIViewController(context: Context) -> MyClipViewController{
+        MyClipViewController()
     }
     
-    func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
+    func updateUIViewController(_ uiViewController: MyClipViewController, context: Context) {
     }
 }
 
 #Preview {
     MyClipViewController_v02Representable()
 }
+

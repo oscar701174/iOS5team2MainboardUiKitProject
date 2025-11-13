@@ -3,8 +3,8 @@ import UniformTypeIdentifiers
 import SwiftUI
 import AVFoundation
 
-@MainActor
-class MyClipViewController_v02: UIViewController {
+
+class MyClipViewController02: UIViewController {
     
     private let clipTableView = UITableView()
     private let button = UIButton(configuration: .glass())
@@ -16,7 +16,6 @@ class MyClipViewController_v02: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //        let openFileAction = UIAction(title: "openFile") { _ in self.openFile() }
         title = "My Clips"
         view.backgroundColor = .systemBackground
         setupTableView()
@@ -43,7 +42,7 @@ class MyClipViewController_v02: UIViewController {
     }
 }
 
-extension MyClipViewController_v02: UITableViewDelegate, UITableViewDataSource {
+extension MyClipViewController02: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
@@ -64,7 +63,7 @@ extension MyClipViewController_v02: UITableViewDelegate, UITableViewDataSource {
     
 }
 
-extension MyClipViewController_v02 {
+extension MyClipViewController02 {
     @objc func openFile() {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.movie, UTType.mpeg4Movie])
         picker.delegate = self
@@ -74,7 +73,7 @@ extension MyClipViewController_v02 {
     }
 }
 
-extension MyClipViewController_v02: UIDocumentPickerDelegate {
+extension MyClipViewController02: UIDocumentPickerDelegate {
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
@@ -91,7 +90,6 @@ extension MyClipViewController_v02: UIDocumentPickerDelegate {
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsURL.appendingPathComponent(fileName)
         print("destinationURL")
-        self.videos.append(VideoModel(title: fileName, filePath: destinationURL, clips: nil))
         
         do {
             if FileManager.default.fileExists(atPath: destinationURL.path) {
@@ -110,15 +108,15 @@ extension MyClipViewController_v02: UIDocumentPickerDelegate {
     }
 }
 
-struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> MyClipViewController_v02{
-        MyClipViewController_v02()
-    }
-    
-    func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
-    }
-}
-
-#Preview {
-    ViewControllerRepresentable()
-}
+//struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
+//    func makeUIViewController(context: Context) -> MyClipViewController_v02{
+//        MyClipViewController_v02()
+//    }
+//    
+//    func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
+//    }
+//}
+//
+//#Preview {
+//    ViewControllerRepresentable()
+//}

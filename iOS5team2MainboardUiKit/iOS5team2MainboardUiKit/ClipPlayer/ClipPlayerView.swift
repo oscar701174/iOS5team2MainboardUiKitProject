@@ -44,17 +44,17 @@ protocol ClipPlayerViewDelegate: AnyObject {
 }
 
 // MARK: - SwiftUI Preview
-struct ClipPlayerViewRepresentable: UIViewRepresentable {
-    func makeUIView(context: Context) -> ClipPlayerView {
-        return ClipPlayerView(video: Video(title: "sample", hlsUrl: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8")!))
-    }
-
-    func updateUIView(_ uiView: ClipPlayerView, context: Context) {
-        // 상태 업데이트가 필요할 경우 여기에 작성
-    }
-}
-
-#Preview {
-    ClipPlayerViewRepresentable()
-        .frame(width: 200, height: 200)
-}
+//struct ClipPlayerViewRepresentable: UIViewRepresentable {
+//    func makeUIView(context: Context) -> ClipPlayerView {
+//        return ClipPlayerView(video: Video(title: "sample", hlsUrl: URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8")!))
+//    }
+//
+//    func updateUIView(_ uiView: ClipPlayerView, context: Context) {
+//        // 상태 업데이트가 필요할 경우 여기에 작성
+//    }
+//}
+//
+//#Preview {
+//    ClipPlayerViewRepresentable()
+//        .frame(width: 200, height: 200)
+//}
