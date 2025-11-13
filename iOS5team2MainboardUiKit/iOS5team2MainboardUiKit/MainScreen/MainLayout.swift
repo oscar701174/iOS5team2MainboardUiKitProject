@@ -40,6 +40,17 @@ class MainLayout: UIView {
     let dropdown = DropDown()
     let itemList = ["Angular", "C", "Django", "Docker", "Java", "JavaScript", "Kotlin", "Kubernetes", "Swift", "PHP"]
 
+    private var topVideoDefaultConstraints: [NSLayoutConstraint] = []
+    private var topVideoIPadLandscapeConstraints: [NSLayoutConstraint] = []
+    private var progressSliderDefaultConstraints: [NSLayoutConstraint] = []
+    private var progressSliderIPadLandscapeConstraints: [NSLayoutConstraint] = []
+    private var videoButtonDefaultConstraints: [NSLayoutConstraint] = []
+    private var videoButtonIPadLandscapeConstraints: [NSLayoutConstraint] = []
+    private var videoCollectionDefaultConstraints: [NSLayoutConstraint] = []
+    private var videoCollectionIPadLandscapeConstraints: [NSLayoutConstraint] = []
+    private var bottomMenuDefaultConstrains: [NSLayoutConstraint] = []
+    private var  bottomMenuIPadLandscapeConstraints: [NSLayoutConstraint] = []
+
     override func layoutSubviews() {
         super.layoutSubviews()
         if let flow = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
@@ -137,7 +148,6 @@ class MainLayout: UIView {
     }
 
     func setTopVideo() {
-        let cfg = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         let img = UIImage(named: "FullScreen")?
             .resized(to: CGSize(width: 24, height: 24))
             .withRenderingMode(.alwaysTemplate)
@@ -150,7 +160,8 @@ class MainLayout: UIView {
 
         fullScreenButton.setImage(img, for: .normal)
         fullScreenButton.tintColor = .white
-        NSLayoutConstraint.activate([
+
+        topVideoDefaultConstraints = [
             playerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             playerView.topAnchor
                 .constraint(equalTo: topAnchor, constant: 110),
@@ -160,8 +171,22 @@ class MainLayout: UIView {
 
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
             fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
-        ])
-        playerView.playerLayer.videoGravity = .resizeAspect
+        ]
+
+        topVideoIPadLandscapeConstraints = [
+            playerView.topAnchor.constraint(equalTo: languageButton.bottomAnchor, constant: 15),
+            playerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
+            playerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            playerView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.6),
+            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 12/16),
+
+            fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
+            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
+        ]
+
+        playerView.playerLayer.videoGravity = .resizeAspectFill
+        playerView.layer.masksToBounds = true
+
     }
 
     func setProgressSlider() {
@@ -182,7 +207,8 @@ class MainLayout: UIView {
         progressSlider.translatesAutoresizingMaskIntoConstraints = false
         start.translatesAutoresizingMaskIntoConstraints = false
         end.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
+
+        progressSliderDefaultConstraints = [
             progressSlider.centerXAnchor.constraint(equalTo: centerXAnchor),
             progressSlider.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 10),
             progressSlider.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
@@ -192,7 +218,20 @@ class MainLayout: UIView {
             end.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: -3),
             end.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
 
-        ])
+        ]
+
+        progressSliderIPadLandscapeConstraints = [
+            progressSlider.centerXAnchor.constraint(equalTo: centerXAnchor),
+            progressSlider.topAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 10),
+            progressSlider.leadingAnchor.constraint(equalTo: playerView.leadingAnchor),
+            progressSlider.trailingAnchor.constraint(equalTo: playerView.trailingAnchor),
+
+            start.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: -3),
+            start.leadingAnchor.constraint(equalTo:progressSlider.leadingAnchor),
+            end.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: -3),
+            end.trailingAnchor.constraint(equalTo: progressSlider.trailingAnchor)
+        ]
+        NSLayoutConstraint.activate(progressSliderDefaultConstraints)
 
         let cfg = UIImage.SymbolConfiguration(pointSize: 10, weight: .regular)
         progressSlider.setThumbImage(UIImage(systemName: "circle.fill", withConfiguration: cfg), for: .normal)
@@ -251,13 +290,21 @@ class MainLayout: UIView {
             $0.setContentCompressionResistancePriority(.required, for: .horizontal)
         }
 
-        NSLayoutConstraint.activate([
+        videoButtonDefaultConstraints = [
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
             middleButtonStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
             ellipsisButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22)
-        ])
+        ]
+
+        videoButtonIPadLandscapeConstraints = [
+            middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 5),
+            middleButtonStackView.centerXAnchor.constraint(equalTo: progressSlider.centerXAnchor),
+
+            ellipsisButton.trailingAnchor.constraint(equalTo: progressSlider.trailingAnchor, constant: -10),
+            ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15)
+        ]
     }
 
     func setVideoCollection() {
@@ -275,12 +322,21 @@ class MainLayout: UIView {
         collectionView.showsVerticalScrollIndicator = false
         addSubview(collectionView)
 
-        NSLayoutConstraint.activate([
+        videoCollectionDefaultConstraints = [
             collectionView.topAnchor.constraint(equalTo: middleButtonStackView.bottomAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        ]
+
+        videoCollectionIPadLandscapeConstraints = [
+
+            collectionView.leadingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: 20),
+            collectionView.topAnchor.constraint(equalTo: playerView.topAnchor),
+
+            collectionView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            collectionView.bottomAnchor.constraint(equalTo: middleButtonStackView.bottomAnchor)
+        ]
 
         collectionView.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.reuseID)
         collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
@@ -328,7 +384,8 @@ class MainLayout: UIView {
         bottomButtonStackView.translatesAutoresizingMaskIntoConstraints = false
 
         bottomButtonStackView.isLayoutMarginsRelativeArrangement = true
-        NSLayoutConstraint.activate([
+
+        bottomMenuDefaultConstrains = [
             bottomBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             bottomBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomBarView.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -337,7 +394,18 @@ class MainLayout: UIView {
             bottomButtonStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             bottomButtonStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             bottomButtonStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 40)
-        ])
+        ]
+
+        bottomMenuIPadLandscapeConstraints = [
+            bottomBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bottomBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomBarView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomBarView.heightAnchor.constraint(equalToConstant: 60),
+
+            bottomButtonStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            bottomButtonStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            bottomButtonStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 40)
+        ]
     }
 
     func setSeachBar() {
@@ -370,8 +438,48 @@ class MainLayout: UIView {
             searchBar.bottomAnchor.constraint(lessThanOrEqualTo: keyboardLayoutGuide.topAnchor)
         ])
     }
+
+    func updateForIpad(for trait: UITraitCollection, containerSize: CGSize? = nil) {
+
+        let size = containerSize ?? bounds.size
+        if trait.userInterfaceIdiom == .pad &&  size.width > size.height {
+            NSLayoutConstraint.deactivate(topVideoDefaultConstraints)
+            NSLayoutConstraint.deactivate(progressSliderDefaultConstraints)
+            NSLayoutConstraint.deactivate(videoButtonDefaultConstraints)
+            NSLayoutConstraint.deactivate(videoCollectionDefaultConstraints)
+            NSLayoutConstraint.deactivate(bottomMenuDefaultConstrains)
+
+            NSLayoutConstraint.activate(topVideoIPadLandscapeConstraints)
+            NSLayoutConstraint.activate(progressSliderIPadLandscapeConstraints)
+            NSLayoutConstraint.activate(videoButtonIPadLandscapeConstraints
+            )
+            NSLayoutConstraint.activate(videoCollectionIPadLandscapeConstraints)
+            NSLayoutConstraint.activate(bottomMenuIPadLandscapeConstraints)
+
+        } else {
+            NSLayoutConstraint.deactivate(topVideoIPadLandscapeConstraints)
+            NSLayoutConstraint.deactivate(progressSliderIPadLandscapeConstraints)
+            NSLayoutConstraint.deactivate(videoButtonIPadLandscapeConstraints)
+            NSLayoutConstraint.deactivate(videoCollectionIPadLandscapeConstraints)
+            NSLayoutConstraint.deactivate(bottomMenuIPadLandscapeConstraints)
+
+            NSLayoutConstraint.activate(topVideoDefaultConstraints)
+            NSLayoutConstraint.activate(progressSliderDefaultConstraints)
+            NSLayoutConstraint.activate(videoButtonDefaultConstraints)
+            NSLayoutConstraint.activate(videoCollectionDefaultConstraints)
+            NSLayoutConstraint.activate(bottomMenuDefaultConstrains)
+
+        }
+        layoutIfNeeded()
+    }
 }
 
+
+
 #Preview {
+    MainViewController()
+}
+
+#Preview("iPad 가로", traits: .landscapeLeft) {
     MainViewController()
 }
