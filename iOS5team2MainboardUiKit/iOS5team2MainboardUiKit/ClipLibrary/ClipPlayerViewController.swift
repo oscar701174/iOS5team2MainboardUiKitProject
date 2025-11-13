@@ -2,14 +2,6 @@ import UIKit
 import AVFoundation
 
 class ClipPlayerViewController: UIViewController {
-<<<<<<< HEAD
-    let asset: AVURLAsset
-    let hlsURL: URL
-    init(url: AVURLAsset, streamUrl: URL) {
-        self.asset = url
-        self.hlsURL = streamUrl
-        super.init(nibName: nil, bundle: nil)
-=======
     private let video: VideoModel
     private var currentPlayingTime: Double = 0.0
     
@@ -59,7 +51,6 @@ class ClipPlayerViewController: UIViewController {
     deinit {
         ClipPlayer.shared.delegate = nil
         print(self,#function)
->>>>>>> 75c4df4 (step6: clipPlayer view - check)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -114,27 +105,6 @@ class ClipPlayerViewController: UIViewController {
             stackView.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-<<<<<<< HEAD
-
-    @objc func playVideo() {
-        // Option 1: Use the asset directly via AVPlayerItem
-        let item = AVPlayerItem(asset: asset)
-        let player = AVPlayer(playerItem: item)
-        let playerVC = AVPlayerViewController()
-        playerVC.player = player
-
-        present(playerVC, animated: true) {
-            player.play()
-        }
-    }
-    @objc func playHls() {
-        print("playing hls", hlsURL)
-        let player = AVPlayer(url: hlsURL)
-        let playerVC = AVPlayerViewController()
-        playerVC.player = player
-        present(playerVC, animated: true) {
-            player.play()
-=======
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -150,22 +120,9 @@ class ClipPlayerViewController: UIViewController {
             btn.tag = index
             btn.addTarget(self, action: #selector(clipButtonTapped(_:)), for: .touchUpInside)
             stackView.addArrangedSubview(btn)
->>>>>>> 75c4df4 (step6: clipPlayer view - check)
         }
 
     }
-<<<<<<< HEAD
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        let item = AVPlayerItem(asset: asset)
-//        let player = AVPlayer(playerItem: item)
-//        let playerVC = AVPlayerViewController()
-//        playerVC.player = player
-//        present(playerVC, animated: true) {
-//            player.play()
-//        }
-//    }
-=======
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -204,5 +161,4 @@ extension ClipPlayerViewController {
         ClipPlayer.shared.playClip(clip)
     }
     
->>>>>>> 75c4df4 (step6: clipPlayer view - check)
 }
