@@ -160,7 +160,4 @@ struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
     }
 }
 
-#Preview {
-    MyClipViewController_v02Representable()
-}
 

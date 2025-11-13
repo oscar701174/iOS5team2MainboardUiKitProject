@@ -205,7 +205,7 @@
 		};
 		D3008F762EC59E2A00B58919 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -218,7 +218,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"SwiftLint not installed\"\nfi\n";
+			shellScript = "if which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"SwiftLint not installed\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

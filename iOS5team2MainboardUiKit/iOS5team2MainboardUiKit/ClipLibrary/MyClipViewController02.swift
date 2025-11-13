@@ -108,15 +108,3 @@ extension MyClipViewController02: UIDocumentPickerDelegate {
     }
 }
 
-//struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
-//    func makeUIViewController(context: Context) -> MyClipViewController_v02{
-//        MyClipViewController_v02()
-//    }
-//    
-//    func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
-//    }
-//}
-//
-//#Preview {
-//    ViewControllerRepresentable()
-//}
