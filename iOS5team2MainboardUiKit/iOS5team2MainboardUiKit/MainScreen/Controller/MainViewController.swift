@@ -27,6 +27,19 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        VideoManager.seedIfNeeded()
+
+        videoList = VideoManager.fetchVideos()
+
+        videoList.sort { alpha, beta in
+            let aIsSwift = (alpha.tag == "Swift")
+            let bIsSwift = (beta.tag == "Swift")
+
+            if aIsSwift != bIsSwift { return aIsSwift }
+            return (alpha.title ?? "") < (beta.title ?? "")
+        }
+
+        print(videoList.count)
 
         bindPlayerCallbacks()
 
@@ -43,6 +56,8 @@ class MainViewController: UIViewController {
         mainView.setVideoCollection()
         mainView.setBottomMenu()
         mainView.setSeachBar()
+
+        mainView.collectionView.reloadData()
 
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
@@ -64,22 +79,6 @@ class MainViewController: UIViewController {
 
         let sliderTapGesture =  UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
         mainView.progressSlider.addGestureRecognizer(sliderTapGesture)
-
-        VideoManager.seedIfNeeded()
-
-        videoList = VideoManager.fetchVideos()
-
-        mainView.onLanguageSelected = { [weak self] _ in
-            guard let self else { return }
-            videoList.sort { alpha, beta in
-                let aIsSwift = (alpha.tag == "Swift")
-                let bIsSwift = (beta.tag == "Swift")
-                if aIsSwift != bIsSwift { return aIsSwift && !bIsSwift }
-                return (alpha.title ?? "") < (beta.title ?? "")
-            }
-        }
-
-        print(videoList.count)
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {

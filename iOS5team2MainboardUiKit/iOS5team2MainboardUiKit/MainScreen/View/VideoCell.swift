@@ -68,11 +68,26 @@ class VideoCell: UICollectionViewCell {
         titleLabel.text = nil
     }
 
+    override var isHighlighted: Bool {
+        didSet {
+            let transform: CGAffineTransform = isHighlighted ? CGAffineTransform(scaleX: 0.95, y: 0.95): .identity
+
+            let alpha: CGFloat = isHighlighted ? 0.8 : 1.0
+
+            UIView.animate(withDuration: 0.1) {
+                self.contentView.transform = transform
+                self.contentView.alpha = alpha
+            }
+        }
+    }
+
     func configure(with video: VideoEntity) {
         titleLabel.text = video.title ?? "제목없음"
         thumbImageView.image = UIImage(named: "sample")
 
-        guard let urlString = video.url, let url = URL(string: urlString) else { return }
+        guard let url = VideoManager.bundleURLString(for: video) else {
+            return
+        }
 
         ThumnailManager.generateThumnail(from: url) { [weak self] image in
             guard let self else {

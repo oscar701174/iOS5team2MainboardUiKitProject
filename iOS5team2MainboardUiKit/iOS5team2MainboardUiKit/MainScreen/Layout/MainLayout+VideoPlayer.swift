@@ -116,7 +116,7 @@ extension MainLayout {
         airPlayButton.setImage(UIImage(systemName: "airplay.video",
                                        withConfiguration: airplayButtonCFG), for: .normal)
 
-        forward15sButton.setImage(UIImage(systemName: "15.arrow.trianglehead.clockwise",
+        forward15sButton.setImage(UIImage(systemName: "10.arrow.trianglehead.clockwise",
                                           withConfiguration: forward15sButtonCFG), for: .normal)
         forward15sButton.tintColor = AppColor.menuIcon
 
@@ -124,7 +124,7 @@ extension MainLayout {
                                     withConfiguration: playButtonCFG), for: .normal)
         playButton.tintColor = AppColor.menuIcon
 
-        rewind15sButton.setImage(UIImage(systemName: "15.arrow.trianglehead.clockwise",
+        rewind15sButton.setImage(UIImage(systemName: "10.arrow.trianglehead.clockwise",
                                          withConfiguration: rewind15sButtonCFG), for: .normal)
         rewind15sButton.tintColor = AppColor.menuIcon
 
