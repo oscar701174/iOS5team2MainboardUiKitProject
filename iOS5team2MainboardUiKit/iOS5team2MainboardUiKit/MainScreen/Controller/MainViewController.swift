@@ -1,6 +1,7 @@
 import UIKit
 import AVFoundation
 import DropDown
+import CoreData
 
 class MainViewController: UIViewController {
 
@@ -17,6 +18,12 @@ class MainViewController: UIViewController {
     var playingVideoURL: URL?
     let mainView = MainLayout()
     let playerManager = VideoPlayerManager()
+
+    func test() {
+        let container = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer
+
+        guard let context = container?.viewContext else { return }
+    }
 
     override func loadView() {
         self.view = mainView
@@ -66,6 +73,21 @@ class MainViewController: UIViewController {
 
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(alongsideTransition: { _ in
+            // 회전 후 실제 size 기준으로 iPad 가로/세로 판단
+            self.mainView.updateForIpad(for: self.traitCollection,
+                                        containerSize: size)
+        })
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
+    }
+
     private func bindPlayerCallbacks() {
 
         playerManager.onPlayEnded = { [weak self] in
@@ -101,7 +123,6 @@ class MainViewController: UIViewController {
         mainView.dropdown.reloadAllComponents()
         view.backgroundColor = AppColor.background
     }
-
 }
 
 #Preview(){

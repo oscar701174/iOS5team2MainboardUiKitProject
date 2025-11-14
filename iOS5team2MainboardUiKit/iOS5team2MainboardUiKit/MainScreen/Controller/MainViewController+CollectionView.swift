@@ -17,7 +17,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         let raw = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.reuseID, for: indexPath)
         guard let cell = raw as? VideoCell else { return raw }
         cell.configure( thumbnail: UIImage(named: "sample"),
-                        title: "이것은 테스트를 위한 임시 문구 입니다. \(IntroModel.languages[indexPath.row])"
+                        title: "이것은 테스트를 위한 임시 문구 입니다. \(CategoryRepository.allCategories[indexPath.row])"
         )
         return cell
     }
