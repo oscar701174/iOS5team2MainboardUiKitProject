@@ -19,11 +19,7 @@ class MainViewController: UIViewController {
     let mainView = MainLayout()
     let playerManager = VideoPlayerManager()
 
-    func test() {
-        let container = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer
-
-        guard let context = container?.viewContext else { return }
-    }
+    var videoList: [VideoEntity] = []
 
     override func loadView() {
         self.view = mainView
@@ -33,8 +29,6 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 
         bindPlayerCallbacks()
-
-        playerManager.startPlayback()
 
         if let player = playerManager.player {
             self.player = player
@@ -71,6 +65,21 @@ class MainViewController: UIViewController {
         let sliderTapGesture =  UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
         mainView.progressSlider.addGestureRecognizer(sliderTapGesture)
 
+        VideoManager.seedIfNeeded()
+
+        videoList = VideoManager.fetchVideos()
+
+        mainView.onLanguageSelected = { [weak self] _ in
+            guard let self else { return }
+            videoList.sort { alpha, beta in
+                let aIsSwift = (alpha.tag == "Swift")
+                let bIsSwift = (beta.tag == "Swift")
+                if aIsSwift != bIsSwift { return aIsSwift && !bIsSwift }
+                return (alpha.title ?? "") < (beta.title ?? "")
+            }
+        }
+
+        print(videoList.count)
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {

@@ -35,18 +35,23 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
 
     func startPlayback(with url: URL? = nil) {
 
-        let defaultURL = URL(string: "https://kxc.blob.core.windows.net/est2/video.mp4")
-        guard let url = url ?? defaultURL else {
-            print(" 유효한 재생 URL이 없습니다.")
+        guard  let defaultURL = URL(string: "https://example.com/default.mp4") else {
             return
         }
 
-        let playerItem = AVPlayerItem(url: url)
+        let finalURL = url ?? defaultURL
+
+        let playerItem = AVPlayerItem(url: finalURL)
         let player = AVPlayer(playerItem: playerItem)
+
+        if let oldPlayer = self.player, let obs = timeObserver {
+            oldPlayer.removeTimeObserver(obs)
+            timeObserver = nil
+        }
 
         self.player = player
 
-        addProgressObserver(to: player)
+        addProgressObserver()
         addPlayEndObserver()
 
         Task {
@@ -64,7 +69,10 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
         }
     }
 
-    func addProgressObserver(to player: AVPlayer) {
+    func addProgressObserver() {
+
+        guard let player = player else { return }
+
         let interval = CMTime(seconds: 0.25, preferredTimescale: 600)
 
         if let obs = timeObserver {
@@ -72,7 +80,8 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
             timeObserver = nil
         }
 
-        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {[weak self] _ in
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] _ in
+
             guard let self else { return }
             guard !self.isScrubbing, let item = player.currentItem else {
                 return
@@ -96,10 +105,7 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
             return
         }
 
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime,
-                                               object: playerItem,
-                                               queue: .main
-        ) { [weak self] _ in
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: playerItem, queue: .main) { [weak self] _ in
             self?.onPlayEnded?()
         }
     }

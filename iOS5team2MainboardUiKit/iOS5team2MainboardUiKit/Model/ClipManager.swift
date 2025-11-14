@@ -9,7 +9,9 @@ import CoreData
 
 enum ClipManager {
 
-    static var context = AppDelegate.viewContext
+    static var context: NSManagedObjectContext {
+        AppDelegate.viewContext
+    }
 
     static func fetchClips(for video: VideoEntity) -> [ClipEntity] {
 

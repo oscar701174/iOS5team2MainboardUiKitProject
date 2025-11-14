@@ -68,9 +68,19 @@ class VideoCell: UICollectionViewCell {
         titleLabel.text = nil
     }
 
-    func configure(thumbnail image: UIImage?, title: String) {
-        thumbImageView.image = image
-        titleLabel.text = title
+    func configure(with video: VideoEntity) {
+        titleLabel.text = video.title ?? "제목없음"
+        thumbImageView.image = UIImage(named: "sample")
+
+        guard let urlString = video.url, let url = URL(string: urlString) else { return }
+
+        ThumnailManager.generateThumnail(from: url) { [weak self] image in
+            guard let self else {
+                return
+            }
+
+            self.thumbImageView.image = image ?? UIImage(named: "sample")
+        }
     }
 }
 
