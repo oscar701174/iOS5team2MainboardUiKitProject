@@ -87,10 +87,12 @@ extension MainLayout {
             guard let self = self else { return }
             self.languageButton.setTitle(item, for: .normal)
             let name = self.itemList[index]
-            self.languageButton.setImage(
-                UIImage(named: "\(name)Logo")?.resized(to: .init(width: 34, height: 34)),
-                for: .normal
-            )
+            if let category = CategoryRepository.allCategories.first(where: { $0.name == name }) {
+                let image = UIImage(named: category.iconName)?.resized(to: .init(width: 34, height: 34))
+                self.languageButton.setImage(image, for: .normal)
+            } else {
+                self.languageButton.setImage(nil, for: .normal)
+            }
         }
 
         updateDropdownColors(for: languageButton.traitCollection)

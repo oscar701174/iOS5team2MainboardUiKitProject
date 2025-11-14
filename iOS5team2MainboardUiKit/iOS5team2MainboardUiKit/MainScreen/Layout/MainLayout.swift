@@ -38,7 +38,7 @@ class MainLayout: UIView {
 
     let searchBar = UISearchBar()
     let dropdown = DropDown()
-    let itemList = ["Angular", "C", "Django", "Docker", "Java", "JavaScript", "Kotlin", "Kubernetes", "Swift", "PHP"]
+    let itemList = CategoryRepository.allCategories.map(\.name)
 
     var headerDefaultConstriants: [NSLayoutConstraint] = []
     var headerIPadLandscapeConstriants: [NSLayoutConstraint] = []

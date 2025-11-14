@@ -99,8 +99,7 @@ extension MyClipViewController02: UIDocumentPickerDelegate {
  func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
  }
  }
- 
- #Preview {
- ViewControllerRepresentable()
- }
  */
+#Preview {
+    MyClipViewController02()
+}

@@ -2,10 +2,10 @@ import UIKit
 import SwiftUI // Preview용(김대현)
 
 // MARK: - 데이터 구조
-struct Category {
-    let name: String
-    let iconName: String // 이미지 이름 (Assets에 추가)
-}
+//struct Category {
+//    let name: String
+//    let iconName: String // 이미지 이름 (Assets에 추가)
+//}
 
 // MARK: - 셀 클래스
 class CategoryCell: UICollectionViewCell {
@@ -69,24 +69,7 @@ class CategoryCell: UICollectionViewCell {
 // MARK: - 메인 ViewController
 class CategoryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    let categories: [Category] = [
-        Category(name: "Kotlin", iconName: "KotlinLogo"),
-        Category(name: "PHP", iconName: "PHPLogo"),
-        Category(name: "Node.js", iconName: "NoSQLLogo"),
-        Category(name: "Java", iconName: "JavaLogo"),
-        Category(name: "C", iconName: "CLogo"),
-        Category(name: "Docker", iconName: "DockerLogo"),
-        Category(name: "JavaScript", iconName: "JavaScriptLogo"),
-        Category(name: "Angular", iconName: "AngularLogo"),
-        Category(name: "Swift", iconName: "SwiftLogo"),
-        Category(name: "Django", iconName: "DjangoLogo"),
-        Category(name: "Kubernetes", iconName: "KubernetesLogo"),
-        Category(name: "Spring", iconName: "SpringLogo"),
-        Category(name: "Python", iconName: "PythonLogo"),
-        Category(name: "React", iconName: "ReactLogo"),
-        Category(name: "Vue", iconName: "VuejsLogo")
-    ]
-
+    let categories: [Category] = CategoryRepository.allCategories
     private var collectionView: UICollectionView!
 
     private let infoLabel: UILabel = {

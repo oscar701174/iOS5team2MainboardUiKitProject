@@ -11,7 +11,7 @@ final class IntroPageViewController: UIPageViewController {
 
     private var pages: [UIViewController] = []
     private let indicator = UIPageControl()
-    private var selectedLanguages = Set<String>()
+    private var selectedNames = Set<String>()
     private var isSetupComplete = false
 
     static func shouldShowIntro() -> Bool {
@@ -30,7 +30,9 @@ final class IntroPageViewController: UIPageViewController {
         super.viewDidAppear(animated)
         guard !isSetupComplete else { return }
         setupPages()
-        if let first = pages.first { setViewControllers([first], direction: .forward, animated: false) }
+        if let first = pages.first {
+            setViewControllers([first], direction: .forward, animated: false)
+        }
         isSetupComplete = true
     }
 
@@ -41,7 +43,7 @@ final class IntroPageViewController: UIPageViewController {
 
     private func setupPages() {
         pages = IntroModel.pages.map(makeIntroPage)
-        pages.append(makeLanguagePage())
+        pages.append(makeCategorySelectionPage())
     }
 
     private func setupIndicator() {
@@ -99,12 +101,12 @@ final class IntroPageViewController: UIPageViewController {
         return page
     }
 
-    private func makeLanguagePage() -> UIViewController {
+    private func makeCategorySelectionPage() -> UIViewController {
         let page = UIViewController()
         page.view.backgroundColor = .systemGray6
 
         let title = UILabel()
-        title.text = "프로그래밍 언어를 최대 3개 선택하세요!"
+        title.text = "관심분야를 최대 3개 선택하세요!"
         title.font = .systemFont(ofSize: 18, weight: .semibold)
         title.textColor = .label
         title.textAlignment = .center
@@ -129,7 +131,7 @@ final class IntroPageViewController: UIPageViewController {
             grid.widthAnchor.constraint(equalTo: scroll.widthAnchor)
         ])
 
-        populateLanguages(in: grid)
+        populateCategories(in: grid)
 
         let start = UIButton(type: .system)
         start.setTitle("시작하기", for: .normal)
@@ -161,10 +163,10 @@ final class IntroPageViewController: UIPageViewController {
         return page
     }
 
-    private func populateLanguages(in grid: UIStackView) {
+    private func populateCategories(in grid: UIStackView) {
         grid.arrangedSubviews.forEach { $0.removeFromSuperview() }
         let columns = traitCollection.userInterfaceIdiom == .pad ? 3 : 2
-        let buttons = IntroModel.languages.map(makeLanguageButton)
+        let buttons = CategoryRepository.allCategories.map(makeCategoryButton)
 
         stride(from: 0, to: buttons.count, by: columns).forEach { start in
             var row = Array(buttons[start..<min(start + columns, buttons.count)]) as [UIView]
@@ -180,18 +182,22 @@ final class IntroPageViewController: UIPageViewController {
         }
     }
 
-    private func makeLanguageButton(for title: String) -> UIButton {
+    private func makeCategoryButton(for category: Category) -> UIButton {
+        let title = category.name
         var config = UIButton.Configuration.plain()
-        if let image = UIImage(named: "\(title)Logo") {
-            let smaller = image.preparingThumbnail(of: CGSize(width: 26, height: 26))
-            config.image = smaller?.withRenderingMode(.alwaysOriginal)
+
+        if let image = UIImage(named: category.iconName) {
+            let thumbnail = image.preparingThumbnail(of: CGSize(width: 26, height: 26))
+            config.image = thumbnail?.withRenderingMode(.alwaysOriginal)
         }
+
         config.imagePlacement = .leading
         config.imagePadding = 10
         config.baseForegroundColor = .label
         config.background.backgroundColor = .systemGray6
         config.cornerStyle = .medium
         config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 18, bottom: 14, trailing: 18)
+
         let attributedTitle = AttributedString(title, attributes: AttributeContainer([
             .font: UIFont.systemFont(ofSize: 16, weight: .semibold),
             .kern: -0.5
@@ -207,7 +213,7 @@ final class IntroPageViewController: UIPageViewController {
 
         button.configurationUpdateHandler = { button in
             guard let name = button.configuration?.title else { return }
-            if self.selectedLanguages.contains(name) {
+            if self.selectedNames.contains(name) {
                 button.configuration?.background.backgroundColor = .systemBlue
                 button.layer.borderColor = UIColor.systemBlue.cgColor
                 button.configuration?.baseForegroundColor = .white
@@ -219,24 +225,22 @@ final class IntroPageViewController: UIPageViewController {
         }
 
         button.addAction(UIAction { [weak self] _ in
-            self?.toggleLanguage(for: button)
+            self?.toggleCategory(for: button)
         }, for: .touchUpInside)
+
         return button
     }
 
-    private func toggleLanguage(for button: UIButton) {
+    private func toggleCategory(for button: UIButton) {
         guard let name = button.configuration?.title else { return }
-        let isSelected = selectedLanguages.contains(name)
+        let isSelected = selectedNames.contains(name)
         if isSelected {
-            selectedLanguages.remove(name)
-            button.configuration?.baseBackgroundColor = .systemGray6
-            button.layer.borderColor = UIColor.systemGray3.cgColor
-        } else if selectedLanguages.count < 3 {
-            selectedLanguages.insert(name)
-            button.configuration?.baseBackgroundColor = .systemBlue
-            button.layer.borderColor = UIColor.systemBlue.cgColor
+            selectedNames.remove(name)
+        } else if selectedNames.count < 3 {
+            selectedNames.insert(name)
         }
-        UserDefaults.standard.set(Array(selectedLanguages), forKey: "preferredLanguages")
+        UserDefaults.standard.set(Array(selectedNames), forKey: "preferredCategories")
+        button.setNeedsUpdateConfiguration()
     }
 
     @objc private func startTapped() {

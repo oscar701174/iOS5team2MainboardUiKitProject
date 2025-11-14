@@ -108,7 +108,6 @@ class MainViewController: UIViewController {
             )
         }
     }
-
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
@@ -116,7 +115,6 @@ class MainViewController: UIViewController {
         mainView.dropdown.reloadAllComponents()
         view.backgroundColor = AppColor.background
     }
-
 }
 
 #Preview(){
