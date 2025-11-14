@@ -3,12 +3,7 @@ import UniformTypeIdentifiers
 import SwiftUI
 import AVFoundation
 
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipViewController02.swift
 class MyClipViewController02: UIViewController {
-=======
-class MyVideoListViewController: UIViewController {
-
->>>>>>> 75c4df4 (step6: clipPlayer view - check):iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
     private let clipTableView = UITableView()
     private let button = UIButton(configuration: .glass())
     private var videos: [VideoModel] = [] {
@@ -42,7 +37,7 @@ class MyVideoListViewController: UIViewController {
     }
 }
 
-extension MyVideoListViewController: UITableViewDelegate, UITableViewDataSource {
+extension MyClipViewController02: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
@@ -54,12 +49,13 @@ extension MyVideoListViewController: UITableViewDelegate, UITableViewDataSource 
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedVideo = videos[indexPath.row]
-        let playerVC = ClipPlayerViewController(video:selectedVideo)
+        let asset = AVURLAsset(url: selectedVideo.filePath)
+        let playerVC = ClipPlayerViewController(url: asset, streamUrl: selectedVideo.filePath)
         navigationController?.pushViewController(playerVC, animated: true)
     }
 }
 
-extension MyVideoListViewController {
+extension MyClipViewController02 {
     @objc func openFile() {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.movie, UTType.mpeg4Movie])
         picker.delegate = self
@@ -68,12 +64,7 @@ extension MyVideoListViewController {
     }
 }
 
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipViewController02.swift
 extension MyClipViewController02: UIDocumentPickerDelegate {
-=======
-extension MyVideoListViewController: UIDocumentPickerDelegate {
-    
->>>>>>> 75c4df4 (step6: clipPlayer view - check):iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
         // ✅ 보안 범위 접근 시작
@@ -81,7 +72,6 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
             print("접근 권한 획득 실패")
             return
         }
-        
         defer { url.stopAccessingSecurityScopedResource() }
         // ✅ 앱 내부 Documents 폴더에 복사
         let fileName = url.lastPathComponent
@@ -93,22 +83,13 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
                 try FileManager.default.removeItem(at: destinationURL)
             }
             try FileManager.default.copyItem(at: url, to: destinationURL)
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipViewController02.swift
             print("✅ 복사 완료:", destinationURL.path)
             self.videos.append(VideoModel(title: fileName, filePath: destinationURL, clips: nil))
-=======
-            print("복사 완료:", destinationURL.path)
-            
-            
-            self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
-            
->>>>>>> 75c4df4 (step6: clipPlayer view - check):iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
         } catch {
             print("파일 복사 실패:", error)
         }
     }
 }
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipViewController02.swift
 /*
  struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
  func makeUIViewController(context: Context) -> MyClipViewController_v02{
@@ -118,23 +99,8 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
  func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
  }
  }
+ 
+ #Preview {
+ ViewControllerRepresentable()
+ }
  */
-#Preview {
-    MyClipViewController02()
-}
-=======
-
-struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> MyVideoListViewController{
-        MyVideoListViewController()
-    }
-    
-    func updateUIViewController(_ uiViewController: MyVideoListViewController, context: Context) {
-    }
-}
-
-#Preview {
-    ViewControllerRepresentable()
-}
-
->>>>>>> 75c4df4 (step6: clipPlayer view - check):iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
