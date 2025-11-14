@@ -52,6 +52,7 @@ class ClipPlayerViewController: UIViewController {
         ClipPlayer.shared.delegate = nil
         print(self,#function)
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

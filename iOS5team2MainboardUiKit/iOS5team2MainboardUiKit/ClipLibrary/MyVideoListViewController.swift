@@ -3,7 +3,8 @@ import UniformTypeIdentifiers
 import SwiftUI
 import AVFoundation
 
-class MyClipViewController02: UIViewController {
+class MyVideoListViewController: UIViewController {
+
     private let clipTableView = UITableView()
     private let button = UIButton(configuration: .glass())
     private var videos: [VideoModel] = [] {
@@ -37,7 +38,7 @@ class MyClipViewController02: UIViewController {
     }
 }
 
-extension MyClipViewController02: UITableViewDelegate, UITableViewDataSource {
+extension MyVideoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
@@ -49,13 +50,12 @@ extension MyClipViewController02: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedVideo = videos[indexPath.row]
-        let asset = AVURLAsset(url: selectedVideo.filePath)
-        let playerVC = ClipPlayerViewController(url: asset, streamUrl: selectedVideo.filePath)
+        let playerVC = ClipPlayerViewController(video:selectedVideo)
         navigationController?.pushViewController(playerVC, animated: true)
     }
 }
 
-extension MyClipViewController02 {
+extension MyVideoListViewController {
     @objc func openFile() {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.movie, UTType.mpeg4Movie])
         picker.delegate = self
@@ -64,7 +64,8 @@ extension MyClipViewController02 {
     }
 }
 
-extension MyClipViewController02: UIDocumentPickerDelegate {
+extension MyVideoListViewController: UIDocumentPickerDelegate {
+    
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
         // ✅ 보안 범위 접근 시작
@@ -72,6 +73,7 @@ extension MyClipViewController02: UIDocumentPickerDelegate {
             print("접근 권한 획득 실패")
             return
         }
+        
         defer { url.stopAccessingSecurityScopedResource() }
         // ✅ 앱 내부 Documents 폴더에 복사
         let fileName = url.lastPathComponent
@@ -83,8 +85,11 @@ extension MyClipViewController02: UIDocumentPickerDelegate {
                 try FileManager.default.removeItem(at: destinationURL)
             }
             try FileManager.default.copyItem(at: url, to: destinationURL)
-            print("✅ 복사 완료:", destinationURL.path)
-            self.videos.append(VideoModel(title: fileName, filePath: destinationURL, clips: nil))
+            print("복사 완료:", destinationURL.path)
+            
+            
+            self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
+            
         } catch {
             print("파일 복사 실패:", error)
         }
@@ -107,4 +112,16 @@ extension MyClipViewController02: UIDocumentPickerDelegate {
  */
 =======
 
->>>>>>> 69cb31a (RemovePlay):iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipViewController02.swift
+struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> MyVideoListViewController{
+        MyVideoListViewController()
+    }
+    
+    func updateUIViewController(_ uiViewController: MyVideoListViewController, context: Context) {
+    }
+}
+
+#Preview {
+    ViewControllerRepresentable()
+}
+
