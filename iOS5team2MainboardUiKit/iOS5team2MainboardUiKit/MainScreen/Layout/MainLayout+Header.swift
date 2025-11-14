@@ -9,7 +9,7 @@ import UIKit
 import DropDown
 
 extension MainLayout {
-    
+
     func setHeader() {
         addSubview(languageButton)
         addSubview(searchButton)
@@ -95,9 +95,9 @@ extension MainLayout {
                 self.languageButton.setImage(nil, for: .normal)
             }
         }
-        
+
         updateDropdownColors(for: languageButton.traitCollection)
-        
+
         dropdown.reloadAllComponents()
 
     }

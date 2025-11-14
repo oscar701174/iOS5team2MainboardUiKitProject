@@ -8,7 +8,6 @@
 import AVFoundation
 import UIKit
 
-
 enum ThumnailManager {
     static func generateThumnail(from url: URL, at time: CMTime = CMTime(seconds: 1, preferredTimescale: 600), completion: @escaping (UIImage?) -> Void) {
         let asset = AVAsset(url: url)

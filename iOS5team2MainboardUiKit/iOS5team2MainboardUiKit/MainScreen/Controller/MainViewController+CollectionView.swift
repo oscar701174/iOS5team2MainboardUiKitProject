@@ -9,6 +9,21 @@ import UIKit
 import CoreData
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+
+    private func resetPlayerUIForNewVideo() {
+
+        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+
+        mainView.progressSlider.value = 0
+
+        mainView.start.text = "00:00:00"
+        didReachEnd = false
+
+        mainView.playButton.setImage(UIImage(systemName: "play.fill",
+                                             withConfiguration: playButtonCFG), for: .normal)
+
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return videoList.count // 데이터 개수
     }
@@ -32,15 +47,15 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
         let selectedVideo = videoList[indexPath.item]
 
-        guard
-            let urlString = selectedVideo.url,
-            let url = URL(string: urlString)
-        else {
-            print(" 잘못된 URL: \(selectedVideo.url ?? "nil")")
+        guard let url = VideoManager.bundleURLString(for: selectedVideo) else {
+            print("잘못된 URL:", selectedVideo.url ?? "nil")
             return
         }
+
+        resetPlayerUIForNewVideo()
 
         playingVideoURL = url
 
@@ -51,7 +66,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
             mainView.playerView.player = newPlayer
         }
 
-        print("선택된 비디오 URL:", urlString)
+        print("선택된 비디오 URL:", url)
     }
 
 }

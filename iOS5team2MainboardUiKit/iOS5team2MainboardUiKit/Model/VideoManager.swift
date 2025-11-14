@@ -14,19 +14,22 @@ enum VideoManager {
         AppDelegate.viewContext
     }
 
-    private static func bundleURLString(forFileName fileName: String) -> String? {
-        let parts = fileName.split(separator: ".")
-        guard parts.count == 2 else { return nil }
+     static func bundleURLString(for video: VideoEntity) -> URL? {
+         guard let raw = video.url, !raw.isEmpty else { return nil }
 
-        let name = String(parts[0])
-        let ext = String(parts[1])
+         // http / https 이면 그대로 사용
+         if raw.hasPrefix("http://") || raw.hasPrefix("https://") {
+             return URL(string: raw)
+         }
 
-        // 번들 안에 있는 Sample1.mp4 찾기
-        guard let url = Bundle.main.url(forResource: name, withExtension: ext) else {
-            return nil
-        }
+         // 그 외는 번들 파일 이름으로 취급: "Sample1.mp4"
+         let parts = raw.split(separator: ".")
+         guard parts.count == 2 else { return nil }
 
-        return url.absoluteString
+         let name = String(parts[0])
+         let ext  = String(parts[1])
+
+         return Bundle.main.url(forResource: name, withExtension: ext)
     }
 
     static func seedIfNeeded() {
@@ -54,12 +57,6 @@ enum VideoManager {
             video.isPlay = 0
             video.text = ""
 
-            if let urlString = bundleURLString(forFileName: item.url) {
-                video.url = urlString
-            } else {
-                print("파일을 찾을 수 없음: \(item.url)")
-                video.url = ""
-            }
         }
 
         saveVideos()
@@ -101,6 +98,14 @@ enum VideoManager {
         } catch {
             print("저장 실패")
         }
+    }
+
+    static func deleteVideo() {
+        let video = VideoEntity(context: context)
+
+        context.delete(video)
+
+        saveVideos()
     }
 
 }

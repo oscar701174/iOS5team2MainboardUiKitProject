@@ -116,14 +116,14 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
         guard durationSeconds.isFinite else { return }
 
         let currentTime = player.currentTime().seconds
-        let newTime = min(currentTime + 15, durationSeconds - 0.1)
+        let newTime = min(currentTime + 10, durationSeconds - 0.1)
         let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
         player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func skipRewindSeconds(player: AVPlayer) {
         let currentTime = player.currentTime().seconds
-        let newTime = max(currentTime - 15, 0)
+        let newTime = max(currentTime - 10, 0)
 
         let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
         player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
