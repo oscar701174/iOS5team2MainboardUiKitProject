@@ -51,7 +51,9 @@ class MainLayout: UIView {
     var videoCollectionDefaultConstraints: [NSLayoutConstraint] = []
     var videoCollectionIPadLandscapeConstraints: [NSLayoutConstraint] = []
     var bottomMenuDefaultConstrains: [NSLayoutConstraint] = []
-    var  bottomMenuIPadLandscapeConstraints: [NSLayoutConstraint] = []
+    var bottomMenuIPadLandscapeConstraints: [NSLayoutConstraint] = []
+
+    var onLanguageSelected: ((String) -> Void)?
 
     override func layoutSubviews() {
         super.layoutSubviews()

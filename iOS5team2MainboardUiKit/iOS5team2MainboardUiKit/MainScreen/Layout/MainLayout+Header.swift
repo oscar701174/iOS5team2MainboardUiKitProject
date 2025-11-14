@@ -86,6 +86,7 @@ extension MainLayout {
         dropdown.selectionAction = { [weak self] (index, item) in
             guard let self = self else { return }
             self.languageButton.setTitle(item, for: .normal)
+            self.onLanguageSelected?(item)
             let name = self.itemList[index]
             if let category = CategoryRepository.allCategories.first(where: { $0.name == name }) {
                 let image = UIImage(named: category.iconName)?.resized(to: .init(width: 34, height: 34))
@@ -94,8 +95,9 @@ extension MainLayout {
                 self.languageButton.setImage(nil, for: .normal)
             }
         }
-
+        
         updateDropdownColors(for: languageButton.traitCollection)
+        
         dropdown.reloadAllComponents()
 
     }
