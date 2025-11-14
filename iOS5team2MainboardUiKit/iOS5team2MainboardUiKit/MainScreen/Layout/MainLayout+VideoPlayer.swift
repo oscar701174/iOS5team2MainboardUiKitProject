@@ -9,7 +9,7 @@ import UIKit
 import AVFoundation
 
 extension MainLayout {
-    
+
     func setTopVideo() {
         let img = UIImage(named: "FullScreen")?
             .resized(to: CGSize(width: 24, height: 24))
