@@ -95,13 +95,7 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
         view.backgroundColor = .white
         setupCollectionView()
         setupInfoLabel()
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            view.backgroundColor = .white
-            setupCollectionView()
-            setupInfoLabel()
-            setupCustomButton()   // ⭐️ 이 줄 추가
-        }
+        setupCustomButton()
     }
 
     // MARK: - CollectionView 설정

@@ -1,6 +1,7 @@
 import UIKit
 import AVFoundation
 import DropDown
+import CoreData
 
 class MainViewController: UIViewController {
 
@@ -17,6 +18,12 @@ class MainViewController: UIViewController {
     var playingVideoURL: URL?
     let mainView = MainLayout()
     let playerManager = VideoPlayerManager()
+
+    func test() {
+        let container = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer
+
+        guard let context = container?.viewContext else { return }
+    }
 
     override func loadView() {
         self.view = mainView
@@ -108,6 +115,7 @@ class MainViewController: UIViewController {
             )
         }
     }
+
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
