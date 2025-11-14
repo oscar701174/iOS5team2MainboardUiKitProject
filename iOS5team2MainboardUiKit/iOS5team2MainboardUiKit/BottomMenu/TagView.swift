@@ -71,7 +71,15 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
 
     let categories: [Category] = CategoryRepository.allCategories
     private var collectionView: UICollectionView!
-
+    private let customButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("커스텀 아이콘 만들기", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 10
+        return button
+    }()
     private let infoLabel: UILabel = {
         let label = UILabel()
         label.text = "원하는 아이콘을 선택해 주세요\n취향을 맞춰 동영상을 제공하기 위한 작업입니다."
@@ -87,6 +95,13 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
         view.backgroundColor = .white
         setupCollectionView()
         setupInfoLabel()
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .white
+            setupCollectionView()
+            setupInfoLabel()
+            setupCustomButton()   // ⭐️ 이 줄 추가
+        }
     }
 
     // MARK: - CollectionView 설정
@@ -111,7 +126,27 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
         ])
     }
-
+    private func setupCustomButton() {
+        view.addSubview(customButton)
+        customButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            customButton.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -20),
+            customButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            customButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            customButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
+    }
+    @objc private func openCustomModal() {
+        let vc = CustomSettingViewController()
+        vc.modalPresentationStyle = .pageSheet
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+        }
+        present(vc, animated: true)
+    }
     // MARK: - 하단 안내문
     private func setupInfoLabel() {
         view.addSubview(infoLabel)
@@ -158,4 +193,66 @@ struct TagView: UIViewControllerRepresentable {
 }
 #Preview {
     TagView()
+}
+class CustomSettingViewController: UIViewController {
+    
+    private let titleLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "커스텀 아이콘 설정"
+        lbl.font = UIFont.boldSystemFont(ofSize: 20)
+        lbl.textAlignment = .center
+        return lbl
+    }()
+    
+    private let colorPicker = UIColorWell()
+    private let textField: UITextField = {
+        let tf = UITextField()
+        tf.borderStyle = .roundedRect
+        tf.placeholder = "아이콘 텍스트 입력"
+        return tf
+    }()
+    
+    private let saveButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("저장하기", for: .normal)
+        btn.backgroundColor = .systemBlue
+        btn.setTitleColor(.white, for: .normal)
+        btn.layer.cornerRadius = 8
+        return btn
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemGroupedBackground
+        setupUI()
+    }
+    
+    private func setupUI() {
+        view.addSubview(titleLabel)
+        view.addSubview(colorPicker)
+        view.addSubview(textField)
+        view.addSubview(saveButton)
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        colorPicker.translatesAutoresizingMaskIntoConstraints = false
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            colorPicker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
+            colorPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            textField.topAnchor.constraint(equalTo: colorPicker.bottomAnchor, constant: 30),
+            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            
+            saveButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 30),
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            saveButton.heightAnchor.constraint(equalToConstant: 45)
+        ])
+    }
 }
