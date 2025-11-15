@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DropDown
 
 extension MainLayout {
 
@@ -45,5 +46,18 @@ extension MainLayout {
 
         }
         layoutIfNeeded()
+    }
+
+    func updateDropdownColors(for trait: UITraitCollection) {
+
+        let backgroundColor  = AppColor.background.resolvedColor(with: trait)
+        let textColor = UIColor.main
+
+        langauageDropDown.backgroundColor = backgroundColor
+        langauageDropDown.textColor = textColor
+
+        speedDropDown.backgroundColor = backgroundColor
+        speedDropDown.textColor = textColor
+
     }
 }

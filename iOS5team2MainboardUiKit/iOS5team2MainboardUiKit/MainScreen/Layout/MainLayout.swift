@@ -37,7 +37,10 @@ class MainLayout: UIView {
     var bottomToKeyboard: NSLayoutConstraint!
 
     let searchBar = UISearchBar()
-    let dropdown = DropDown()
+
+    let langauageDropDown = DropDown()
+    let speedDropDown = DropDown()
+
     let itemList = CategoryRepository.allCategories.map(\.name)
 
     var headerDefaultConstriants: [NSLayoutConstraint] = []
@@ -53,6 +56,7 @@ class MainLayout: UIView {
     var bottomMenuDefaultConstrains: [NSLayoutConstraint] = []
     var bottomMenuIPadLandscapeConstraints: [NSLayoutConstraint] = []
 
+    var onSpeedSelected: ((Double) -> Void)?
     var onLanguageSelected: ((String) -> Void)?
 
     override func layoutSubviews() {
@@ -67,11 +71,11 @@ class MainLayout: UIView {
         }
 
         let anchor = languageButton
-        dropdown.width = max(160, anchor.bounds.width)
-        dropdown.direction = .bottom
+        langauageDropDown.width = max(160, anchor.bounds.width)
+        langauageDropDown.direction = .bottom
 
         let cgX = max(0, anchor.bounds.width - max(160, anchor.bounds.width)) + 24
-        dropdown.bottomOffset = CGPoint(x: cgX, y: anchor.bounds.height)
+        langauageDropDown.bottomOffset = CGPoint(x: cgX, y: anchor.bounds.height)
     }
 
 }

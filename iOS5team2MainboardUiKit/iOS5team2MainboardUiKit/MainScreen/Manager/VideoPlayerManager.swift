@@ -139,10 +139,10 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
         pvc.entersFullScreenWhenPlaybackBegins = false
         pvc.exitsFullScreenWhenPlaybackEnds = true
         pvc.modalPresentationStyle = .fullScreen
+        pvc.showsPlaybackControls = true
+        player.allowsExternalPlayback = false
 
-        viewController.present(pvc, animated: true) {
-            player.play()
-        }
+        viewController.present(pvc, animated: true) { player.play() }
     }
 
     func playerViewController(_ playerViewController: AVPlayerViewController, willEndFullScreenPresentationWithAnimationCoordinator coordinator: any UIViewControllerTransitionCoordinator) {
@@ -166,6 +166,10 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
                 self.onPlayStateChanged?(false)
             }
         }
+    }
+
+    func changeSpeed(to rate: Double) {
+        player?.rate = Float(rate)
     }
 
 }

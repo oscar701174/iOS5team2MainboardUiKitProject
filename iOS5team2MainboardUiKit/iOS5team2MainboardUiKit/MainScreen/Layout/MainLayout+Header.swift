@@ -58,32 +58,37 @@ extension MainLayout {
 
     func configureLanguageMenu() {
 
-        dropdown.dismissMode = .automatic
-        dropdown.dataSource = itemList
-        dropdown.anchorView = languageButton
-        dropdown.textFont = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
-        dropdown.direction = .bottom
+        langauageDropDown.dismissMode = .automatic
+        langauageDropDown.dataSource = itemList
+        langauageDropDown.anchorView = languageButton
+        langauageDropDown.textFont = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
+        langauageDropDown.direction = .bottom
 
-        dropdown.willShowAction = { [weak self] in
+        langauageDropDown.willShowAction = { [weak self] in
             guard let self, self.languageButton.window != nil else { return }
-            self.languageButton.layoutIfNeeded() // 최신 크기 반영
-            self.dropdown.width = self.languageButton.bounds.width
+            self.languageButton.layoutIfNeeded()
 
             let isIPadLandscape = self.traitCollection.userInterfaceIdiom == .pad
             && bounds.width > bounds.height
 
             if isIPadLandscape {
-                // 아이패드 가로
-                self.dropdown.bottomOffset = CGPoint(x: 0,
-                                                     y: self.languageButton.bounds.height - 20)
+                // 아이패드 가로 → 넓게
+                self.langauageDropDown.width = self.languageButton.bounds.width * 0.6
+
+                self.langauageDropDown.bottomOffset = CGPoint(x: 0, y: self.languageButton.bounds.height - 20
+                )
+
             } else {
-                // 그 외 (아이폰 / 아이패드 세로)
-                self.dropdown.bottomOffset = CGPoint(x: 0,
-                                                     y: self.languageButton.bounds.height)
+
+                let contentWidth = self.languageButton.bounds.width * 0.3
+                self.langauageDropDown.width = min(contentWidth, self.bounds.width)
+
+                self.langauageDropDown.bottomOffset = CGPoint(x: 0, y: self.languageButton.bounds.height + 3
+                )
             }
         }
 
-        dropdown.selectionAction = { [weak self] (index, item) in
+        langauageDropDown.selectionAction = { [weak self] (index, item) in
             guard let self = self else { return }
             self.languageButton.setTitle(item, for: .normal)
             self.onLanguageSelected?(item)
@@ -98,17 +103,12 @@ extension MainLayout {
 
         updateDropdownColors(for: languageButton.traitCollection)
 
-        dropdown.reloadAllComponents()
+        langauageDropDown.reloadAllComponents()
 
     }
 
-    func updateDropdownColors(for trait: UITraitCollection) {
+}
 
-        let backgroundColor  = AppColor.background.resolvedColor(with: trait)
-        let textColor = UIColor.main
-
-        dropdown.backgroundColor = backgroundColor
-        dropdown.textColor = textColor
-
-    }
+#Preview() {
+    MainViewController()
 }

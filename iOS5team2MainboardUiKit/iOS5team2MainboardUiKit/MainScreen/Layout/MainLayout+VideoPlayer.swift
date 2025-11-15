@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import DropDown
 
 extension MainLayout {
 
@@ -170,4 +171,56 @@ extension MainLayout {
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15)
         ]
     }
+
+    func configureVideoSpeed() {
+        let speedList: [Double] = [1, 1.25, 1.5, 2]
+
+        speedDropDown.dismissMode = .automatic
+        speedDropDown.dataSource = speedList.map { value in
+            value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(Int(value))
+            : String(value)
+        }
+
+        speedDropDown.anchorView = ellipsisButton
+        speedDropDown.textFont = UIFont.boldSystemFont(ofSize: 14)
+        speedDropDown.direction = .bottom
+
+        speedDropDown.willShowAction = { [weak self] in
+            guard let self, self.ellipsisButton.window != nil else { return }
+            self.ellipsisButton.layoutIfNeeded()
+
+            let isIPadLandscape = self.traitCollection.userInterfaceIdiom == .pad
+            && self.bounds.width > self.bounds.height
+
+            if isIPadLandscape {
+                self.speedDropDown.width = self.ellipsisButton.bounds.width * 1.5
+                self.speedDropDown.bottomOffset = CGPoint(
+                    x: 0,
+                    y: self.ellipsisButton.bounds.height - 10
+                )
+            } else {
+                let contentWidth = max(self.ellipsisButton.bounds.width * 1.5, 80)
+                self.speedDropDown.width = min(contentWidth, self.bounds.width - 40)
+                self.speedDropDown.bottomOffset = CGPoint(
+                    x: 0,
+                    y: self.ellipsisButton.bounds.height + 4
+                )
+            }
+        }
+
+        speedDropDown.selectionAction = { [weak self] (index, _) in
+            guard let self = self else { return }
+            let value = speedList[index]
+            self.onSpeedSelected?(value)   // or delegate / notification
+        }
+
+        updateDropdownColors(for: traitCollection)
+        speedDropDown.reloadAllComponents()
+    }
+
+}
+
+#Preview() {
+    MainViewController()
 }

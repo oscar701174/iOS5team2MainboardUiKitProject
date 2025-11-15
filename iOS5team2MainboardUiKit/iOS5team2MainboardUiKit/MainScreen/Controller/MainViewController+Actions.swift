@@ -57,7 +57,11 @@ extension MainViewController {
     }
 
     @objc func dropdownClick(_ sender: UIButton) {
-        mainView.dropdown.show()
+        mainView.langauageDropDown.show()
+    }
+
+    @objc func ellipsButtonClick(_ sender: UIButton) {
+        mainView.speedDropDown.show()
     }
 
     @objc func searchButtonTapped(_ sender: UIButton) {

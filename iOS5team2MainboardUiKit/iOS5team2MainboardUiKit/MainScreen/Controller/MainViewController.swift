@@ -6,20 +6,19 @@ import CoreData
 class MainViewController: UIViewController {
 
     var isSearchButtonActive = true
-
     var player: AVPlayer?
     var timeObserver: Any?
-
     var didReachEnd = false
     var isScrubbing = false
     var wasPlayingBeforeScrub = false
     var wasPlayingBeforeFullScreen = false
+    var isSearching = false
 
     var playingVideoURL: URL?
     let mainView = MainLayout()
     let playerManager = VideoPlayerManager()
-
     var videoList: [VideoEntity] = []
+    var filteredVideos: [VideoEntity] = []
 
     override func loadView() {
         self.view = mainView
@@ -39,7 +38,10 @@ class MainViewController: UIViewController {
             return (alpha.title ?? "") < (beta.title ?? "")
         }
 
-        print(videoList.count)
+        mainView.onLanguageSelected = { [weak self] lang in
+            guard let self else { return }
+            self.prioritizeLanguage(lang)
+        }
 
         bindPlayerCallbacks()
 
@@ -53,6 +55,7 @@ class MainViewController: UIViewController {
         mainView.setTopVideo()
         mainView.setProgressSlider()
         mainView.setVideoButton()
+        mainView.configureVideoSpeed()
         mainView.setVideoCollection()
         mainView.setBottomMenu()
         mainView.setSeachBar()
@@ -70,6 +73,7 @@ class MainViewController: UIViewController {
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
+        mainView.ellipsisButton.addTarget(self, action: #selector(ellipsButtonClick(_:)), for: .touchUpInside)
         mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)
         mainView.tagButton.addTarget(self, action: #selector(pushTagScreen(_:)), for: .touchUpInside)
         mainView.settingButton.addTarget(self, action: #selector(pushSettingScreen(_:)), for: .touchUpInside)
@@ -79,6 +83,11 @@ class MainViewController: UIViewController {
 
         let sliderTapGesture =  UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
         mainView.progressSlider.addGestureRecognizer(sliderTapGesture)
+
+        mainView.onSpeedSelected = { [weak self] speed in
+            guard let self else { return }
+            self.playerManager.changeSpeed(to: speed)
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
@@ -96,7 +105,7 @@ class MainViewController: UIViewController {
         mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
     }
 
-    private func bindPlayerCallbacks() {
+    func bindPlayerCallbacks() {
 
         playerManager.onPlayEnded = { [weak self] in
             self?.handlePlayEnd()
@@ -124,11 +133,30 @@ class MainViewController: UIViewController {
         }
     }
 
+    func prioritizeLanguage(_ language: String) {
+
+        // tag == lang 인 애들을 앞으로 몰기
+        videoList.sort { lhs, rhs in
+            let lhsMatch = (lhs.tag == language)
+            let rhsMatch = (rhs.tag == language)
+
+            // 둘 다 같은 상태(둘 다 맞거나 둘 다 아니거나)면 순서 변경 X
+            if lhsMatch == rhsMatch { return false }
+
+            // lhs가 선택한 언어면 앞으로
+            return lhsMatch && !rhsMatch
+        }
+
+        mainView.collectionView.reloadData()
+    }
+
+
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
         mainView.updateFooterView(for: traitCollection)
-        mainView.dropdown.reloadAllComponents()
+        mainView.langauageDropDown.reloadAllComponents()
+        mainView.speedDropDown.reloadAllComponents()
         view.backgroundColor = AppColor.background
     }
 }

@@ -25,6 +25,7 @@ class VideoCell: UICollectionViewCell {
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .left
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 
         contentView.preservesSuperviewLayoutMargins = false
         contentView.directionalLayoutMargins = .zero
