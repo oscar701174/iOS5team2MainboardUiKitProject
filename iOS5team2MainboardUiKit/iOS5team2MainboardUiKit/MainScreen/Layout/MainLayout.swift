@@ -2,11 +2,13 @@ import Foundation
 import UIKit
 import AVFoundation
 import DropDown
+import MediaPlayer
 
 class MainLayout: UIView {
 
     let start = UILabel()
     let end = UILabel()
+    let volumeLabel = UILabel()
 
     let languageImage = UIImage()
 
@@ -16,7 +18,7 @@ class MainLayout: UIView {
     let forward15sButton = UIButton()
     let playButton = UIButton()
     let rewind15sButton = UIButton()
-    let airPlayButton = UIButton()
+    let muteButton = UIButton()
     let ellipsisButton = UIButton()
     let tagButton = UIButton()
     let clipButton = UIButton()
@@ -28,10 +30,14 @@ class MainLayout: UIView {
     let bottomButtonStackView = UIStackView()
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
 
+    let popup = UIView()
     let bottomBarView = UIView()
     let dropView = UIView()
 
     let progressSlider = UISlider()
+    let volumeSlider = UISlider()
+
+    let systemVolumeView = MPVolumeView()
 
     var bottomToBottomMenu: NSLayoutConstraint!
     var bottomToKeyboard: NSLayoutConstraint!
@@ -58,6 +64,12 @@ class MainLayout: UIView {
 
     var onSpeedSelected: ((Double) -> Void)?
     var onLanguageSelected: ((String) -> Void)?
+
+    let forward15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+    let rewind15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let muteButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let ellipsisButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
 
     override func layoutSubviews() {
         super.layoutSubviews()

@@ -18,7 +18,6 @@ extension MainLayout {
         layout.sectionInset = .zero
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        layout.sectionInset = .zero
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,4 +53,8 @@ extension MainLayout {
             flow.footerReferenceSize = CGSize(width: width, height: width * 0.07)
         }
     }
+}
+
+#Preview() {
+    MainViewController()
 }

@@ -19,7 +19,6 @@ class VideoCell: UICollectionViewCell {
         contentView.addSubview(thumbImageView)
         contentView.addSubview(titleLabel)
 
-        // thumbImageView.contentMode = .scaleAspectFill
         thumbImageView.clipsToBounds = true
 
         titleLabel.numberOfLines = 0
@@ -83,8 +82,7 @@ class VideoCell: UICollectionViewCell {
     }
 
     func configure(with video: VideoEntity) {
-        titleLabel.text = video.title ?? "제목없음"
-        thumbImageView.image = UIImage(named: "sample")
+        titleLabel.text = video.title
 
         guard let url = VideoManager.bundleURLString(for: video) else {
             return

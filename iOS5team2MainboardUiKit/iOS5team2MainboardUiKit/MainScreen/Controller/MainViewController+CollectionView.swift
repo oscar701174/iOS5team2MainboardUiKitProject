@@ -69,7 +69,6 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         playerManager.startPlayback(with: url)
 
         if let newPlayer = playerManager.player {
-            self.player = newPlayer
             mainView.playerView.player = newPlayer
         }
 

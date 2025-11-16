@@ -6,7 +6,7 @@ import CoreData
 class MainViewController: UIViewController {
 
     var isSearchButtonActive = true
-    var player: AVPlayer?
+
     var timeObserver: Any?
     var didReachEnd = false
     var isScrubbing = false
@@ -46,8 +46,8 @@ class MainViewController: UIViewController {
         bindPlayerCallbacks()
 
         if let player = playerManager.player {
-            self.player = player
-            mainView.playerView.player = player
+               mainView.playerView.player = player
+               mainView.volumeSlider.value = player.volume
         }
 
         mainView.setHeader()
@@ -59,6 +59,7 @@ class MainViewController: UIViewController {
         mainView.setVideoCollection()
         mainView.setBottomMenu()
         mainView.setSeachBar()
+        mainView.setVolumeSlider()
 
         mainView.collectionView.reloadData()
 
@@ -73,6 +74,8 @@ class MainViewController: UIViewController {
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
+        mainView.muteButton.addTarget(self, action: #selector(muteButtonClick(_:)), for: .touchUpInside )
+        mainView.volumeSlider.addTarget(self, action: #selector(volumeChanged(_:)), for: .valueChanged)
         mainView.ellipsisButton.addTarget(self, action: #selector(ellipsButtonClick(_:)), for: .touchUpInside)
         mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)
         mainView.tagButton.addTarget(self, action: #selector(pushTagScreen(_:)), for: .touchUpInside)
@@ -87,6 +90,12 @@ class MainViewController: UIViewController {
         mainView.onSpeedSelected = { [weak self] speed in
             guard let self else { return }
             self.playerManager.changeSpeed(to: speed)
+        }
+
+        playerManager.onVolumeChanged = { [weak self] volume in
+            guard let self else { return }
+            self.mainView.volumeSlider.value = volume
+            self.mainView.volumeLabel.text = String(Int(volume * 100))
         }
     }
 
@@ -149,7 +158,6 @@ class MainViewController: UIViewController {
 
         mainView.collectionView.reloadData()
     }
-
 
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
