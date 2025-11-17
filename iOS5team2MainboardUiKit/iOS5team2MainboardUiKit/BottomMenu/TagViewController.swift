@@ -8,12 +8,13 @@
 import UIKit
 import SwiftUI
 
-// MARK: - 셀 클래스 (내부 포함)
+// MARK: - 셀 클래스
 final class CategoryCell: UICollectionViewCell {
     static let identifier = "CategoryCell"
 
-    private let containerView = UIView()
-    private let iconView = UIImageView()
+    private let iconImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private let verticalStack = UIStackView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,41 +26,52 @@ final class CategoryCell: UICollectionViewCell {
     }
 
     private func setupUI() {
-        contentView.addSubview(containerView)
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.backgroundColor = .white
-        containerView.layer.cornerRadius = 35
-        containerView.layer.shadowColor = UIColor.black.cgColor
-        containerView.layer.shadowOpacity = 0.1
-        containerView.layer.shadowOffset = CGSize(width: 1, height: 1)
-        containerView.layer.shadowRadius = 4
-        containerView.layer.masksToBounds = false
+        verticalStack.axis = .vertical
+        verticalStack.alignment = .center
+        verticalStack.spacing = 6
+        verticalStack.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.addSubview(iconView)
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconView.contentMode = .scaleAspectFit
+        iconImageView.contentMode = .scaleAspectFit
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        iconImageView.layer.cornerRadius = 30
+        iconImageView.layer.masksToBounds = true
+
+        nameLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        nameLabel.textColor = .label
+        nameLabel.textAlignment = .center
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        verticalStack.addArrangedSubview(iconImageView)
+        verticalStack.addArrangedSubview(nameLabel)
+
+        contentView.addSubview(verticalStack)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            containerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            containerView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            containerView.widthAnchor.constraint(equalToConstant: 70),
-            containerView.heightAnchor.constraint(equalToConstant: 70),
+            verticalStack.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            verticalStack.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            iconView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 40),
-            iconView.heightAnchor.constraint(equalToConstant: 40)
+            iconImageView.widthAnchor.constraint(equalToConstant: 60),
+            iconImageView.heightAnchor.constraint(equalToConstant: 60)
         ])
+
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 12
+        contentView.layer.shadowColor = UIColor.black.cgColor
+        contentView.layer.shadowOpacity = 0.08
+        contentView.layer.shadowOffset = CGSize(width: 1, height: 1)
+        contentView.layer.shadowRadius = 3
     }
 
     func configure(with category: Category) {
-        iconView.image = UIImage(named: category.iconName)
+        iconImageView.image = UIImage(named: category.iconName)
+        nameLabel.text = category.name
     }
 
     override var isSelected: Bool {
         didSet {
-            containerView.layer.borderWidth = isSelected ? 2 : 0
-            containerView.layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
+            contentView.layer.borderWidth = isSelected ? 2 : 0
+            contentView.layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
         }
     }
 }
@@ -67,7 +79,7 @@ final class CategoryCell: UICollectionViewCell {
 // MARK: - 태그 선택 화면
 final class TagViewController: UIViewController {
 
-    let categories: [Category] = CategoryRepository.allCategories
+    private let categories = CategoryRepository.allCategories
     private var collectionView: UICollectionView!
 
     private let customButton: UIButton = {
@@ -77,6 +89,7 @@ final class TagViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
@@ -87,21 +100,34 @@ final class TagViewController: UIViewController {
         label.numberOfLines = 2
         label.font = .systemFont(ofSize: 14)
         label.textColor = .darkGray
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        setupCollectionView()
+        view.backgroundColor = .systemBackground
+
+        // 1️⃣ 버튼 & 라벨을 먼저 addSubview
+        view.addSubview(customButton)
+        view.addSubview(infoLabel)
+
         setupInfoLabel()
         setupCustomButton()
+
+        // 2️⃣ 이후에 collectionView 생성 + 제약 적용
+        setupCollectionView()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.collectionViewLayout.invalidateLayout()
     }
 
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 15
-        layout.minimumLineSpacing = 25
+        layout.minimumInteritemSpacing = 12
+        layout.minimumLineSpacing = 20
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -116,22 +142,29 @@ final class TagViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
+
+            // 이제 customButton은 이미 view에 있으므로 충돌 없음
+            collectionView.bottomAnchor.constraint(equalTo: customButton.topAnchor, constant: -20)
         ])
     }
 
     private func setupCustomButton() {
-        view.addSubview(customButton)
-        customButton.translatesAutoresizingMaskIntoConstraints = false
-
         NSLayoutConstraint.activate([
-            customButton.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -20),
             customButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             customButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            customButton.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -20),
             customButton.heightAnchor.constraint(equalToConstant: 50)
         ])
 
         customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
+    }
+
+    private func setupInfoLabel() {
+        NSLayoutConstraint.activate([
+            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+        ])
     }
 
     @objc private func openCustomModal() {
@@ -142,44 +175,46 @@ final class TagViewController: UIViewController {
         }
         present(customModal, animated: true)
     }
-
-    private func setupInfoLabel() {
-        view.addSubview(infoLabel)
-        infoLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-        ])
-    }
 }
 
 // MARK: - CollectionView Delegate
 extension TagViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         categories.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCell.identifier, for: indexPath) as? CategoryCell else {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CategoryCell.identifier,
+            for: indexPath
+        ) as? CategoryCell else {
             return UICollectionViewCell()
         }
+
         cell.configure(with: categories[indexPath.item])
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: 90, height: 90)
-    }
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selected = categories[indexPath.item]
-        print("✅ 선택된 아이콘: \(selected.name)")
+        let isIPhone = traitCollection.userInterfaceIdiom == .phone
+        let columns: CGFloat = isIPhone ? 4 : 3
+
+        let spacing: CGFloat = (columns - 1) * 12
+        let sideInsets: CGFloat = 20 + 20
+        let availableWidth = collectionView.bounds.width - spacing - sideInsets
+
+        let width = floor(availableWidth / columns)
+        return CGSize(width: width, height: width + 24)
     }
 }
 
-// MARK: - 커스텀 모달 뷰
+// MARK: - 커스텀 모달
 final class CustomSettingViewController: UIViewController {
 
     private let titleLabel: UILabel = {
@@ -187,6 +222,7 @@ final class CustomSettingViewController: UIViewController {
         lbl.text = "커스텀 아이콘 설정"
         lbl.font = .boldSystemFont(ofSize: 20)
         lbl.textAlignment = .center
+        lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
 
@@ -195,6 +231,7 @@ final class CustomSettingViewController: UIViewController {
         let tf = UITextField()
         tf.borderStyle = .roundedRect
         tf.placeholder = "아이콘 텍스트 입력"
+        tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
 
@@ -204,6 +241,7 @@ final class CustomSettingViewController: UIViewController {
         btn.backgroundColor = .systemBlue
         btn.setTitleColor(.white, for: .normal)
         btn.layer.cornerRadius = 8
+        btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
 
@@ -214,10 +252,10 @@ final class CustomSettingViewController: UIViewController {
     }
 
     private func setupUI() {
-        [titleLabel, colorPicker, textField, saveButton].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        view.addSubview(titleLabel)
+        view.addSubview(colorPicker)
+        view.addSubview(textField)
+        view.addSubview(saveButton)
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
@@ -240,10 +278,7 @@ final class CustomSettingViewController: UIViewController {
 
 // MARK: - Preview
 struct TagView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> TagViewController {
-        TagViewController()
-    }
-
+    func makeUIViewController(context: Context) -> TagViewController { TagViewController() }
     func updateUIViewController(_ uiViewController: TagViewController, context: Context) {}
 }
 
