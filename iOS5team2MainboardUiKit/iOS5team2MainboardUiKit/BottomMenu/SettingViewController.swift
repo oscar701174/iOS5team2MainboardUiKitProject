@@ -8,28 +8,42 @@
 import UIKit
 import SwiftUI
 
+/// # SettingSection
+/// 설정 화면의 섹션 단위를 정의합니다.
 struct SettingSection {
     let title: String
     let items: [SettingItem]
 }
 
+/// # SettingItem
+/// 설정 화면의 각 항목 정보를 나타냅니다.
 struct SettingItem {
     let title: String
     let icon: String
     let action: SettingAction
 }
 
+/// # SettingAction
+/// 설정 항목 클릭 시 수행할 동작 열거형
 enum SettingAction {
     case language, playback, tag, intro, about
 }
 
+/// # SettingViewController
+/// 앱의 설정을 구성하고 보여주는 메인 설정 화면입니다.
+///
+/// - 섹션별 설정 항목을 테이블로 구성
+/// - 각 항목 클릭 시 적절한 액션 수행
+/// - `TagViewController`, `IntroPageViewController` 등으로 이동 가능
 final class SettingViewController: UIViewController {
 
+    /// 설정 항목을 표시하는 테이블뷰
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
+    /// 설정 항목 및 섹션 구성 데이터
     private let settings: [SettingSection] = [
         SettingSection(title: "일반", items: [
-            SettingItem(title: "재생 설정", icon: "play.circle", action: .playback),
+            // SettingItem(title: "재생 설정", icon: "play.circle", action: .playback),
             SettingItem(title: "태그 관리", icon: "tag", action: .tag)
         ]),
         SettingSection(title: "언어", items: [
@@ -48,6 +62,7 @@ final class SettingViewController: UIViewController {
         configureTableView()
     }
 
+    /// 테이블 뷰 초기 설정 및 레이아웃 구성
     private func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,6 +79,8 @@ final class SettingViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SettingCell")
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension SettingViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -95,6 +112,8 @@ extension SettingViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
+
 extension SettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath) {
@@ -103,7 +122,6 @@ extension SettingViewController: UITableViewDelegate {
         let action = settings[indexPath.section].items[indexPath.row].action
 
         switch action {
-
         case .playback:
             print("재생 설정으로 이동")
         case .tag:
@@ -126,8 +144,11 @@ extension SettingViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - 언어 재설정 Alert
+
 extension SettingViewController {
 
+    /// 언어 재설정 안내 Alert 표시
     private func showLanguageResetAlert() {
         let alert = UIAlertController(
             title: "언어 재설정",
@@ -146,6 +167,7 @@ extension SettingViewController {
         present(alert, animated: true)
     }
 
+    /// 언어 재설정 실행 및 IntroPage로 전환
     private func performLanguageReset() {
         WeightStore.shared.reset()
         UserDefaults.standard.set(false, forKey: IntroModel.introSeenKey)
@@ -162,7 +184,7 @@ extension SettingViewController {
     }
 }
 
-// Preview용
+// MARK: - 미리보기
 #Preview("SettingViewController") {
     UINavigationController(rootViewController: SettingViewController())
 }

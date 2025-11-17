@@ -1,11 +1,27 @@
+//
+//  TagIconPickerViewController.swift
+//  iOS5team2MainboardUiKit
+//
+//  Created by 여승위 on 2025/11/17.
+//
+
 import UIKit
 
+/// # TagIconPickerViewController
+/// 커스텀 태그 아이콘을 생성하기 위한 팝업 화면입니다.
+///
+/// - 아이콘 이름 입력
+/// - 색상 선택
+/// - SF Symbols 중 아이콘 선택
+/// - 저장 시 콜백으로 결과 전달
 final class TagIconPickerViewController: UIViewController {
 
+    /// 사용자 입력 완료 시 전달할 콜백 타입
     typealias Completion = (_ name: String, _ iconName: String, _ color: UIColor) -> Void
+
     private let completion: Completion
 
-    // 사용할 SF Symbols 목록
+    /// 사용할 SF Symbols 목록
     private let iconNames = [
         "star.fill", "heart.fill", "bolt.fill", "flame.fill",
         "book.fill", "camera.fill", "film.fill", "paintbrush.fill",
@@ -13,7 +29,9 @@ final class TagIconPickerViewController: UIViewController {
     ]
     private var selectedIconIndex = 0
 
-    // UI
+    // MARK: - UI 컴포넌트
+
+    /// 상단 타이틀 라벨
     private let titleLabel: UILabel = {
         let l = UILabel()
         l.text = "커스텀 아이콘 설정"
@@ -24,6 +42,7 @@ final class TagIconPickerViewController: UIViewController {
         return l
     }()
 
+    /// 색상 선택기
     private let colorPicker: UIColorWell = {
         let cp = UIColorWell()
         cp.supportsAlpha = false
@@ -31,6 +50,7 @@ final class TagIconPickerViewController: UIViewController {
         return cp
     }()
 
+    /// 이름 입력 필드
     private let nameField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "이름 입력 (예: 액션)"
@@ -39,6 +59,7 @@ final class TagIconPickerViewController: UIViewController {
         return tf
     }()
 
+    /// 저장 버튼
     private let saveButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitle("저장하기", for: .normal)
@@ -50,16 +71,22 @@ final class TagIconPickerViewController: UIViewController {
         return b
     }()
 
+    /// 아이콘 선택 컬렉션 뷰
     private var iconCollection: UICollectionView!
 
-    // MARK: Init
+    // MARK: - Init
+
     init(completion: @escaping Completion) {
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
-    required init?(coder: NSCoder) { fatalError() }
 
-    // MARK: LifeCycle
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+
+    // MARK: - 생명주기
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -68,11 +95,13 @@ final class TagIconPickerViewController: UIViewController {
 
         saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
 
+        // 기본값 설정
         nameField.text = "액션"
         colorPicker.selectedColor = .systemBlue
     }
 
-    // MARK: Setup - 아이콘 컬렉션뷰
+    // MARK: - 아이콘 컬렉션 뷰 설정
+
     private func setupCollection() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -88,9 +117,9 @@ final class TagIconPickerViewController: UIViewController {
         iconCollection.register(IconCell.self, forCellWithReuseIdentifier: "IconCell")
     }
 
-    // MARK: Setup - Layout
-    private func setupLayout() {
+    // MARK: - 전체 UI 레이아웃 구성
 
+    private func setupLayout() {
         [titleLabel, colorPicker, nameField, iconCollection, saveButton]
             .forEach { view.addSubview($0) }
 
@@ -117,7 +146,8 @@ final class TagIconPickerViewController: UIViewController {
         ])
     }
 
-    // MARK: Action
+    // MARK: - 저장 동작
+
     @objc private func saveTapped() {
         let name = (nameField.text?.isEmpty == false) ? nameField.text! : "액션"
         let iconName = iconNames[selectedIconIndex]
@@ -128,7 +158,8 @@ final class TagIconPickerViewController: UIViewController {
     }
 }
 
-// MARK: - Collection Delegate
+// MARK: - UICollectionView Delegate / DataSource / FlowLayout
+
 extension TagIconPickerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -160,7 +191,8 @@ extension TagIconPickerViewController: UICollectionViewDelegate, UICollectionVie
     }
 }
 
-// MARK: - 아이콘 셀
+/// # IconCell
+/// SF Symbol을 표시하는 단일 아이콘 셀입니다.
 final class IconCell: UICollectionViewCell {
 
     private let iconView = UIImageView()
@@ -185,11 +217,14 @@ final class IconCell: UICollectionViewCell {
         ])
     }
 
+    /// 셀의 표시할 아이콘과 선택 여부 설정
     func configure(icon: String, selected: Bool) {
         iconView.image = UIImage(systemName: icon)
         contentView.layer.borderColor = selected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
     }
 
-    required init?(coder: NSCoder) { fatalError() }
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 }
 

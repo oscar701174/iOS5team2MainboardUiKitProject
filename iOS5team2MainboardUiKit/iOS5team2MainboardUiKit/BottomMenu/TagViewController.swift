@@ -8,7 +8,13 @@
 import UIKit
 import SwiftUI
 
-// MARK: - 아이콘 카테고리 모델
+/// # IconCategory
+/// 사용자 정의 아이콘 카테고리를 표현하는 데이터 모델입니다.
+///
+/// - name: 사용자 지정 이름
+/// - iconName: SF Symbol 이름
+/// - color: 아이콘 색상
+/// - isCustom: 커스텀 여부
 struct IconCategory: Hashable {
     let id = UUID()
     let name: String
@@ -17,7 +23,8 @@ struct IconCategory: Hashable {
     let isCustom: Bool
 }
 
-// MARK: - 셀 클래스
+/// # CategoryCell
+/// 태그 아이콘을 표시하는 UICollectionView 셀입니다.
 final class CategoryCell: UICollectionViewCell {
     static let identifier = "CategoryCell"
 
@@ -29,10 +36,12 @@ final class CategoryCell: UICollectionViewCell {
         super.init(frame: frame)
         setupUI()
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    /// 셀의 UI 구성
     private func setupUI() {
         contentView.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,6 +80,7 @@ final class CategoryCell: UICollectionViewCell {
         ])
     }
 
+    /// 셀에 모델 데이터 설정
     func configure(with category: IconCategory) {
         nameLabel.text = category.name
         iconView.image = UIImage(systemName: category.iconName)
@@ -78,6 +88,7 @@ final class CategoryCell: UICollectionViewCell {
         containerView.backgroundColor = .systemBackground
     }
 
+    /// 셀 선택 상태 시 테두리 강조
     override var isSelected: Bool {
         didSet {
             containerView.layer.borderWidth = isSelected ? 2 : 0
@@ -86,12 +97,19 @@ final class CategoryCell: UICollectionViewCell {
     }
 }
 
-// MARK: - 태그 선택 화면
+/// # TagViewController
+/// 사용자가 커스텀 태그 아이콘을 생성, 선택, 삭제할 수 있는 화면입니다.
+///
+/// - 커스텀 태그를 리스트로 보여줌
+/// - 새 태그 추가를 위한 모달 제공
+/// - 선택 시 삭제 가능
 final class TagViewController: UIViewController {
 
     private var customCategories: [IconCategory] = []
     private var selectedIndexPath: IndexPath?
     private var collectionView: UICollectionView!
+
+    // MARK: - 하단 버튼 및 라벨 구성
 
     private let customButton: UIButton = {
         let button = UIButton(type: .system)
@@ -136,12 +154,16 @@ final class TagViewController: UIViewController {
         return label
     }()
 
+    // MARK: - 생명주기
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupCollectionView()
         setupBottomViews()
     }
+
+    // MARK: - CollectionView 설정
 
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
@@ -158,13 +180,15 @@ final class TagViewController: UIViewController {
         view.addSubview(collectionView)
     }
 
+    // MARK: - 하단 UI 설정
+
     private func setupBottomViews() {
         view.addSubview(infoLabel)
         view.addSubview(buttonStack)
         buttonStack.addArrangedSubview(customButton)
         buttonStack.addArrangedSubview(deleteButton)
 
-        let fixedWidth: CGFloat = 390  // iPhone 14 기준 세로 너비
+        let fixedWidth: CGFloat = 360
 
         NSLayoutConstraint.activate([
             infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
@@ -185,6 +209,8 @@ final class TagViewController: UIViewController {
         customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(confirmDelete), for: .touchUpInside)
     }
+
+    // MARK: - 모달 열기
 
     @objc private func openCustomModal() {
         let modal = TagIconPickerViewController { [weak self] name, iconName, color in
@@ -213,6 +239,7 @@ final class TagViewController: UIViewController {
     }
 
     // MARK: - 삭제 처리
+
     @objc private func confirmDelete() {
         guard let indexPath = selectedIndexPath else { return }
 
@@ -234,7 +261,8 @@ final class TagViewController: UIViewController {
     }
 }
 
-// MARK: - CollectionView Delegate/DataSource
+// MARK: - CollectionView Delegate & FlowLayout
+
 extension TagViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -262,6 +290,7 @@ extension TagViewController: UICollectionViewDelegate, UICollectionViewDataSourc
         deleteButton.isEnabled = false
     }
 
+    /// 셀 크기 계산 (기기 및 방향 대응)
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
