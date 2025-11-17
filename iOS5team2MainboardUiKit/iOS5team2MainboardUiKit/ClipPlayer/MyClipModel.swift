@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1820de7 (check)
 import Foundation
 import AVFoundation
 
