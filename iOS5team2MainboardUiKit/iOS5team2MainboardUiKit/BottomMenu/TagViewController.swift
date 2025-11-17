@@ -1,14 +1,15 @@
+//
+//  TagViewController.swift
+//  iOS5team2MainboardUiKit
+//
+//  Created by 여승위 on 2025/11/17.
+//
+
 import UIKit
-import SwiftUI // Preview용(김대현)
+import SwiftUI
 
-// MARK: - 데이터 구조
-// struct Category {
-//    let name: String
-//    let iconName: String // 이미지 이름 (Assets에 추가)
-// }
-
-// MARK: - 셀 클래스
-class CategoryCell: UICollectionViewCell {
+// MARK: - 셀 클래스 (내부 포함)
+final class CategoryCell: UICollectionViewCell {
     static let identifier = "CategoryCell"
 
     private let containerView = UIView()
@@ -24,7 +25,6 @@ class CategoryCell: UICollectionViewCell {
     }
 
     private func setupUI() {
-        // 컨테이너 뷰 (둥근 카드형)
         contentView.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.backgroundColor = .white
@@ -35,7 +35,6 @@ class CategoryCell: UICollectionViewCell {
         containerView.layer.shadowRadius = 4
         containerView.layer.masksToBounds = false
 
-        // 아이콘 이미지
         containerView.addSubview(iconView)
         iconView.translatesAutoresizingMaskIntoConstraints = false
         iconView.contentMode = .scaleAspectFit
@@ -57,7 +56,6 @@ class CategoryCell: UICollectionViewCell {
         iconView.image = UIImage(named: category.iconName)
     }
 
-    // 선택 효과 (테두리 색상)
     override var isSelected: Bool {
         didSet {
             containerView.layer.borderWidth = isSelected ? 2 : 0
@@ -66,26 +64,28 @@ class CategoryCell: UICollectionViewCell {
     }
 }
 
-// MARK: - 메인 ViewController
-class CategoryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - 태그 선택 화면
+final class TagViewController: UIViewController {
 
     let categories: [Category] = CategoryRepository.allCategories
     private var collectionView: UICollectionView!
+
     private let customButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("커스텀 아이콘 만들기", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
         return button
     }()
+
     private let infoLabel: UILabel = {
         let label = UILabel()
         label.text = "원하는 아이콘을 선택해 주세요\n취향을 맞춰 동영상을 제공하기 위한 작업입니다."
         label.textAlignment = .center
         label.numberOfLines = 2
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 14)
         label.textColor = .darkGray
         return label
     }()
@@ -98,7 +98,6 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
         setupCustomButton()
     }
 
-    // MARK: - CollectionView 설정
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 15
@@ -120,6 +119,7 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100)
         ])
     }
+
     private func setupCustomButton() {
         view.addSubview(customButton)
         customButton.translatesAutoresizingMaskIntoConstraints = false
@@ -133,15 +133,16 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
 
         customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
     }
+
     @objc private func openCustomModal() {
-        let vc = CustomSettingViewController()
-        vc.modalPresentationStyle = .pageSheet
-        if let sheet = vc.sheetPresentationController {
+        let customModal = CustomSettingViewController()
+        customModal.modalPresentationStyle = .pageSheet
+        if let sheet = customModal.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
         }
-        present(vc, animated: true)
+        present(customModal, animated: true)
     }
-    // MARK: - 하단 안내문
+
     private func setupInfoLabel() {
         view.addSubview(infoLabel)
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -152,10 +153,12 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
             infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
+}
 
-    // MARK: - CollectionView Delegate / DataSource
+// MARK: - CollectionView Delegate
+extension TagViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories.count
+        categories.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -167,7 +170,7 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 90, height: 90)
+        CGSize(width: 90, height: 90)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -176,24 +179,13 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
     }
 }
 
-// Preview용 (김대현)
-struct TagView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> CategoryViewController {
-        return CategoryViewController()
-    }
-
-    func updateUIViewController(_ uiViewController: CategoryViewController, context: Context) {
-    }
-}
-#Preview {
-    TagView()
-}
-class CustomSettingViewController: UIViewController {
+// MARK: - 커스텀 모달 뷰
+final class CustomSettingViewController: UIViewController {
 
     private let titleLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "커스텀 아이콘 설정"
-        lbl.font = UIFont.boldSystemFont(ofSize: 20)
+        lbl.font = .boldSystemFont(ofSize: 20)
         lbl.textAlignment = .center
         return lbl
     }()
@@ -222,15 +214,10 @@ class CustomSettingViewController: UIViewController {
     }
 
     private func setupUI() {
-        view.addSubview(titleLabel)
-        view.addSubview(colorPicker)
-        view.addSubview(textField)
-        view.addSubview(saveButton)
-
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        colorPicker.translatesAutoresizingMaskIntoConstraints = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        [titleLabel, colorPicker, textField, saveButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
@@ -249,4 +236,17 @@ class CustomSettingViewController: UIViewController {
             saveButton.heightAnchor.constraint(equalToConstant: 45)
         ])
     }
+}
+
+// MARK: - Preview
+struct TagView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> TagViewController {
+        TagViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: TagViewController, context: Context) {}
+}
+
+#Preview {
+    TagViewController()
 }

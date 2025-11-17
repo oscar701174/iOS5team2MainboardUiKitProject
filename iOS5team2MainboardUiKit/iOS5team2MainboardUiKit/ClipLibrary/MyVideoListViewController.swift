@@ -12,19 +12,19 @@ class MyVideoListViewController: UIViewController {
             clipTableView.reloadData()
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "My Clips"
         view.backgroundColor = .systemBackground
         setupTableView()
-        navigationItem.rightBarButtonItem = UIBarButtonItem (
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(openFile)
         )
     }
-    
+
     func setupTableView() {
         view.addSubview(clipTableView)
         clipTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -44,17 +44,17 @@ extension MyVideoListViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return videos.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = clipTableView.dequeueReusableCell(withIdentifier: "clipTable", for: indexPath)
         cell.textLabel?.text = videos[indexPath.row].title
         cell.accessoryType = .disclosureIndicator
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedVideo = videos[indexPath.row]
-        let playerVC = ClipPlayerViewController(video:selectedVideo)
+        let playerVC = ClipPlayerViewController(video: selectedVideo)
         navigationController?.pushViewController(playerVC, animated: true)
     }
 }
@@ -69,40 +69,61 @@ extension MyVideoListViewController {
 }
 
 extension MyVideoListViewController: UIDocumentPickerDelegate {
-    
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { return }
-        
+
         // ✅ 보안 범위 접근 시작
         guard url.startAccessingSecurityScopedResource() else {
             print("접근 권한 획득 실패")
             return
         }
-        
+
         defer { url.stopAccessingSecurityScopedResource() }
-        
+
         // ✅ 앱 내부 Documents 폴더에 복사
         let fileName = url.lastPathComponent
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsURL.appendingPathComponent(fileName)
         print("destinationURL")
-        
+
         do {
             if FileManager.default.fileExists(atPath: destinationURL.path) {
                 try FileManager.default.removeItem(at: destinationURL)
             }
             try FileManager.default.copyItem(at: url, to: destinationURL)
             print("복사 완료:", destinationURL.path)
-            
-            
+
             self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
-            
+
         } catch {
             print("파일 복사 실패:", error)
         }
-        
+
     }
 }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// <<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
+/*
+ struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
+ func makeUIViewController(context: Context) -> MyClipViewController_v02{
+ MyClipViewController_v02()
+ }
+ 
+ func updateUIViewController(_ uiViewController: MyClipViewController_v02, context: Context) {
+ }
+ }
+ 
+ #Preview {
+ ViewControllerRepresentable()
+ }
+ 
+=======
+=======
+>>>>>>> 1820de7 (check)
+>>>>>>> main
 
 struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> MyVideoListViewController{
@@ -116,4 +137,4 @@ struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
 #Preview {
     ViewControllerRepresentable()
 }
-
+*/

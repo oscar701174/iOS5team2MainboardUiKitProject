@@ -9,98 +9,112 @@ import Foundation
 import AVFoundation
 import AVKit
 
-/// 하나의 AVPlayer를 관리해 주는 클래스입니다.
-/// - 영상 재생 시작
-/// - 재생 위치(슬라이더) 업데이트
-/// - 10초 앞으로 / 뒤로
-/// - 배속 변경
-/// - 전체화면 진입/종료 시 상태 유지
+/// # Overview
+/// 단일 `AVPlayer` 인스턴스를 관리하는 재생 전용 매니저입니다.
+///
+/// # Discussion
+/// 이 매니저는 ViewController 대신 다음과 같은 역할을 수행합니다:
+/// - 영상 재생 초기화 및 상태 관리
+/// - 슬라이더/타임라벨 업데이트
+/// - 영상 종료 감지
+/// - 10초 앞으로/뒤로 이동
+/// - 배속(speed) 변경 및 유지
+/// - 전체화면 전환 시 재생 상태/배속/볼륨 동기화
+///
+/// 재생 관련 로직을 ViewController에서 분리하여
+/// UI 코드와 재생 로직이 섞이지 않도록 구성한 구조입니다.
 class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
 
-    /// 실제 영상을 재생하는 플레이어
-    /// 외부에서는 읽기만 가능
+    // MARK: - Player & Observers
+
+    /// # Overview
+    /// 실제 영상을 재생하는 AVPlayer 인스턴스입니다.
+    /// 읽기 전용으로 외부에 노출됩니다.
     private(set) var player: AVPlayer?
 
-    /// 일정 간격으로 현재 재생 시간을 알려주는 토큰
+    /// 타임 업데이트용 옵저버 토큰
     private var timeObserver: Any?
 
-    /// (지금은 사용하지 않는 플래그 / 필요하면 쓸 수 있음)
-    private var wasPlayingBeforeFullScreen = false
-
-    /// 전체화면 플레이어(필요하면 나중에 사용)
+    /// 전체화면 진입/복귀 시 필요한 참조
     private weak var presentedPlayerVC: AVPlayerViewController?
 
-    /// 슬라이더를 사용자가 드래그 중인지 여부
+    // MARK: - States
+
+    /// 슬라이더 조작 여부
     var isScrubbing = false
 
-    /// 재생이 끝났는지 여부
+    /// 영상 종료 여부
     var didReachEnd = false
 
-    /// 진행률, 현재 시간 텍스트를 알려주는 콜백
-    var onProgressChanged: ((Float, String) -> Void)?
-
-    /// 전체 길이 텍스트를 알려주는 콜백
-    var onDurationLoaded: ((String) -> Void)?
-
-    /// 영상이 끝났을 때 알려주는 콜백
-    var onPlayEnded: (() -> Void)?
-
-    /// 재생 중/일시정지 상태가 바뀔 때 알려주는 콜백
-    var onPlayStateChanged: ((Bool) -> Void)?
-
-    var volumeObservation: NSKeyValueObservation?
-
+    /// 시스템 볼륨 값
     var currentSystemVolume: Float = 1.0
 
+    /// 현재 배속 값 (전체화면 전환 시 유지하기 위해 사용)
+    var currentRate: Float = 1.0
+
+    /// 시스템 볼륨 KVO 옵저버
+    var volumeObservation: NSKeyValueObservation?
+
+    // MARK: - Callback Handlers
+
+    /// 진행률(0~1)과 현재 재생 시간 문자열을 전달
+    var onProgressChanged: ((Float, String) -> Void)?
+
+    /// 전체 영상 길이 문자열 전달
+    var onDurationLoaded: ((String) -> Void)?
+
+    /// 영상 끝남 이벤트 전달
+    var onPlayEnded: (() -> Void)?
+
+    /// 재생/일시정지 상태 전달
+    var onPlayStateChanged: ((Bool) -> Void)?
+
+    /// 시스템 볼륨값 전달
     var onVolumeChanged: ((Float) -> Void)?
 
+    // MARK: - Deinit
+
     deinit {
-        // 이 매니저가 사라질 때, 등록해 둔 옵저버 정리
         if let obs = timeObserver, let player {
             player.removeTimeObserver(obs)
         }
     }
 
-    /// 영상을 재생할 준비를 합니다.
-    /// - Parameter url: 재생할 영상 주소 (없으면 기본값 사용)
+    // MARK: - Playback Control
+
+    /// # Overview
+    /// 영상을 재생할 준비를 하고 AVPlayer를 초기화합니다.
+    ///
+    /// # Discussion
+    /// - 기존 플레이어에 등록된 옵저버는 먼저 제거합니다.
+    /// - 새로운 AVPlayerItem을 생성하고 Player에 연결합니다.
+    /// - 진행률 업데이트, 영상 종료, 시스템 볼륨 감지 등을 설정합니다.
+    ///
+    /// - Parameter url: 재생할 영상 URL. 없으면 기본 테스트용 URL 사용.
     func startPlayback(with url: URL? = nil) {
+        guard let defaultURL = URL(string: "https://example.com/default.mp4") else { return }
 
-        // 기본으로 사용할 영상 주소
-        guard let defaultURL = URL(string: "https://example.com/default.mp4") else {
-            return
-        }
-
-        // url이 들어오면 그걸 쓰고, 아니면 defaultURL 사용
         let finalURL = url ?? defaultURL
+        let item = AVPlayerItem(url: finalURL)
+        let player = AVPlayer(playerItem: item)
 
-        // 새 플레이어 아이템과 플레이어 생성
-        let playerItem = AVPlayerItem(url: finalURL)
-        let player = AVPlayer(playerItem: playerItem)
-
-        // 이전에 쓰던 플레이어가 있다면, 그에 연결된 타임옵저버 제거
         if let oldPlayer = self.player, let obs = timeObserver {
             oldPlayer.removeTimeObserver(obs)
             timeObserver = nil
         }
 
-        // 새 플레이어를 보관
         self.player = player
 
-        // 슬라이더 업데이트용 옵저버 등록
         addProgressObserver()
-        // 재생이 끝났는지 체크하는 옵저버 등록
         addPlayEndObserver()
         observeSystemVolume()
 
-        // 전체 길이(duration)를 가져와서 텍스트로 전달
         Task {
             do {
-                let duration = try await playerItem.asset.load(.duration)
-                let durationSeconds = CMTimeGetSeconds(duration)
-
-                if durationSeconds.isFinite && durationSeconds > 0 {
-                    let text = TimeFormatter.timeFormat(durationSeconds)
-                    self.onDurationLoaded?(text)
+                let duration = try await item.asset.load(.duration)
+                let seconds = CMTimeGetSeconds(duration)
+                if seconds.isFinite && seconds > 0 {
+                    self.onDurationLoaded?(TimeFormatter.timeFormat(seconds))
                 }
             } catch {
                 print("Failed to load duration:", error)
@@ -108,200 +122,181 @@ class VideoPlayerManager: NSObject, AVPlayerViewControllerDelegate {
         }
     }
 
-    /// 일정 시간마다 현재 재생 위치를 계산해서
-    /// 슬라이더/레이블에 쓸 수 있게 콜백으로 넘겨줍니다.
+    /// # Overview
+    /// 일정 간격(0.25초)마다 현재 재생 위치를 받아 UI로 전달합니다.
+    ///
+    /// # Note
+    /// 슬라이더 조작 중에는 자동 업데이트를 멈춥니다.
     func addProgressObserver() {
-
         guard let player = player else { return }
 
-        // 0.25초마다 콜백이 들어오도록 설정
         let interval = CMTime(seconds: 0.25, preferredTimescale: 600)
 
-        // 기존 옵저버가 있으면 먼저 제거
         if let obs = timeObserver {
             player.removeTimeObserver(obs)
             timeObserver = nil
         }
 
-        // 새 타임 옵저버 등록
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] _ in
-            guard let self else { return }
-
-            // 사용자가 슬라이더를 드래그 중이면, 자동 업데이트는 잠시 중지
-            guard !self.isScrubbing, let item = player.currentItem else {
-                return
-            }
+            guard let self,
+                  !self.isScrubbing,
+                  let item = player.currentItem else { return }
 
             let duration = item.duration.seconds
-            // 전체 길이가 제대로 들어있을 때만 진행률 계산
             guard duration.isFinite, duration > 0 else { return }
 
             let current = player.currentTime().seconds
-            let progress = max(0, min(1, Float(current / duration)))
-            let currentText = TimeFormatter.timeFormat(current)
+            let progress = Float(current / duration)
 
-            // 화면 쪽으로 진행률과 현재 시간 텍스트 전달
-            self.onProgressChanged?(progress, currentText)
+            self.onProgressChanged?(max(0, min(1, progress)),
+                                   TimeFormatter.timeFormat(current))
         }
     }
 
-    /// 영상이 끝났을 때 한 번 호출되는 알림을 등록합니다.
+    /// # Overview
+    /// 영상 종료 시 알림(Notification)을 받아 콜백으로 전달합니다.
     func addPlayEndObserver() {
-        guard let playerItem = player?.currentItem else { return }
+        guard let item = player?.currentItem else { return }
 
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
-            object: playerItem,
+            object: item,
             queue: .main
         ) { [weak self] _ in
             self?.onPlayEnded?()
         }
     }
 
+    /// # Overview
+    /// 시스템 볼륨(outputVolume)을 감지하여 UI와 동기화합니다.
     func observeSystemVolume() {
         let session = AVAudioSession.sharedInstance()
         try? session.setActive(true)
 
-        volumeObservation = session.observe(\.outputVolume, options: [.new, .initial]) { [weak self] session, change in
+        volumeObservation = session.observe(\.outputVolume, options: [.new, .initial]) { [weak self] _, change in
             guard let self else { return }
             let volume = change.newValue ?? session.outputVolume
             self.currentSystemVolume = volume
-
-            // MainViewController로 전달
             self.onVolumeChanged?(volume)
         }
     }
 
-    /// 10초 앞으로 이동합니다.
+    // MARK: - Skip
+
+    /// # Overview
+    /// 현재 위치에서 10초 앞으로 이동합니다.
     func skipForwardSeconds(player: AVPlayer) {
         guard let duration = player.currentItem?.duration else { return }
-        let durationSeconds = CMTimeGetSeconds(duration)
-        guard durationSeconds.isFinite else { return }
+        let total = CMTimeGetSeconds(duration)
+        guard total.isFinite else { return }
 
-        let currentTime = player.currentTime().seconds
-        // 끝을 살짝 넘지 않도록 duration - 0.1까지로 제한
-        let newTime = min(currentTime + 10, durationSeconds - 0.1)
-        let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
+        let current = player.currentTime().seconds
+        let new = min(current + 10, total - 0.1)
 
-        player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(to: CMTime(seconds: new, preferredTimescale: 600),
+                    toleranceBefore: .zero,
+                    toleranceAfter: .zero)
     }
 
-    /// 10초 뒤로 이동합니다.
+    /// # Overview
+    /// 현재 위치에서 10초 뒤로 이동합니다.
     func skipRewindSeconds(player: AVPlayer) {
-        let currentTime = player.currentTime().seconds
-        // 0초보다 아래로 내려가지 않도록 제한
-        let newTime = max(currentTime - 10, 0)
-        let targetTime = CMTime(seconds: newTime, preferredTimescale: 600)
+        let current = player.currentTime().seconds
+        let new = max(current - 10, 0)
 
-        player.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        player.seek(to: CMTime(seconds: new, preferredTimescale: 600),
+                    toleranceBefore: .zero,
+                    toleranceAfter: .zero)
     }
 
-    /// 시스템 볼륨이 0이면 player를 음소거합니다.
-    /// (하드웨어 볼륨 버튼 상태에 맞추고 싶을 때 사용)
-    private func applyMuteAccordingToSystemVolume() {
-        let audioSession = AVAudioSession.sharedInstance()
-        let systemVolume = audioSession.outputVolume
+    // MARK: - Fullscreen Handling
 
-        // 0과 완전 똑같이 비교하기 애매하니, 아주 작은 값(epsilon) 사용
-        let epsilon: Float = 0.001
-        let shouldMute = systemVolume <= epsilon
-
-        player?.isMuted = shouldMute
-        presentedPlayerVC?.player?.isMuted = shouldMute
-    }
-
-    /// AVPlayerViewController를 전체화면으로 띄웁니다.
+    /// # Overview
+    /// AVPlayerViewController를 이용해 전체화면 재생을 시작합니다.
+    ///
+    /// # Discussion
+    /// - PiP 비활성화
+    /// - 전체화면 종료 시 자동 복귀
+    /// - 전체화면 진입 시 현재 배속 유지
     func presentFullScreenPlayer(from viewController: UIViewController, player: AVPlayer) {
         let pvc = AVPlayerViewController()
 
         pvc.player = player
         pvc.delegate = self
-
-        // 아래쪽 기본 컨트롤(재생 버튼, 슬라이더 등)을 보이게 할지 여부
         pvc.showsPlaybackControls = true
-
-        // PiP(작은 창) 기능은 사용하지 않음
         pvc.allowsPictureInPicturePlayback = false
-
-        // 재생 시작한다고 자동으로 전체화면으로 가지는 않도록
         pvc.entersFullScreenWhenPlaybackBegins = false
-
-        // 재생이 끝나면 전체화면에서 빠져나오게 설정
         pvc.exitsFullScreenWhenPlaybackEnds = true
-
-        // 모달을 전체화면 스타일로 표시
         pvc.modalPresentationStyle = .fullScreen
 
-        // AirPlay 등 외부 기기로 보내지 못하게 막고 싶을 때 사용
         player.allowsExternalPlayback = false
 
         viewController.present(pvc, animated: true) {
-            // 전체화면 진입 후 재생 시작
             player.play()
         }
     }
 
-    // MARK: - AVPlayerViewControllerDelegate
-
-    /// 전체화면으로 들어가기 직전에 한 번 호출됩니다.
+    /// # Overview
+    /// 전체화면 진입 직후 현재 배속을 적용합니다.
     func playerViewControllerWillBeginFullScreenPresentation(_ playerViewController: AVPlayerViewController) {
-        // 시스템 볼륨이 0이면 player를 mute로 맞춰줌
-        applyMuteAccordingToSystemVolume()
+        playerViewController.player?.isMuted = (currentSystemVolume <= 0.001)
+
+        if let player = playerViewController.player {
+            player.rate = currentRate
+        }
     }
 
-    /// 전체화면에서 빠져나올 때 호출됩니다.
-    /// (재생 중이던 상태를 이어주는 역할)
+    /// # Overview
+    /// 전체화면 종료 후 재생 상태와 볼륨/배속 정보를 복구합니다.
+    ///
+    /// # Discussion
+    /// - 전체화면 전환 중 AVPlayer의 내부 상태가 1.0으로 초기화될 수 있어
+    ///   약간의 지연 후 배속을 두 번 적용해 안정적으로 복구합니다.
     func playerViewController(
-        _ playerViewController: AVPlayerViewController,
+        _ pvc: AVPlayerViewController,
         willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
     ) {
-        // 전체화면에서 재생 중이었는지 확인
-        let wasPlaying: Bool
-        if let player = playerViewController.player {
-            wasPlaying = (player.timeControlStatus == .playing || player.rate > 0)
-        } else {
-            wasPlaying = false
-        }
+        let wasPlaying: Bool = {
+            guard let player = pvc.player else { return false }
+            return player.timeControlStatus == .playing || player.rate > 0
+        }()
 
         coordinator.animate(alongsideTransition: nil) { [weak self] _ in
             guard let self, let player = self.player else { return }
 
-            // *** 핵심 포인트 ***
-            // 애니메이션 끝나고 약간 딜레이 준 뒤에 볼륨/뮤트/UI 업데이트
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 
-                // 시스템 볼륨 기반으로 mute 상태 정리
-                let isMuted = (self.currentSystemVolume <= 0.001)
-                self.player?.isMuted = isMuted
-                self.presentedPlayerVC?.player?.isMuted = isMuted
-
-                // MainViewController 쪽에게 현재 볼륨 전달
                 self.onVolumeChanged?(self.currentSystemVolume)
 
-                // 재생 상태 복구
                 if wasPlaying {
                     player.play()
+
+                    // 1차 배속 복원
+                    player.rate = self.currentRate
+
+                    // 2차 배속 복원 (AVPlayer 내부 리셋 방지용)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        player.rate = self.currentRate
+                    }
+
                     self.onPlayStateChanged?(true)
                 } else {
                     player.pause()
                     self.onPlayStateChanged?(false)
                 }
-
-                // 전체화면 VC 참조 제거
-                if playerViewController.presentingViewController == nil {
-                    self.presentedPlayerVC = nil
-                }
             }
         }
     }
 
-    /// 재생 속도(배속)를 바꿉니다. 예: 0.5, 1.0, 1.5, 2.0
+    // MARK: - Speed
+
+    /// # Overview
+    /// 재생 속도를 변경하고 내부 상태에 저장합니다.
+    ///
+    /// # Parameters
+    /// - rate: 1.0, 1.25, 1.5, 2.0 등 적용할 배속 값
     func changeSpeed(to rate: Double) {
-        player?.rate = Float(rate)
+        currentRate = Float(rate)
+        player?.rate = currentRate
     }
-
-}
-
-#Preview {
-    MainViewController()
 }
