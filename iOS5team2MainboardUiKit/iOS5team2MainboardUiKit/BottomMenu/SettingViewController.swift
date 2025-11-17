@@ -106,17 +106,14 @@ extension SettingViewController: UITableViewDelegate {
 
         case .playback:
             print("재생 설정으로 이동")
-
         case .tag:
             let tagViewController = TagViewController()
             navigationController?.pushViewController(tagViewController, animated: true)
-
         case .language:
             showLanguageResetAlert()
         case .intro:
             let introPageViewController = IntroPageViewController()
             navigationController?.pushViewController(introPageViewController, animated: true)
-
         case .about:
             let alert = UIAlertController(
                 title: "Team 2 : Mainboard",
