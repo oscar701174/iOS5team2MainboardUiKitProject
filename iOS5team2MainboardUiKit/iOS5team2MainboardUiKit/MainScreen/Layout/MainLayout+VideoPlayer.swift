@@ -82,7 +82,6 @@ extension MainLayout {
         playerView.layer.masksToBounds = true
     }
 
-
     // MARK: - Progress Slider (진행 바 & 시간 표시)
 
     /// # Overview
@@ -150,7 +149,6 @@ extension MainLayout {
         progressSlider.thumbTintColor = AppColor.menuIcon
         progressSlider.maximumTrackTintColor = AppColor.menuIcon.withAlphaComponent(0.5)
     }
-
 
     // MARK: - Video Buttons (재생 / 일시정지 / 10초 이동 / 볼륨 / 배속)
 
@@ -220,7 +218,6 @@ extension MainLayout {
         ]
     }
 
-
     // MARK: - Speed Menu (배속 DropDown)
 
     /// # Overview
@@ -276,7 +273,6 @@ extension MainLayout {
         updateDropdownColors(for: traitCollection)
         speedDropDown.reloadAllComponents()
     }
-
 
     // MARK: - Volume Popup (볼륨 슬라이더)
 
