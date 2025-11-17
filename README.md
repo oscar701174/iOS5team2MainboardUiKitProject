@@ -52,30 +52,69 @@ Mainboard는 사용자가 강의 영상을 더 효과적으로 보고,
 ---
 
 
-📂 프로젝트 구조 (Project Structure)
+## 📂 프로젝트 구조 (Project Structure)
 
+```
 iOS5team2MainboardUiKitProject
-├── AppDelegate.swift
-├── SceneDelegate.swift
-├── Views/
-│ └── MainLayout.swift
-├── Controllers/
-│ ├── MainViewController.swift
-│ ├── MainViewController+Actions.swift
-│ ├── MainViewController+CollectionView.swift
-│ ├── MainViewController+Search.swift
-│ └── ...
-├── Managers/
-│ ├── VideoPlayerManager.swift
-│ ├── ThumnailManager.swift
-│ └── WeightStore.swift
-├── Models/
-│ ├── VideoEntity
-│ └── ClipEntity
-└── Resources/
-├── Assets.xcassets
-└── LaunchScreen
-
+├── Archive/
+│   ├── SettingViewController.swift
+│   └── TagView.swift
+│
+├── BottomMenu/
+│   ├── SettingViewController.swift
+│   └── TagView.swift
+│
+├── ClipLibrary/
+│   ├── ClipPlayerViewController.swift
+│   └── MyVideoListViewController.swift
+│
+├── ClipPlayer/
+│   ├── ClipPlayer.swift
+│   └── MyClipModel.swift
+│
+├── Common/
+│   ├── Colors.swift
+│   ├── Languages.swift
+│   ├── ThumbnailManager.swift
+│   ├── TimeFormatter.swift
+│   └── UIImage+Resize.swift
+│
+├── Intro/
+│   ├── IntroModel.swift
+│   └── IntroPageViewController.swift
+│
+├── MainScreen/
+│   ├── Controller/
+│   │   ├── MainViewController.swift
+│   │   ├── MainViewController+Actions.swift
+│   │   ├── MainViewController+CollectionView.swift
+│   │   └── MainViewController+Search.swift
+│   │
+│   ├── Layout/
+│   │   ├── MainLayout.swift
+│   │   ├── MainLayout+AdaptiveLayout.swift
+│   │   ├── MainLayout+BottomArea.swift
+│   │   ├── MainLayout+Header.swift
+│   │   ├── MainLayout+VideoCollection.swift
+│   │   └── MainLayout+VideoPlayer.swift
+│   │
+│   ├── Manager/
+│   │   └── VideoPlayerManager.swift
+│   │
+│   └── View/
+│       ├── PlayerView.swift
+│       └── VideoCell.swift
+│
+├── Model/
+│   ├── ClipEntity.swift
+│   ├── ClipManager.swift
+│   ├── VideoEntity.swift
+│   ├── VideoManager.swift
+│   └── WeightStore.swift
+│
+└── SplashScreen/
+    └── SplashViewController.swift
+```
 
 
 ## 🖥️ 화면 소개 (Screen Preview)
