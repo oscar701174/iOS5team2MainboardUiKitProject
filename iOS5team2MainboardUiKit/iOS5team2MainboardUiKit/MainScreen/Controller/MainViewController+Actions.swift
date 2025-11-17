@@ -15,30 +15,44 @@ extension MainViewController {
     // MARK: - Play / Pause
 
     /// # Overview
-    /// 영상의 재생과 일시정지를 전환합니다.
+    /// 영상 재생과 일시정지를 전환합니다.
     ///
     /// # Discussion
-    /// 사용자가 재생 버튼을 누르면 호출되며,
-    /// 플레이어의 현재 상태에 따라 재생 또는 일시정지를 수행합니다.
-    /// 재생이 끝난 상태(`didReachEnd == true`)에서는 항상
-    /// 시간을 처음으로 돌려 초기 상태에서 재생을 준비합니다.
+    /// 재생 버튼을 누르면 현재 플레이어 상태에 따라
+    /// 재생 또는 일시정지가 수행됩니다.
+    /// 만약 영상이 끝까지 재생된 상태(`didReachEnd == true`)라면
+    /// 시간을 처음으로 돌린 뒤 재생을 준비합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 재생/일시정지 버튼
+    /// - Parameter sender: 재생/일시정지 버튼
     @objc func playButtonTapped(_ sender: UIButton) {
         let cfg = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
 
-        if didReachEnd == true {
+        if didReachEnd {
             didReachEnd = false
-            playerManager.player?.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero)
+            playerManager.player?.seek(
+                to: .zero,
+                toleranceBefore: .zero,
+                toleranceAfter: .zero
+            )
         }
 
-        if mainView.playerView.player?.timeControlStatus == .paused {
-            mainView.playButton.setImage(UIImage(systemName: "pause.fill", withConfiguration: cfg), for: .normal)
-            mainView.playerView.player?.play()
-        } else if mainView.playerView.player?.timeControlStatus == .playing {
-            mainView.playerView.player?.pause()
-            mainView.playButton.setImage(UIImage(systemName: "play.fill", withConfiguration: cfg), for: .normal)
+        guard let player = mainView.playerView.player else { return }
+
+        switch player.timeControlStatus {
+        case .paused:
+            player.play()
+            mainView.playButton.setImage(
+                UIImage(systemName: "pause.fill", withConfiguration: cfg),
+                for: .normal
+            )
+        case .playing:
+            player.pause()
+            mainView.playButton.setImage(
+                UIImage(systemName: "play.fill", withConfiguration: cfg),
+                for: .normal
+            )
+        default:
+            break
         }
     }
 
@@ -48,11 +62,10 @@ extension MainViewController {
     /// 영상을 15초 앞으로 이동합니다.
     ///
     /// # Discussion
-    /// PlayerManager 내부의 `skipForwardSeconds` 기능을 호출하여
-    /// 현재 재생 중인 영상의 시간을 15초 앞으로 이동시킵니다.
+    /// PlayerManager가 제공하는 기능을 호출하여
+    /// 현재 재생 시간을 기준으로 15초 이동합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 앞으로 이동 버튼
+    /// - Parameter sender: 앞으로 이동 버튼
     @objc func forward15sButtonTapped(_ sender: UIButton) {
         guard let player = playerManager.player else { return }
         playerManager.skipForwardSeconds(player: player)
@@ -62,11 +75,10 @@ extension MainViewController {
     /// 영상을 15초 뒤로 이동합니다.
     ///
     /// # Discussion
-    /// PlayerManager의 `skipRewindSeconds`를 통해
-    /// 재생 시간을 15초 이전으로 이동시킵니다.
+    /// `skipRewindSeconds` 기능을 이용해
+    /// 현재 재생 시간에서 15초 뒤로 이동합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 뒤로 이동 버튼
+    /// - Parameter sender: 뒤로 이동 버튼
     @objc func rewind15sButtonTapped(_ sender: UIButton) {
         guard let player = playerManager.player else { return }
         playerManager.skipRewindSeconds(player: player)
@@ -75,12 +87,14 @@ extension MainViewController {
     // MARK: - End of Playback
 
     /// # Overview
-    /// 영상 재생이 끝났을 때 플레이어 UI를 초기 상태로 돌립니다.
+    /// 영상 재생이 끝났을 때 UI를 초기 상태로 되돌립니다.
     ///
     /// # Discussion
-    /// - 재생 버튼을 '재생' 상태로 설정합니다.
-    /// - 슬라이더는 끝 위치로 이동합니다.
-    /// - 재생된 전체 시간을 라벨에 표시합니다.
+    /// - 재생 버튼을 ‘재생’ 아이콘으로 변경
+    /// - 슬라이더를 마지막 위치로 이동
+    /// - 종료된 시간을 라벨에 표시
+    ///
+    /// 재생이 끝난 이후 다시 재생 버튼을 누르면 처음부터 재생됩니다.
     @objc func handlePlayEnd() {
         let cfg = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
         guard let player = playerManager.player else { return }
@@ -102,16 +116,16 @@ extension MainViewController {
     // MARK: - Dropdown & Popup
 
     /// # Overview
-    /// 언어 선택 드롭다운을 화면에 표시합니다.
+    /// 언어 선택 드롭다운을 표시합니다.
     @objc func dropdownClick(_ sender: UIButton) {
         mainView.langauageDropDown.show()
     }
 
     /// # Overview
-    /// 볼륨 팝업의 표시 상태를 전환합니다.
+    /// 볼륨 팝업의 표시/숨김 상태를 전환합니다.
     ///
     /// # Discussion
-    /// 한 번 누르면 표시, 다시 누르면 숨겨지는 방식으로 동작합니다.
+    /// 버튼을 누를 때마다 토글 방식으로 표시 여부가 변경됩니다.
     @objc func volumeButtonClick(_ sender: UIButton) {
         mainView.popup.isHidden.toggle()
     }
@@ -123,10 +137,10 @@ extension MainViewController {
     ///
     /// # Discussion
     /// 선택된 `VideoEntity`가 존재하는 경우
-    /// ClipManager를 통해 CoreData에 클립을 추가합니다.
+    /// ClipManager를 통해 클립 데이터를 CoreData에 저장합니다.
     ///
     /// - Note:
-    ///   선택된 영상이 없으면 저장이 실패합니다.
+    ///   선택된 영상이 없을 경우 저장이 수행되지 않습니다.
     @objc func saveClipButtonClick(_ sender: UIButton) {
         guard let video = selectedVideo else {
             print("클립 저장 실패: 선택된 비디오가 없습니다.")
@@ -142,16 +156,17 @@ extension MainViewController {
     // MARK: - Volume Slider
 
     /// # Overview
-    /// 앱 내부의 볼륨 슬라이더 값을 시스템 볼륨과 동기화합니다.
+    /// 앱 내부 볼륨 슬라이더 값을 시스템 볼륨과 동기화합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 사용자 조작에 의해 변경된 UISlider
+    /// - Parameter sender: 사용자에 의해 조작된 UISlider
     @objc func volumeChanged(_ sender: UISlider) {
         let percentage = Int(sender.value * 100)
 
-        let systemSlider = mainView.systemVolumeView.subviews.first { $0 is UISlider } as? UISlider
-        systemSlider?.value = sender.value
+        let systemSlider = mainView.systemVolumeView
+            .subviews
+            .first { $0 is UISlider } as? UISlider
 
+        systemSlider?.value = sender.value
         mainView.volumeLabel.text = "\(percentage)"
     }
 
@@ -167,8 +182,8 @@ extension MainViewController {
     /// 검색창을 표시하거나 숨깁니다.
     ///
     /// # Discussion
-    /// `isSearchButtonActive` 상태에 따라
-    /// 검색창을 열거나 닫는 동작을 수행합니다.
+    /// 검색 버튼이 눌릴 때마다
+    /// `isSearchButtonActive` 값에 따라 열림/닫힘이 전환됩니다.
     @objc func searchButtonTapped(_ sender: UIButton) {
         if isSearchButtonActive {
             showSearchBar()
@@ -183,10 +198,10 @@ extension MainViewController {
     /// '내 클립' 화면으로 이동합니다.
     ///
     /// # Discussion
-    /// 네비게이션 컨트롤러가 있으면 push 방식으로,
-    /// 없으면 NavigationController로 감싼 후 present합니다.
+    /// NavigationController가 있으면 push,
+    /// 없으면 navigation으로 감싸서 present 합니다.
     @objc func pushMyClipScreen(_ sender: UIButton) {
-        let viewController = IntroPageViewController()
+        let viewController = MyVideoListViewController()
 
         if let nav = navigationController {
             nav.pushViewController(viewController, animated: true)
@@ -210,24 +225,24 @@ extension MainViewController {
     /// # Overview
     /// 설정 화면으로 이동합니다.
     @objc func pushSettingScreen(_ sender: UIButton) {
-        let viewController = SettingViewController()
+        let vc = SettingViewController()
 
         if let nav = navigationController {
-            nav.pushViewController(viewController, animated: true)
+            nav.pushViewController(vc, animated: true)
         } else {
-            present(UINavigationController(rootViewController: viewController), animated: true)
+            present(UINavigationController(rootViewController: vc), animated: true)
         }
     }
 
-    // MARK: - Slider Scrubbing
+    // MARK: - Slider Scrubbing (Drag)
 
     /// # Overview
-    /// 영상 재생 슬라이더를 드래그하기 시작할 때 호출됩니다.
+    /// 영상 재생 슬라이더 드래그가 시작될 때 호출됩니다.
     ///
     /// # Discussion
-    /// 드래그 시작 전에 영상이 재생 중이었다면 일시정지하고,
-    /// 드래그 종료 후 원래 재생 중이었는지 여부를 판단하기 위해
-    /// **wasPlayingBeforeScrub** 상태를 기록합니다.
+    /// 드래그 동안 재생을 멈추고,
+    /// 드래그 종료 후 재생을 이어갈지 결정하기 위해
+    /// 이전 재생 상태를 `wasPlayingBeforeScrub`에 저장합니다.
     @objc func scrubBegan(_ sender: UISlider) {
         isScrubbing = true
         guard let player = playerManager.player else { return }
@@ -242,39 +257,38 @@ extension MainViewController {
     }
 
     /// # Overview
-    /// 드래그 중 실시간으로 영상 재생 위치를 이동합니다.
+    /// 슬라이더 드래그 중에 영상 위치를 실시간으로 이동시킵니다.
     ///
-    /// - Parameters:
-    ///   - sender: 조작 중인 슬라이더
+    /// - Parameter sender: 이동 중인 슬라이더
     @objc func scrubChanged(_ sender: UISlider) {
         guard let item = mainView.playerView.player?.currentItem else { return }
 
         let duration = item.duration.seconds
         guard duration.isFinite, duration > 0 else { return }
 
-        let targetSeconds = Double(sender.value) * duration
-        let targetTime = CMTime(seconds: targetSeconds, preferredTimescale: 600)
+        let seconds = Double(sender.value) * duration
+        let targetTime = CMTime(seconds: seconds, preferredTimescale: 600)
 
-        mainView.start.text = TimeFormatter.timeFormat(targetSeconds)
-
+        mainView.start.text = TimeFormatter.timeFormat(seconds)
         item.cancelPendingSeeks()
         item.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     /// # Overview
-    /// 슬라이더 드래그가 종료되면 최종 위치로 이동하고,
-    /// 필요하면 재생도 다시 시작합니다.
+    /// 슬라이더 드래그가 종료되면 최종 위치로 영상이 이동합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 최종 값이 결정된 슬라이더
+    /// # Discussion
+    /// 드래그 이전에 재생 중이었다면 재생을 이어서 진행합니다.
+    ///
+    /// - Parameter sender: 드래그를 마친 슬라이더
     @objc func scrubEnded(_ sender: UISlider) {
         guard let item = playerManager.player?.currentItem else { return }
 
         let duration = item.duration.seconds
         guard duration.isFinite, duration > 0 else { return }
 
-        let targetSeconds = Double(sender.value) * duration
-        let targetTime = CMTime(seconds: targetSeconds, preferredTimescale: 600)
+        let seconds = Double(sender.value) * duration
+        let targetTime = CMTime(seconds: seconds, preferredTimescale: 600)
 
         item.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
             guard let self else { return }
@@ -290,10 +304,9 @@ extension MainViewController {
     // MARK: - Full Screen
 
     /// # Overview
-    /// 영상 플레이어를 전체 화면 모드로 표시합니다.
+    /// 영상을 전체 화면으로 표시합니다.
     ///
-    /// - Parameters:
-    ///   - sender: 전체 화면 버튼
+    /// - Parameter sender: 전체 화면 버튼
     @objc func goFullScreen(_ sender: UIButton) {
         guard let player = playerManager.player else { return }
         playerManager.presentFullScreenPlayer(from: self, player: player)
@@ -305,10 +318,9 @@ extension MainViewController {
     /// 슬라이더를 탭한 위치로 즉시 이동합니다.
     ///
     /// # Discussion
-    /// 드래그 없이 ‘탭만’으로도 영상의 특정 위치로 이동할 수 있도록 합니다.
+    /// 드래그 없이도 ‘탭’만으로 재생 위치를 빠르게 이동할 수 있습니다.
     ///
-    /// - Parameters:
-    ///   - gesture: 슬라이더 영역을 탭한 제스처
+    /// - Parameter gesture: 슬라이더 탭 제스처
     @objc func progressSliderTapped(_ gesture: UITapGestureRecognizer) {
         let slider = mainView.progressSlider
         let point = gesture.location(in: slider)
@@ -316,7 +328,7 @@ extension MainViewController {
         isScrubbing = true
 
         let ratio = max(0, min(1, point.x / slider.bounds.width))
-        let newValue = slider.minimumValue + Float(ratio) * (slider.maximumValue - slider.minimumValue)
+        let newValue = Float(ratio)
         slider.setValue(newValue, animated: false)
 
         guard let item = playerManager.player?.currentItem else {
@@ -330,13 +342,17 @@ extension MainViewController {
             return
         }
 
-        let targetSeconds = Double(newValue) * duration
-        let targetTime = CMTime(seconds: targetSeconds, preferredTimescale: 600)
+        let seconds = Double(newValue) * duration
+        let targetTime = CMTime(seconds: seconds, preferredTimescale: 600)
 
-        mainView.start.text = TimeFormatter.timeFormat(targetSeconds)
+        mainView.start.text = TimeFormatter.timeFormat(seconds)
 
         item.cancelPendingSeeks()
-        item.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+        item.seek(
+            to: targetTime,
+            toleranceBefore: .zero,
+            toleranceAfter: .zero
+        ) { [weak self] _ in
             self?.isScrubbing = false
         }
     }
