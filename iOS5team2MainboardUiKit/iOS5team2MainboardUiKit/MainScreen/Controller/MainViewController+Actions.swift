@@ -8,6 +8,7 @@
 import UIKit
 import AVFoundation
 import DropDown
+import MediaPlayer
 
 extension MainViewController {
 
@@ -16,7 +17,7 @@ extension MainViewController {
 
         if didReachEnd == true {
             didReachEnd = false
-            player?.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero)
+            playerManager.player?.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero)
         }
         if mainView.playerView.player?.timeControlStatus == .paused {
             mainView.playButton.setImage(UIImage(systemName: "pause.fill",
@@ -30,34 +31,54 @@ extension MainViewController {
     }
 
     @objc func forward15sButtonTapped(_ sender: UIButton) {
-        guard let player else {
-            return
-        }
+        guard let player = playerManager.player else { return }
+
         playerManager.skipForwardSeconds(player: player)
     }
 
     @objc func rewind15sButtonTapped(_ sender: UIButton) {
-        guard let player else {
-            return
-        }
+        guard let player = playerManager.player else { return }
         playerManager.skipRewindSeconds(player: player)
     }
 
     @objc func handlePlayEnd() {
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        player?.pause()
+        guard let player = playerManager.player else { return }
+        player.pause()
         didReachEnd = true
         mainView.playButton.setImage(UIImage(systemName: "play.fill",
                                              withConfiguration: playButtonCFG), for: .normal)
         mainView.progressSlider.value = 1
 
-        if let duration = player?.currentItem?.duration.seconds, duration.isFinite {
+        if let duration = player.currentItem?.duration.seconds, duration.isFinite {
             mainView.start.text = TimeFormatter.timeFormat(duration)
         }
     }
 
     @objc func dropdownClick(_ sender: UIButton) {
-        mainView.dropdown.show()
+        mainView.langauageDropDown.show()
+    }
+
+    @objc func muteButtonClick(_ sender: UIButton) {
+
+        if mainView.popup.isHidden == true {
+            mainView.popup.isHidden = false
+        } else {
+            mainView.popup.isHidden = true
+        }
+
+    }
+
+    @objc func volumeChanged(_ sender: UISlider) {
+        let percentage = Int(sender.value * 100)
+        let volumeViewSlider = mainView.systemVolumeView.subviews.first { $0 is UISlider } as? UISlider
+
+        volumeViewSlider?.value = sender.value
+        mainView.volumeLabel.text = "\(percentage)"
+    }
+
+    @objc func ellipsButtonClick(_ sender: UIButton) {
+        mainView.speedDropDown.show()
     }
 
     @objc func searchButtonTapped(_ sender: UIButton) {
@@ -100,7 +121,7 @@ extension MainViewController {
     @objc func scrubBegan(_ sender: UISlider) {
         isScrubbing = true
 
-        guard let player = mainView.playerView.player else { return }
+        guard let player = playerManager.player else { return }
 
         if player.timeControlStatus == .playing {
             wasPlayingBeforeScrub = true
@@ -133,7 +154,7 @@ extension MainViewController {
     }
 
     @objc func scrubEnded(_ sender: UISlider) {
-        guard let player = mainView.playerView.player?.currentItem else { return }
+        guard let player = playerManager.player?.currentItem else { return }
 
         let duration = player.duration.seconds
 
@@ -148,7 +169,7 @@ extension MainViewController {
             }
 
             if self.wasPlayingBeforeScrub {
-                self.player?.play()
+                self.playerManager.player?.play()
             }
 
             self.isScrubbing = false
@@ -156,10 +177,7 @@ extension MainViewController {
     }
 
     @objc func goFullScreen(_ sender: UIButton) {
-        guard let player else {
-            return
-        }
-
+        guard let player = playerManager.player else { return }
         playerManager.presentFullScreenPlayer(from: self, player: player)
     }
 
@@ -197,4 +215,8 @@ extension MainViewController {
             self.isScrubbing = false
         }
     }
+}
+
+#Preview() {
+    MainViewController()
 }

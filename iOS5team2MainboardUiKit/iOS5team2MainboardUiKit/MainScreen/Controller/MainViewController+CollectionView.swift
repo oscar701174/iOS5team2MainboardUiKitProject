@@ -6,19 +6,39 @@
 //
 
 import UIKit
+import CoreData
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+
+    func resetPlayerUIForNewVideo() {
+
+    let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+
+    mainView.progressSlider.value = 0
+
+    mainView.start.text = "00:00:00"
+    didReachEnd = false
+
+    mainView.playButton.setImage(UIImage(systemName: "play.fill",
+                                            withConfiguration: playButtonCFG), for: .normal)
+
+}
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10 // 데이터 개수
+        let dataSource = isSearching ? filteredVideos : videoList
+        return dataSource.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let raw = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.reuseID, for: indexPath)
         guard let cell = raw as? VideoCell else { return raw }
-        cell.configure( thumbnail: UIImage(named: "sample"),
-                        title: "이것은 테스트를 위한 임시 문구 입니다. \(CategoryRepository.allCategories[indexPath.row])"
-        )
+
+        let dataSource = isSearching ? filteredVideos : videoList
+        let video = dataSource[indexPath.item]
+
+        cell.configure(with: video)
+
         return cell
     }
 
@@ -30,8 +50,33 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedCell = collectionView.cellForItem(at: indexPath)
-        // playingVideoURL = selectedCell
+
+        let selectedVideo = videoList[indexPath.item]
+        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+
+        guard let url = VideoManager.bundleURLString(for: selectedVideo) else {
+            print("잘못된 URL:", selectedVideo.url ?? "nil")
+            return
+        }
+
+        resetPlayerUIForNewVideo()
+
+        playingVideoURL = url
+
+        mainView.playButton.setImage(UIImage(systemName: "play.fill",
+                                             withConfiguration: playButtonCFG), for: .normal)
+
+        playerManager.startPlayback(with: url)
+
+        if let newPlayer = playerManager.player {
+            mainView.playerView.player = newPlayer
+        }
+
+        print("선택된 비디오 URL:", url)
     }
 
+}
+
+#Preview {
+    MainViewController()
 }

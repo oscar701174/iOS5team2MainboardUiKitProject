@@ -1,19 +1,11 @@
+=======
 import Foundation
 import AVFoundation
 
 struct ClipModel: Decodable {
     var id: UUID = UUID()
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyClipModel.swift
-    let filePath: URL
-    let start: String
-    let end: String
-    var asset: AVURLAsset {
-        AVURLAsset(url: filePath)
-    }
-=======
     let start: Double
     let end: Double
->>>>>>> clipPlayer:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipPlayer/MyClipModel.swift
 }
 
 struct VideoModel: Decodable {
