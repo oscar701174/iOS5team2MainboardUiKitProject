@@ -1,13 +1,12 @@
 import UIKit
 import AVKit
 
-//update
+// update
 extension ClipPlayerViewController {
     // 가로,세로모드 변화에 따른 mainStackContainer와 clipStackContainer 설정 업데이트
     func updateContainerAxis() {
         heightRatioConstraint?.isActive = false
         heightRatioConstraint = nil
-        
         if deviceOrientation.isPortrait {
             mainStackContainer.axis = .vertical
             let constraint = videoContainer.heightAnchor.constraint(
@@ -43,9 +42,9 @@ extension ClipPlayerViewController {
     }
 }
 
-//setup
+// setup
 extension ClipPlayerViewController {
-    //mainStackContainer 설정.
+    // mainStackContainer 설정.
     func loadMainStack() {
         mainStackContainer.addArrangedSubview(videoContainer)
         mainStackContainer.addArrangedSubview(clipStackContainer)
@@ -53,9 +52,8 @@ extension ClipPlayerViewController {
         mainStackContainer.alignment = .fill
         mainStackContainer.distribution = .fill
         view.addSubview(mainStackContainer)
-        print(self,#function)
+        print(self, #function)
     }
-    
     func loadMainStackConstraint() {
         mainStackContainer.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -64,23 +62,19 @@ extension ClipPlayerViewController {
             mainStackContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             mainStackContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         ])
-        print(self,#function)
+        print(self, #function)
     }
-    
     func loadClipStackContainer() {
-        
         clipStackContainer.addArrangedSubview(clippingButton)
         clipStackContainer.spacing = 10
         clipStackContainer.axis = .vertical
         clipStackContainer.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         clipStackContainer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         guard let clipContainer = returnScrollableClipContainer(by: deviceOrientation) else { return }
-        
         clipStackContainer.addArrangedSubview(clipContainer)
         clipStackContainer.addArrangedSubview(memoView)
-        print(self,#function)
+        print(self, #function)
     }
-    
     func loadClippingButton() {
         let recordTimeAction = UIAction(title: "record time") { [weak self] _ in
             guard let self else { return }
@@ -103,9 +97,8 @@ extension ClipPlayerViewController {
                 config?.background.backgroundColor = .clear
             }
         }
-        print(self,#function)
+        print(self, #function)
     }
-    
     func loadMemoView() {
         memoView.borderStyle = .roundedRect
         memoView.layer.borderWidth = 0
@@ -124,26 +117,21 @@ extension ClipPlayerViewController {
         memoView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(memoViewTapped(_:)))
- 
         memoView.addGestureRecognizer(singleTap)
-        
-        print(self,#function)
+        print(self, #function)
     }
-    
     func appearVideoContainer() {
         videoContainer.backgroundColor = .black
         ClipPlayer.shared.embedInline(in: self, container: videoContainer)
         ClipPlayer.shared.video = video
-        print(self,#function)
+        print(self, #function)
     }
-    
     func returnClipButtons() -> [UIButton]? {
         var clipButtons: [UIButton] = []
         for (index, clip) in clips.enumerated() {
             let clipButton = UIButton(configuration: .glass())
             let startTime = clip.start.toMinuteSecond
             let endTime = clip.end.toMinuteSecond
-            
             clipButton.setTitle("\(startTime)-\(endTime)", for: .normal)
             clipButton.backgroundColor = .main
             clipButton.setTitleColor(.white, for: .normal)
@@ -153,36 +141,32 @@ extension ClipPlayerViewController {
             clipButton.addTarget(self, action: #selector(clipButtonDoubleTapped(_:)), for: .touchDownRepeat)
 
             clipButtons.append(clipButton)
-            
             let longPress = UILongPressGestureRecognizer(target: self, action: #selector(clipButtonLongPressed(_:)))
             clipButton.addGestureRecognizer(longPress)
         }
-        print(self,#function)
+        print(self, #function)
         return clipButtons
     }
-    
     func returnScrollableClipContainer(by deviceOrientation: UIDeviceOrientation) -> MyScrollableContainer? {
-        
         guard let clipButtons = returnClipButtons() else { return nil }
         if deviceOrientation.isPortrait {
             let clipContainer = MyScrollableContainer(contents: clipButtons, scrollMode: .horizontal)
-            print(self,#function,"portrait")
+            print(self, #function, "portrait")
             return clipContainer
-        }else {
+        } else {
             let clipContainer = MyScrollableContainer(contents: clipButtons, scrollMode: .vertical)
-            print(self,#function,"landscape")
+            print(self, #function, "landscape")
             return clipContainer
         }
     }
 }
 
-//button event
+// button event
 extension ClipPlayerViewController {
     @objc func addClip(from start: Double, to end: Double) {
         let clip = ClipModel(start: start, end: end, title: nil)
         clips.append(clip)
-        
-        //MARK: CoreData
+        // MARK: CoreData
         if let videoEntity = self.video.entityReference {
             clipManager.createClip(
                 video: videoEntity,
@@ -192,9 +176,8 @@ extension ClipPlayerViewController {
             )
         }
     }
-    
     @objc func clipButtonTapped(_ sender: UIButton) {
-        print(self,#function)
+        print(self, #function)
         let index = sender.tag
         guard index < clips.count else { return }
         let clip = clips[index]
@@ -206,52 +189,40 @@ extension ClipPlayerViewController {
         memoView.isEnabled = true
         self.updateMemoView(by: index)
     }
-    
     @objc func clipButtonDoubleTapped(_ sender: UIButton) {
-        print(self,#function)
+        print(self, #function)
         let index = sender.tag
         guard index < clips.count else { return }
         let clip = clips[index]
-   
         print(clip)
         ClipPlayer.shared.playClip(clip)
     }
-    
     @objc func clipButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began,
               let button = sender.view as? UIButton else { return }
-        
         let index = button.tag
         guard index < clips.count else { return }
-        
         let alert = UIAlertController(title: "Clip 삭제",
                                       message: "해당 클립을 삭제하시겠습니까?",
                                       preferredStyle: .alert)
-        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
             guard let self else { return }
             self.clips.remove(at: index)
-            
-            //MARK: CoreData, Delete from CoreData
+            // MARK: CoreData, Delete from CoreData
             if let videoEntity = self.video.entityReference,
                let clipEntity = clipManager.fetchClips(for: videoEntity)[safe: index] {
                    clipManager.delete(clipEntity)
             }
         }))
-        
         self.present(alert, animated: true, completion: nil)
     }
-    
-    
     @objc func memoViewTapped(_ sender: UIView) {
-        print(self,#function)
+        print(self, #function)
         memoView.text = ""
         showMemoEditor()
     }
-    
     func showMemoEditor() {
-        
         let alert = UIAlertController(title: "# memo tag",
                                       message: nil,
                                       preferredStyle: .alert)
@@ -268,8 +239,7 @@ extension ClipPlayerViewController {
             guard  let index = self.clipIndexTouched else { return }
             let memo = String(text.prefix(15))
             self.clips[index].title = memo
-            
-            //MARK: CoreData Update CoreData memo
+            // MARK: CoreData Update CoreData memo
             if let videoEntity = self.video.entityReference {
                 let clipEntities = clipManager.fetchClips(for: videoEntity)
                 if index < clipEntities.count {
@@ -278,9 +248,7 @@ extension ClipPlayerViewController {
                 }
             }
             self.memoView.text = memo
-            
         }))
-        
         self.present(alert, animated: true ) {
             guard let index = self.clipIndexTouched else { return }
             self.updateMemoView(by: index)
@@ -296,7 +264,6 @@ extension Double {
         return String(format: "%d:%02d", minutes, seconds)
     }
 }
-
 
 extension ScrollTestUIView {
     // Assuming somewhere in init or setup:
