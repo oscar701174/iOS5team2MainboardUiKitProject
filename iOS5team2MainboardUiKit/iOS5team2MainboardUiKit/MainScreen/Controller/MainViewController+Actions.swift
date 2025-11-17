@@ -92,7 +92,7 @@ extension MainViewController {
     }
 
     @objc func pushMyClipScreen(_ sender: UIButton) {
-        let settingVC = MyClipViewController()
+        let settingVC = IntroPageViewController()
         if let nav = navigationController {
             nav.pushViewController(settingVC, animated: true)
         } else {
@@ -101,7 +101,7 @@ extension MainViewController {
     }
 
     @objc func pushTagScreen(_ sender: UIButton) {
-        let settingVC = MyClipViewController02()
+        let settingVC = IntroPageViewController()
         if let nav = navigationController {
             nav.pushViewController(settingVC, animated: true)
         } else {

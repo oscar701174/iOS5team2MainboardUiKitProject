@@ -103,7 +103,7 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
         
     }
 }
-<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
+//<<<<<<< HEAD:iOS5team2MainboardUiKit/iOS5team2MainboardUiKit/ClipLibrary/MyVideoListViewController.swift
 /*
  struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
  func makeUIViewController(context: Context) -> MyClipViewController_v02{
@@ -117,7 +117,7 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
  #Preview {
  ViewControllerRepresentable()
  }
- */
+ 
 =======
 
 struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
@@ -132,4 +132,4 @@ struct MyClipViewController_v02Representable: UIViewControllerRepresentable {
 #Preview {
     ViewControllerRepresentable()
 }
-
+*/
