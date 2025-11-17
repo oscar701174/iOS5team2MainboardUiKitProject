@@ -36,12 +36,10 @@ extension MyScrollableContainer {
 }
 
 extension MyScrollableContainer {
-    
     override func didMoveToWindow() {
         super.didMoveToWindow()
         //        print(self,#function)
     }
-    
     override func didMoveToSuperview() {
         super.didMoveToSuperview( )
         //        print(self,#function)
@@ -49,20 +47,17 @@ extension MyScrollableContainer {
 }
 
 extension MyScrollableContainer {
-    //subview위치 계산 배치
+    // subview위치 계산 배치
     override func layoutSubviews() {
         super.layoutSubviews()
-        
         alwaysBounceHorizontal = scrollMode == .horizontal
         alwaysBounceVertical = scrollMode == .vertical
-        
         let clip = views.first ?? UIView()
         let clipWidth = clip.intrinsicContentSize.width + 6
         let clipHeight = clip.intrinsicContentSize.height + 3
         let spacing: CGFloat = 10
         if scrollMode == .horizontal {
             let totalWidth = CGFloat(views.count) * (clipWidth + spacing)
-            
             views.enumerated().forEach { index, content in
                 let xPosition = CGFloat(index) * (clipWidth + spacing)
                 content.frame = CGRect(x: xPosition, y: 0, width: clipWidth, height: clipHeight)
@@ -70,12 +65,10 @@ extension MyScrollableContainer {
             self.contentSize = CGSize(width: totalWidth, height: clipHeight)
         } else { // .vertical
             let totalHeight = CGFloat(views.count) * (clipHeight + spacing)
-            
             views.enumerated().forEach { index, content in
                 let yPosition = CGFloat(index) * (clipHeight + spacing)
                 content.frame = CGRect(x: 0, y: yPosition, width: clipWidth, height: clipHeight)
             }
-            
             self.contentSize = CGSize(width: clipWidth, height: totalHeight)
         }
     }
@@ -87,16 +80,13 @@ extension MyScrollableContainer {
             // 세로 스크롤 모드:
             self.setContentCompressionResistancePriority(.required, for: .horizontal)
             self.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-            
             // Hugging(늘어나려는 성향)
             self.setContentHuggingPriority(.defaultLow, for: .horizontal)
             self.setContentHuggingPriority(.defaultHigh, for: .vertical)
-            
         } else {
             // 가로 스크롤 모드:
             self.setContentCompressionResistancePriority(.required, for: .vertical)
             self.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            
             // Hugging
             self.setContentHuggingPriority(.defaultLow, for: .vertical)
             self.setContentHuggingPriority(.defaultHigh, for: .horizontal)
