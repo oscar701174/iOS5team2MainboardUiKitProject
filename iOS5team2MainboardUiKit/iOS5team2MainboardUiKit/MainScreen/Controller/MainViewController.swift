@@ -261,18 +261,42 @@ class MainViewController: UIViewController {
     /// 지정된 언어 태그를 기준으로 영상 리스트를 재정렬합니다.
     ///
     /// # Discussion
-    /// 선택된 언어와 일치하는 tag를 가진 영상이 상단에 오도록 정렬한 뒤,
-    /// 컬렉션뷰를 갱신합니다.
+    /// 기존에는 선택된 언어와 일치 여부만으로 상단 정렬했으나,
+    /// 이제 WeightStore(유저 선호도 가중치)를 반영하여
+    /// 태그 우선순위에 따라 전체 정렬을 수행합니다.
     ///
     /// - Parameters:
     ///   - language: 선택된 언어 문자열
     func prioritizeLanguage(_ language: String) {
-        videoList.sort { lhs, rhs in
-            let lhsMatch = (lhs.tag == language)
-            let rhsMatch = (rhs.tag == language)
+        // 1) 현재 목록에서 등장하는 태그 수집
+        let tags = Array(Set(videoList.compactMap { $0.tag }))
 
-            if lhsMatch == rhsMatch { return false }
-            return lhsMatch && !rhsMatch
+        // 2) 유저 선호도(WeightStore)로 태그를 가중치 내림차순 정렬
+        var orderedTags = WeightStore.shared.sortedIDs(from: tags)
+
+        // 3) "전체"가 아닌 경우에만 이번 선택을 최상단으로 보정
+        if language != "전체" {
+            if let idx = orderedTags.firstIndex(of: language) {
+                orderedTags.remove(at: idx)
+            }
+            orderedTags.insert(language, at: 0)
+        }
+
+        // 4) 태그 → 우선순위 인덱스 맵
+        let priority: [String: Int] = {
+            var dict: [String: Int] = [:]
+            for (i, t) in orderedTags.enumerated() {
+                dict[t] = i
+            }
+            return dict
+        }()
+
+        // 5) videoList를 태그 우선순위로 정렬, 동점이면 제목으로 tie-break
+        videoList.sort { lhs, rhs in
+            let lp = priority[lhs.tag ?? ""] ?? Int.max
+            let rp = priority[rhs.tag ?? ""] ?? Int.max
+            if lp != rp { return lp < rp }
+            return (lhs.title ?? "") < (rhs.title ?? "")
         }
 
         mainView.collectionView.reloadData()
@@ -343,3 +367,4 @@ class MainViewController: UIViewController {
 #Preview() {
     UINavigationController(rootViewController: MainViewController())
 }
+

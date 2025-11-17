@@ -52,12 +52,15 @@ extension MainLayout {
             searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
         ]
 
-        // 초기 타이틀 및 아이콘 설정
-        languageButton.setTitle("Swift", for: .normal)
+        // 초기 타이틀 및 아이콘 설정 - "전체" 기본 선택
+        languageButton.setTitle("전체", for: .normal)
         languageButton.setImage(
-            UIImage(named: "SwiftLogo")?.resized(to: .init(width: 34, height: 34)),
+            UIImage(named: "IconBlack")?
+                .resized(to: .init(width: 34, height: 34))
+                .withRenderingMode(.alwaysTemplate),
             for: .normal
         )
+        languageButton.tintColor = AppColor.menuIcon
 
         // 정렬 및 텍스트 스타일
         languageButton.contentHorizontalAlignment = .leading
@@ -95,8 +98,11 @@ extension MainLayout {
     /// 드롭다운 너비와 표시 위치(bottomOffset)를 다르게 계산합니다.
     func configureLanguageMenu() {
 
+        // "전체" + 기존 항목
+        let dataSource = ["전체"] + itemList
+
         langauageDropDown.dismissMode = .automatic
-        langauageDropDown.dataSource = itemList
+        langauageDropDown.dataSource = dataSource
         langauageDropDown.anchorView = languageButton
         langauageDropDown.textFont = .boldSystemFont(ofSize: UIFont.labelFontSize)
         langauageDropDown.direction = .bottom
@@ -134,10 +140,27 @@ extension MainLayout {
         langauageDropDown.selectionAction = { [weak self] (index, item) in
             guard let self else { return }
 
+            // index 0 = "전체"
+            if index == 0 {
+                self.languageButton.setTitle("전체", for: .normal)
+                self.languageButton.setImage(
+                    UIImage(named: "IconBlack")?
+                        .resized(to: .init(width: 34, height: 34))
+                        .withRenderingMode(.alwaysTemplate),
+                    for: .normal
+                )
+                self.languageButton.tintColor = AppColor.menuIcon
+                self.onLanguageSelected?("전체")
+                return
+            }
+
+            // 실제 카테고리 인덱스는 -1 보정
+            let actualIndex = index - 1
+            let name = self.itemList[actualIndex]
+
             self.languageButton.setTitle(item, for: .normal)
             self.onLanguageSelected?(item)
 
-            let name = self.itemList[index]
             if let category = CategoryRepository.allCategories.first(where: { $0.name == name }) {
                 let icon = UIImage(named: category.iconName)?
                     .resized(to: .init(width: 34, height: 34))
@@ -153,3 +176,4 @@ extension MainLayout {
         langauageDropDown.reloadAllComponents()
     }
 }
+
