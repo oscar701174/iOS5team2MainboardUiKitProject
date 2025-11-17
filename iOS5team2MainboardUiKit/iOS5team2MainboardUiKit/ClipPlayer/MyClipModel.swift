@@ -5,7 +5,7 @@ struct ClipModel: Decodable {
     var id: UUID = UUID()
     let start: Double
     let end: Double
-    var memo: String?
+    var title: String?
 }
 
 struct VideoModel: Decodable {

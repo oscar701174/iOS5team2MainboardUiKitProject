@@ -38,7 +38,7 @@ extension ClipPlayerViewController {
     }
     // memoView update
     func updateMemoView(by clipIndex: Int) {
-        guard let memo = clips[clipIndex].memo else { return }
+        guard let memo = clips[clipIndex].title else { return }
         memoView.text = memo
     }
 }
@@ -179,8 +179,18 @@ extension ClipPlayerViewController {
 //button event
 extension ClipPlayerViewController {
     @objc func addClip(from start: Double, to end: Double) {
-        let clip = ClipModel(start: start, end: end, memo: nil)
+        let clip = ClipModel(start: start, end: end, title: nil)
         clips.append(clip)
+        
+        //MARK: CoreData
+        if let videoEntity = self.video.entityReference {
+            clipManager.createClip(
+                video: videoEntity,
+                title: clip.memo ?? "",
+                startSeconds: clip.start,
+                endSeconds: clip.end
+            )
+        }
     }
     
     @objc func clipButtonTapped(_ sender: UIButton) {
@@ -222,6 +232,12 @@ extension ClipPlayerViewController {
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
             guard let self else { return }
             self.clips.remove(at: index)
+            
+            //MARK: CoreData, Delete from CoreData
+            if let videoEntity = self.video.entityReference,
+               let clipEntity = clipManager.fetchClips(for: videoEntity)[safe: index] {
+                   clipManager.delete(clipEntity)
+            }
         }))
         
         self.present(alert, animated: true, completion: nil)
@@ -242,7 +258,7 @@ extension ClipPlayerViewController {
 
         alert.addTextField { textField in
             textField.placeholder = "memo tag 입력(15자 이내)"
-            guard  let index = self.clipIndexTouched, let _ = self.clips[index].memo else { return }
+            guard  let index = self.clipIndexTouched, let _ = self.clips[index].title else { return }
             textField.text = self.clips[index].memo
         }
 
@@ -251,7 +267,16 @@ extension ClipPlayerViewController {
             guard let text = alert.textFields?.first?.text else { return }
             guard  let index = self.clipIndexTouched else { return }
             let memo = String(text.prefix(15))
-            self.clips[index].memo = memo
+            self.clips[index].title = memo
+            
+            //MARK: CoreData Update CoreData memo
+            if let videoEntity = self.video.entityReference {
+                let clipEntities = clipManager.fetchClips(for: videoEntity)
+                if index < clipEntities.count {
+                    clipEntities[index].title = memo
+                    try? clipManager.context.save()
+                }
+            }
             self.memoView.text = memo
             
         }))
@@ -273,3 +298,15 @@ extension Double {
 }
 
 
+extension ScrollTestUIView {
+    // Assuming somewhere in init or setup:
+    func loadClipsFromCoreData() {
+        if let videoEntity = video.entityReference {
+            self.clips = clipManager.fetchClips(for: videoEntity).map {
+                ClipModel(start: $0.startSeconds, end: $0.endSeconds, memo: $0.title)
+            }
+        } else {
+            self.clips = []
+        }
+    }
+}

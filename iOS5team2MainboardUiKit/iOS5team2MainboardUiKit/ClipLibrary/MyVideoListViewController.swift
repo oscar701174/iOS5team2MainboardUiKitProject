@@ -4,7 +4,7 @@ import SwiftUI
 import AVFoundation
 
 class MyVideoListViewController: UIViewController {
-
+    let videoManager = VideoManager()
     private let clipTableView = UITableView()
     private let button = UIButton(configuration: .glass())
     private var videos: [VideoModel] = [] {
@@ -18,8 +18,11 @@ class MyVideoListViewController: UIViewController {
         title = "My Clips"
         view.backgroundColor = .systemBackground
         setupTableView()
-
-
+        // MARK: CoreData
+        self.videos = videoManager.fetch().map {
+            VideoModel(title: $0.title, filePath: URL(string: $0.filePath)!, clips: $0.clips.map(\.clipData))
+        }
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem (
             barButtonSystemItem: .add,
             target: self,
@@ -96,9 +99,17 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
             }
             try FileManager.default.copyItem(at: url, to: destinationURL)
             print("복사 완료:", destinationURL.path)
-            
-            
+
             self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
+            // MARK: CoreData
+            videoManager.create(
+                title: fileName,
+                filePath: destinationURL.absoluteString
+            )
+            // MARK: CoreData
+            self.videos = videoManager.fetch().map {
+                VideoModel(title: $0.title, filePath: URL(string: $0.filePath)!)
+            }
             
         } catch {
             print("파일 복사 실패:", error)

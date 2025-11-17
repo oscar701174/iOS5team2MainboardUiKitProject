@@ -2,6 +2,7 @@ import UIKit
 import AVKit
 
 class ClipPlayerViewController: UIViewController {
+    let clipManager = ClipManager()
     var deviceOrientation: UIDeviceOrientation = .portrait
     var heightRatioConstraint: NSLayoutConstraint?
     let mainStackContainer = UIStackView()
