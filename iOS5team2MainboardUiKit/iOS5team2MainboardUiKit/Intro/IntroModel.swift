@@ -35,7 +35,7 @@ struct IntroModel {
             icon: "Intro1",
             title: "미디어 파일을 담아보세요",
             description: "플레이 할 미디어 파일을 카테고리별로 담아 필요할떄 언제든 꺼내 볼 수 있는 어플입니다. 플레이어를 통해 나의 역량을 늘려보세요",
-            backgroundColor: AppColor.menuIcon.withAlphaComponent(1.0),
+            backgroundColor: .white,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
             fontColor: .black
@@ -44,7 +44,7 @@ struct IntroModel {
             icon: "Intro2",
             title: "나만의 영상을 저장해 보세요",
             description: "필요한 영상만 골라 나만의 저장소에 담아보세요. 사이트를 찾아 헤매이지 않고 필요한 자료를 언제든 플레이 할 수 있습니다",
-            backgroundColor: AppColor.menuIcon.withAlphaComponent(0.66),
+            backgroundColor: .white,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
             fontColor: .black
@@ -53,7 +53,7 @@ struct IntroModel {
             icon: "Intro3",
             title: "클립하여 필요한 구간만 쏙!",
             description: "나의 미디어 플레이어를 필요한 구간에 간편하게 클립하여 나만의 영상을 남기세요. 반복하여 보며 학습을 이어갈 수 있습니다",
-            backgroundColor: AppColor.menuIcon.withAlphaComponent(0.33),
+            backgroundColor: .white,
 //            titleFont: .systemFont(ofSize: 28, weight: .heavy),
 //            descriptionFont: .systemFont(ofSize: 16, weight: .medium),
             fontColor: .black
