@@ -1,7 +1,7 @@
 import UIKit
 import SwiftUI
 
-//clip들을 포함하는 container
+// clip들을 포함하는 container
 class MyScrollableContainer: UIScrollView {
     private var heightConstraint: NSLayoutConstraint?
     private var widthConstraint: NSLayoutConstraint?
@@ -14,7 +14,6 @@ class MyScrollableContainer: UIScrollView {
 //            레이아웃 업데이트 요청
         }
     }
-    
     init(contents: [UIView], scrollMode: ScrollViewMode){
         self.views = contents
         self.scrollMode = scrollMode
@@ -92,23 +91,17 @@ extension MyScrollableContainer {
             self.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         }
     }
-    
     func updateSizeConstraints(itemWidth: CGFloat = 100, itemHeight: CGFloat = 50) {
         // 기존 제약 제거
         heightConstraint?.isActive = false
         widthConstraint?.isActive = false
-        
         if scrollMode == .horizontal {
             // 높이를 itemHeight로 고정
             heightConstraint = self.heightAnchor.constraint(equalToConstant: itemHeight)
             heightConstraint?.isActive = true
-            
         } else { // vertical
-            
             widthConstraint = self.widthAnchor.constraint(equalToConstant: itemWidth)
             widthConstraint?.isActive = true
-            
-            
         }
     }
 }
@@ -124,18 +117,15 @@ enum ScrollViewMode {
         redView.backgroundColor = .systemRed
         return redView
     }()
-    
     let view2: UIView = {
         let blueView = UIView()
         blueView.backgroundColor = .systemBlue
         return blueView
     }()
-    
     let view3: UIView = {
         let greenView = UIView()
         greenView.backgroundColor = .systemGreen
         return greenView
     }()
-    
     MyScrollableContainer(contents: [view1, view2, view3], scrollMode: .vertical)
 }

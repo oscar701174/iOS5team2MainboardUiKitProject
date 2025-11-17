@@ -70,4 +70,3 @@ struct IntroModel {
     ]
     static let introSeenKey = "hasSeenIntro"
 }
-

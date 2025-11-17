@@ -14,16 +14,13 @@ class ClipPlayer {
             playerViewControllerIfLoaded = AVPlayerViewController()
         }
     }
-    
     weak var delegate: ClipPlayerDelegate?
     var video: VideoModel? {
         didSet {
            try? loadVideo()
         }
     }
-    
     var durationTimeToEnd: CMTime?
-    
     private(set) var playerSetStates: States = [] {
         didSet {
             delegate?.clipPlayer(self, didChangeState: playerSetStates)
@@ -59,7 +56,6 @@ extension AVPlayerViewController {
 }
 
 struct States: OptionSet {
-    
     let rawValue: Int
     static let embeddedInline = States(rawValue: 1 << 0)  // 앱 내 임베디드 재생 중
     static let videoLoaded = States(rawValue: 1 << 1)
@@ -68,7 +64,6 @@ struct States: OptionSet {
 }
 
 extension ClipPlayer {
-    
     private func removeFromParentIfNeeded() {
         guard let vc = playerViewControllerIfLoaded else { return }
         if vc.parent != nil {
@@ -77,12 +72,10 @@ extension ClipPlayer {
             vc.removeFromParent()
         }
     }
-    
     func embedInline(in parent: UIViewController, container: UIView) {
         loadPlayerViewControllerIfNeeded()
         guard let playerViewController = playerViewControllerIfLoaded,
               playerViewController.parent != parent else { return }
-        
         removeFromParentIfNeeded()
         playerSetStates.insert(.embeddedInline)
 
@@ -100,7 +93,6 @@ extension ClipPlayer {
 }
 // player time 관찰자
 extension ClipPlayer {
-    
     private func addTimeObserver() {
         guard let player = playerViewControllerIfLoaded?.player else { return }
         // 기존 observer 제거
@@ -116,7 +108,7 @@ extension ClipPlayer {
         }
     }
 }
-//player 기능 구현
+// player 기능 구현
 extension ClipPlayer {
     func loadVideo() throws {
         guard let playerVC = playerViewControllerIfLoaded else { return }
@@ -143,7 +135,7 @@ extension ClipPlayer {
                 DispatchQueue.main.async {
                     self.playerSetStates.insert(.videoLoaded)
                     self.delegate?.clipPlayer(self, didVideoLoaded: true)
-                    //재생시간 observer setting
+                    // 재생시간 observer setting
                     self.addTimeObserver()
                     if self.playerMode == .auto {
                         self.startPlaying()
@@ -156,14 +148,12 @@ extension ClipPlayer {
             }
         })
     }
-    
     func startPlaying() {
         guard let playerVC = playerViewControllerIfLoaded else { return }
         guard playerSetStates.contains(.videoLoaded) else { return }
         playerVC.player?.play()
         playerSetStates.insert(.playing)
     }
-    
     func playClip(_ clip: ClipModel) {
         guard
             let playerVC = playerViewControllerIfLoaded,
@@ -178,7 +168,7 @@ extension ClipPlayer {
         }
 
         let start = CMTime(seconds: clip.start, preferredTimescale: 600)
-        let end = CMTime(seconds: clip.end,   preferredTimescale: 600)
+        let end = CMTime(seconds: clip.end, preferredTimescale: 600)
 
         // 정확한 위치로 이동
         player.seek(to: start, toleranceBefore: .zero, toleranceAfter: .zero)
@@ -204,22 +194,18 @@ extension ClipPlayer {
             break
         }
     }
-    
     func stopPlaying() {
         guard let playerVC = playerViewControllerIfLoaded else { return }
         guard playerSetStates.contains(.playing) else { return }
         playerVC.player?.pause()
         playerSetStates.insert(.paused)
     }
-    
     enum PlayerMode {
         case auto
         case manual
     }
-    
     enum PlayLoopMode {
         case on
         case off
     }
 }
-

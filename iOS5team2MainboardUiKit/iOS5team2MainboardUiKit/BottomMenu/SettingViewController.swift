@@ -113,7 +113,6 @@ extension SettingViewController: UITableViewDelegate {
 
         case .language:
             showLanguageResetAlert()
-            
         case .intro:
             let introPageViewController = IntroPageViewController()
             navigationController?.pushViewController(introPageViewController, animated: true)

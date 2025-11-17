@@ -14,6 +14,3 @@ struct VideoModel: Decodable {
     let filePath: URL
     var clips: [ClipModel]? = []
 }
-    
-
-
