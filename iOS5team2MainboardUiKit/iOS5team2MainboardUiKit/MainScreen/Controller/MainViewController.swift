@@ -15,12 +15,15 @@ class MainViewController: UIViewController {
     var isSearching = false
 
     var playingVideoURL: URL?
+    var selectedVideo: VideoEntity?
+
     let mainView = MainLayout()
     let playerManager = VideoPlayerManager()
     var videoList: [VideoEntity] = []
     var filteredVideos: [VideoEntity] = []
 
-    let videoManager = VideoManager(context: AppDelegate.viewContext)
+    let videoManager = VideoManager()
+    let clipManager = ClipManager()
 
     func setupData() {
         videoManager.seedIfNeeded()
@@ -66,11 +69,12 @@ class MainViewController: UIViewController {
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
         mainView.languageButton.addTarget(self, action: #selector(dropdownClick(_:)), for: .touchUpInside)
+        mainView.saveToClipButton.addTarget(self, action: #selector(saveClipButtonClick(_:)), for: .touchUpInside)
         mainView.fullScreenButton.addTarget(self, action: #selector(goFullScreen(_:)), for: .touchUpInside)
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
-        mainView.muteButton.addTarget(self, action: #selector(muteButtonClick(_:)), for: .touchUpInside )
+        mainView.muteButton.addTarget(self, action: #selector(volumeButtonClick(_:)), for: .touchUpInside)
         mainView.volumeSlider.addTarget(self, action: #selector(volumeChanged(_:)), for: .valueChanged)
         mainView.ellipsisButton.addTarget(self, action: #selector(ellipsButtonClick(_:)), for: .touchUpInside)
         mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)

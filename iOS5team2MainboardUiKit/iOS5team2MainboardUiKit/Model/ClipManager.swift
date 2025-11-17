@@ -11,7 +11,7 @@ class ClipManager {
 
     private let context: NSManagedObjectContext
 
-    init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext = AppDelegate.viewContext) {
         self.context = context
     }
 

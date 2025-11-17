@@ -59,7 +59,7 @@ extension MainViewController {
         mainView.langauageDropDown.show()
     }
 
-    @objc func muteButtonClick(_ sender: UIButton) {
+    @objc func volumeButtonClick(_ sender: UIButton) {
 
         if mainView.popup.isHidden == true {
             mainView.popup.isHidden = false
@@ -67,6 +67,30 @@ extension MainViewController {
             mainView.popup.isHidden = true
         }
 
+    }
+
+    @objc func saveClipButtonClick(_ sender: UIButton) {
+    
+        print("[save] saveClipButtonClick tapped")
+        print("[save] self:", self)
+    
+        guard let video = selectedVideo else {
+            print("클립 저장 실패: 선택된 비디오가 없습니다.")
+            return
+        }
+
+        // 저장 시도
+        clipManager.saveToClip(video: video)
+        print("클립 저장 요청 완료. 비디오 제목: \(video.title ?? "제목 없음")")
+
+        // 저장 후 해당 비디오의 클립들을 다시 fetch해서 검증 로그 출력
+        let clips = clipManager.fetchClips(for: video)
+        print("현재 비디오의 클립 개수: \(clips.count)")
+        // 필요하면 각 클립의 정보도 함께 출력
+        for (idx, clip) in clips.enumerated() {
+            let title = clip.title ?? "(제목 없음)"
+            print(" - [\(idx)] title: \(title), start: \(clip.startSeconds), end: \(clip.endSeconds)")
+        }
     }
 
     @objc func volumeChanged(_ sender: UISlider) {

@@ -62,6 +62,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 
         resetPlayerUIForNewVideo()
 
+        // 현재 선택된 VideoEntity를 보관
+        self.selectedVideo = selectedVideo
+
         playingVideoURL = url
 
         mainView.playButton.setImage(UIImage(systemName: "play.fill",

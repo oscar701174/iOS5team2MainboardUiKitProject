@@ -41,8 +41,8 @@ extension MainLayout {
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
             fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10),
 
-            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 0),
-            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 0)
+            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 5),
+            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
         ]
 
         topVideoIPadLandscapeConstraints = [
@@ -54,8 +54,8 @@ extension MainLayout {
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
             fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10),
 
-            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 0),
-            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 0)
+            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 10),
+            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
         ]
 
         playerView.playerLayer.videoGravity = .resizeAspectFill
