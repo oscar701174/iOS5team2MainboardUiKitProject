@@ -14,8 +14,16 @@ final class IntroPageViewController: UIPageViewController {
     private var selectedNames = Set<String>()
     private var isSetupComplete = false
 
+    private var showLastOnly = false
+    private var shouldHideIndicator = false
+
     static func shouldShowIntro() -> Bool {
         !UserDefaults.standard.bool(forKey: IntroModel.introSeenKey)
+    }
+
+    func showOnlyLastPage() {
+        showLastOnly = true
+        shouldHideIndicator = true
     }
 
     override func viewDidLoad() {
@@ -42,12 +50,18 @@ final class IntroPageViewController: UIPageViewController {
     }
 
     private func setupPages() {
-        pages = IntroModel.pages.map(makeIntroPage)
-        pages.append(makeCategorySelectionPage())
+        pages.removeAll()
+        if showLastOnly {
+            pages = [makeCategorySelectionPage()]
+        } else {
+            pages = IntroModel.pages.map(makeIntroPage)
+            pages.append(makeCategorySelectionPage())
+        }
+        indicator.numberOfPages = pages.count
     }
 
     private func setupIndicator() {
-        indicator.numberOfPages = IntroModel.pages.count + 1
+        guard !shouldHideIndicator else { return }
         indicator.pageIndicatorTintColor = .systemGray3
         indicator.currentPageIndicatorTintColor = .systemBlue
         indicator.translatesAutoresizingMaskIntoConstraints = false
@@ -62,8 +76,7 @@ final class IntroPageViewController: UIPageViewController {
         let page = UIViewController()
         page.view.backgroundColor = model.backgroundColor
 
-        let icon = UIImageView(image: UIImage(systemName: model.icon))
-        icon.tintColor = model.fontColor
+        let icon = UIImageView(image: UIImage(named: model.icon))
         icon.contentMode = .scaleAspectFit
         icon.translatesAutoresizingMaskIntoConstraints = false
 
@@ -91,8 +104,8 @@ final class IntroPageViewController: UIPageViewController {
 
         page.view.addSubview(stack)
         NSLayoutConstraint.activate([
-            icon.heightAnchor.constraint(equalToConstant: 140),
-            icon.widthAnchor.constraint(equalToConstant: 140),
+            icon.heightAnchor.constraint(equalToConstant: 240),
+            icon.widthAnchor.constraint(equalToConstant: 240),
             stack.centerYAnchor.constraint(equalTo: page.view.centerYAnchor, constant: -20),
             stack.leadingAnchor.constraint(equalTo: page.view.leadingAnchor, constant: 28),
             stack.trailingAnchor.constraint(equalTo: page.view.trailingAnchor, constant: -28)
@@ -139,7 +152,6 @@ final class IntroPageViewController: UIPageViewController {
         start.backgroundColor = .systemBlue
         start.tintColor = .white
         start.layer.cornerRadius = 12
-        start.layer.masksToBounds = true
         start.translatesAutoresizingMaskIntoConstraints = false
         start.heightAnchor.constraint(equalToConstant: 55).isActive = true
         start.addTarget(self, action: #selector(startTapped), for: .touchUpInside)
@@ -169,7 +181,7 @@ final class IntroPageViewController: UIPageViewController {
         let buttons = CategoryRepository.allCategories.map(makeCategoryButton)
 
         stride(from: 0, to: buttons.count, by: columns).forEach { start in
-            var row = Array(buttons[start..<min(start + columns, buttons.count)]) as [UIView]
+            var row = Array(buttons[start..<min(start + columns, buttons.count)])
             while row.count < columns { row.append(makeSpacer()) }
 
             let rowStack = UIStackView(arrangedSubviews: row)
@@ -212,9 +224,8 @@ final class IntroPageViewController: UIPageViewController {
         button.layer.borderColor = UIColor.systemGray3.cgColor
 
         button.configurationUpdateHandler = { [weak self] button in
-            guard
-                let self = self,
-                let name = button.configuration?.title
+            guard let self = self,
+                  let name = button.configuration?.title
             else { return }
 
             if self.selectedNames.contains(name) {
@@ -259,10 +270,13 @@ final class IntroPageViewController: UIPageViewController {
         present(main, animated: true)
     }
 
-    private func makeSpacer() -> UIView {
-        let spacer = UIView()
-        spacer.alpha = 0
-        return spacer
+    private func makeSpacer() -> UIButton {
+        let button = UIButton(type: .system)
+        button.isEnabled = false
+        button.backgroundColor = .clear
+        button.setTitle("", for: .normal)
+        button.layer.borderWidth = 0
+        return button
     }
 }
 
