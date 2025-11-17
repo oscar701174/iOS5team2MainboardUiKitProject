@@ -198,7 +198,7 @@ extension MainViewController {
     /// # Overview
     /// 태그 화면으로 이동합니다.
     @objc func pushTagScreen(_ sender: UIButton) {
-        let viewController = CategoryViewController()
+        let viewController = TagViewController()
 
         if let nav = navigationController {
             nav.pushViewController(viewController, animated: true)

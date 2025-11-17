@@ -20,7 +20,7 @@ struct SettingItem {
 }
 
 enum SettingAction {
-    case language, playback, tag, about
+    case language, playback, tag, intro, about
 }
 
 final class SettingViewController: UIViewController {
@@ -36,6 +36,7 @@ final class SettingViewController: UIViewController {
             SettingItem(title: "언어 재설정", icon: "person.fill.checkmark.and.xmark", action: .language)
         ]),
         SettingSection(title: "기타", items: [
+            SettingItem(title: "Intro재생(시연용)", icon: "info.circle", action: .intro),
             SettingItem(title: "앱 정보", icon: "info.circle", action: .about)
         ])
     ]
@@ -112,6 +113,10 @@ extension SettingViewController: UITableViewDelegate {
 
         case .language:
             showLanguageResetAlert()
+            
+        case .intro:
+            let introPageViewController = IntroPageViewController()
+            navigationController?.pushViewController(introPageViewController, animated: true)
 
         case .about:
             let alert = UIAlertController(
@@ -134,7 +139,7 @@ extension SettingViewController {
             preferredStyle: .alert
         )
 
-        let confirmAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] _ in
+        let confirmAction = UIAlertAction(title: "재설정", style: .destructive) { [weak self] _ in
             self?.performLanguageReset()
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
