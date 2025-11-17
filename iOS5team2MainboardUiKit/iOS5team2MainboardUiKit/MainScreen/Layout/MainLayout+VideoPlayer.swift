@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import DropDown
 
 extension MainLayout {
 
@@ -107,16 +108,11 @@ extension MainLayout {
     func setVideoButton() {
         let playButtons: [UIButton] = [rewind15sButton, playButton, forward15sButton]
 
-        let forward15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
-        let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        let rewind15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
-        let airplayButtonCFG = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let ellipsisButtonCFG = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        muteButton.setImage(UIImage(systemName: "speaker",
+                                       withConfiguration: muteButtonCFG), for: .normal)
+        muteButton.tintColor = AppColor.menuIcon
 
-        airPlayButton.setImage(UIImage(systemName: "airplay.video",
-                                       withConfiguration: airplayButtonCFG), for: .normal)
-
-        forward15sButton.setImage(UIImage(systemName: "15.arrow.trianglehead.clockwise",
+        forward15sButton.setImage(UIImage(systemName: "10.arrow.trianglehead.clockwise",
                                           withConfiguration: forward15sButtonCFG), for: .normal)
         forward15sButton.tintColor = AppColor.menuIcon
 
@@ -124,7 +120,7 @@ extension MainLayout {
                                     withConfiguration: playButtonCFG), for: .normal)
         playButton.tintColor = AppColor.menuIcon
 
-        rewind15sButton.setImage(UIImage(systemName: "15.arrow.trianglehead.clockwise",
+        rewind15sButton.setImage(UIImage(systemName: "10.arrow.trianglehead.clockwise",
                                          withConfiguration: rewind15sButtonCFG), for: .normal)
         rewind15sButton.tintColor = AppColor.menuIcon
 
@@ -132,6 +128,7 @@ extension MainLayout {
                                         withConfiguration: ellipsisButtonCFG), for: .normal)
         ellipsisButton.tintColor = AppColor.menuIcon
 
+        addSubview(muteButton)
         addSubview(middleButtonStackView)
         addSubview(ellipsisButton)
 
@@ -143,7 +140,7 @@ extension MainLayout {
         playButtons.forEach { btn in
             middleButtonStackView.addArrangedSubview(btn)
         }
-
+        muteButton.translatesAutoresizingMaskIntoConstraints = false
         middleButtonStackView.translatesAutoresizingMaskIntoConstraints = false
         ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -154,14 +151,20 @@ extension MainLayout {
         }
 
         videoButtonDefaultConstraints = [
+            muteButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            muteButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22),
+
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
             middleButtonStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-            ellipsisButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            ellipsisButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -22),
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22)
         ]
 
         videoButtonIPadLandscapeConstraints = [
+            muteButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            muteButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
+
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 5),
             middleButtonStackView.centerXAnchor.constraint(equalTo: progressSlider.centerXAnchor),
             middleButtonStackView.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor, constant: -50),
@@ -170,4 +173,116 @@ extension MainLayout {
             ellipsisButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15)
         ]
     }
+
+    func configureVideoSpeed() {
+        let speedList: [Double] = [1, 1.25, 1.5, 2]
+
+        speedDropDown.dismissMode = .automatic
+        speedDropDown.dataSource = speedList.map { value in
+            value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(Int(value))
+            : String(value)
+        }
+
+        speedDropDown.anchorView = ellipsisButton
+        speedDropDown.textFont = UIFont.boldSystemFont(ofSize: 14)
+        speedDropDown.direction = .bottom
+
+        speedDropDown.willShowAction = { [weak self] in
+            guard let self, self.ellipsisButton.window != nil else { return }
+            self.ellipsisButton.layoutIfNeeded()
+
+            let isIPadLandscape = self.traitCollection.userInterfaceIdiom == .pad
+            && self.bounds.width > self.bounds.height
+
+            if isIPadLandscape {
+                self.speedDropDown.width = self.ellipsisButton.bounds.width * 1.5
+                self.speedDropDown.bottomOffset = CGPoint(
+                    x: 0,
+                    y: self.ellipsisButton.bounds.height - 10
+                )
+            } else {
+                let contentWidth = max(self.ellipsisButton.bounds.width * 1.5, 80)
+                self.speedDropDown.width = min(contentWidth, self.bounds.width - 40)
+                self.speedDropDown.bottomOffset = CGPoint(
+                    x: 0,
+                    y: self.ellipsisButton.bounds.height + 4
+                )
+            }
+        }
+
+        speedDropDown.selectionAction = { [weak self] (index, _) in
+            guard let self = self else { return }
+            let value = speedList[index]
+            self.onSpeedSelected?(value)   // or delegate / notification
+        }
+
+        updateDropdownColors(for: traitCollection)
+        speedDropDown.reloadAllComponents()
+    }
+
+    func setVolumeSlider() {
+        let cfg = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+
+        popup.backgroundColor = AppColor.background
+        popup.layer.cornerRadius = 12
+        popup.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
+        popup.layer.borderWidth = 1.5
+
+        volumeSlider.transform = CGAffineTransform(rotationAngle: -.pi / 2)
+        volumeSlider.minimumValue = 0
+        volumeSlider.maximumValue = 1
+        volumeSlider.value = 1
+
+        volumeSlider.setThumbImage(UIImage(systemName: "square.fill", withConfiguration: cfg), for: .normal)
+
+        volumeSlider.thumbTintColor = AppColor.menuIcon
+        volumeSlider.maximumTrackTintColor = AppColor.menuIcon.withAlphaComponent(0.5)
+        volumeSlider.minimumTrackTintColor = AppColor.menuIcon.withAlphaComponent(0.5)
+
+        popup.addSubview(volumeSlider)
+        popup.addSubview(volumeLabel)
+
+        systemVolumeView.frame = CGRect(x: -1000, y: -1000, width: 0, height: 0)
+        systemVolumeView.alpha = 0.01   // 거의 보이지 않음
+
+        addSubview(systemVolumeView)
+
+        volumeLabel.textAlignment = .center
+        volumeLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        volumeLabel.textColor = AppColor.textPrimary
+        volumeLabel.text = "100"
+
+        volumeSlider.translatesAutoresizingMaskIntoConstraints = false
+        popup.translatesAutoresizingMaskIntoConstraints = false
+        volumeLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(popup)
+
+        NSLayoutConstraint.activate([
+               popup.widthAnchor.constraint(equalToConstant: 50),
+               popup.heightAnchor.constraint(equalToConstant: 180),
+               popup.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+
+               popup.centerXAnchor.constraint(equalTo: muteButton.centerXAnchor),
+               popup.bottomAnchor.constraint(equalTo: muteButton.topAnchor, constant: -5),
+
+               volumeSlider.centerXAnchor.constraint(equalTo: popup.centerXAnchor),
+               volumeSlider.centerYAnchor.constraint(equalTo: popup.centerYAnchor, constant: -10),
+
+               volumeSlider.heightAnchor.constraint(equalToConstant: 200),
+               volumeSlider.widthAnchor.constraint(equalToConstant: 110),
+
+               volumeLabel.topAnchor.constraint(equalTo: popup.bottomAnchor, constant: -35),
+               volumeLabel.centerXAnchor.constraint(equalTo: popup.centerXAnchor)
+           ])
+
+        popup.isHidden = true
+
+    }
+
+}
+
+#Preview() {
+    MainViewController()
 }

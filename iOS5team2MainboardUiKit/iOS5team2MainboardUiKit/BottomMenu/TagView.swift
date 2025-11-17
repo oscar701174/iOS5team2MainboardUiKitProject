@@ -2,10 +2,10 @@ import UIKit
 import SwiftUI // Preview용(김대현)
 
 // MARK: - 데이터 구조
-//struct Category {
+// struct Category {
 //    let name: String
 //    let iconName: String // 이미지 이름 (Assets에 추가)
-//}
+// }
 
 // MARK: - 셀 클래스
 class CategoryCell: UICollectionViewCell {
@@ -123,14 +123,14 @@ class CategoryViewController: UIViewController, UICollectionViewDelegate, UIColl
     private func setupCustomButton() {
         view.addSubview(customButton)
         customButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             customButton.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -20),
             customButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             customButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             customButton.heightAnchor.constraint(equalToConstant: 50)
         ])
-        
+
         customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
     }
     @objc private func openCustomModal() {
@@ -189,7 +189,7 @@ struct TagView: UIViewControllerRepresentable {
     TagView()
 }
 class CustomSettingViewController: UIViewController {
-    
+
     private let titleLabel: UILabel = {
         let lbl = UILabel()
         lbl.text = "커스텀 아이콘 설정"
@@ -197,7 +197,7 @@ class CustomSettingViewController: UIViewController {
         lbl.textAlignment = .center
         return lbl
     }()
-    
+
     private let colorPicker = UIColorWell()
     private let textField: UITextField = {
         let tf = UITextField()
@@ -205,7 +205,7 @@ class CustomSettingViewController: UIViewController {
         tf.placeholder = "아이콘 텍스트 입력"
         return tf
     }()
-    
+
     private let saveButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("저장하기", for: .normal)
@@ -214,35 +214,35 @@ class CustomSettingViewController: UIViewController {
         btn.layer.cornerRadius = 8
         return btn
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
         setupUI()
     }
-    
+
     private func setupUI() {
         view.addSubview(titleLabel)
         view.addSubview(colorPicker)
         view.addSubview(textField)
         view.addSubview(saveButton)
-        
+
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         colorPicker.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
         saveButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
+
             colorPicker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
             colorPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
+
             textField.topAnchor.constraint(equalTo: colorPicker.bottomAnchor, constant: 30),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-            
+
             saveButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 30),
             saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
             saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),

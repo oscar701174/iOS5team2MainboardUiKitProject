@@ -2,11 +2,13 @@ import Foundation
 import UIKit
 import AVFoundation
 import DropDown
+import MediaPlayer
 
 class MainLayout: UIView {
 
     let start = UILabel()
     let end = UILabel()
+    let volumeLabel = UILabel()
 
     let languageImage = UIImage()
 
@@ -16,7 +18,7 @@ class MainLayout: UIView {
     let forward15sButton = UIButton()
     let playButton = UIButton()
     let rewind15sButton = UIButton()
-    let airPlayButton = UIButton()
+    let muteButton = UIButton()
     let ellipsisButton = UIButton()
     let tagButton = UIButton()
     let clipButton = UIButton()
@@ -28,16 +30,23 @@ class MainLayout: UIView {
     let bottomButtonStackView = UIStackView()
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
 
+    let popup = UIView()
     let bottomBarView = UIView()
     let dropView = UIView()
 
     let progressSlider = UISlider()
+    let volumeSlider = UISlider()
+
+    let systemVolumeView = MPVolumeView()
 
     var bottomToBottomMenu: NSLayoutConstraint!
     var bottomToKeyboard: NSLayoutConstraint!
 
     let searchBar = UISearchBar()
-    let dropdown = DropDown()
+
+    let langauageDropDown = DropDown()
+    let speedDropDown = DropDown()
+
     let itemList = CategoryRepository.allCategories.map(\.name)
 
     var headerDefaultConstriants: [NSLayoutConstraint] = []
@@ -53,7 +62,14 @@ class MainLayout: UIView {
     var bottomMenuDefaultConstrains: [NSLayoutConstraint] = []
     var bottomMenuIPadLandscapeConstraints: [NSLayoutConstraint] = []
 
+    var onSpeedSelected: ((Double) -> Void)?
     var onLanguageSelected: ((String) -> Void)?
+
+    let forward15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+    let rewind15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let muteButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
+    let ellipsisButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -67,11 +83,11 @@ class MainLayout: UIView {
         }
 
         let anchor = languageButton
-        dropdown.width = max(160, anchor.bounds.width)
-        dropdown.direction = .bottom
+        langauageDropDown.width = max(160, anchor.bounds.width)
+        langauageDropDown.direction = .bottom
 
         let cgX = max(0, anchor.bounds.width - max(160, anchor.bounds.width)) + 24
-        dropdown.bottomOffset = CGPoint(x: cgX, y: anchor.bounds.height)
+        langauageDropDown.bottomOffset = CGPoint(x: cgX, y: anchor.bounds.height)
     }
 
 }
