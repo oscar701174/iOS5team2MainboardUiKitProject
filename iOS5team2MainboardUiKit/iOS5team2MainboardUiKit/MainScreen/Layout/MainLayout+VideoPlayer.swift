@@ -119,9 +119,9 @@ extension MainLayout {
     func setVideoButton() {
         let playButtons: [UIButton] = [rewind15sButton, playButton, forward15sButton]
 
-        muteButton.setImage(UIImage(systemName: "speaker",
+        volumeButton.setImage(UIImage(systemName: "speaker",
                                        withConfiguration: muteButtonCFG), for: .normal)
-        muteButton.tintColor = AppColor.menuIcon
+        volumeButton.tintColor = AppColor.menuIcon
 
         forward15sButton.setImage(UIImage(systemName: "10.arrow.trianglehead.clockwise",
                                           withConfiguration: forward15sButtonCFG), for: .normal)
@@ -139,7 +139,7 @@ extension MainLayout {
                                         withConfiguration: ellipsisButtonCFG), for: .normal)
         ellipsisButton.tintColor = AppColor.menuIcon
 
-        addSubview(muteButton)
+        addSubview(volumeButton)
         addSubview(middleButtonStackView)
         addSubview(ellipsisButton)
 
@@ -151,7 +151,7 @@ extension MainLayout {
         playButtons.forEach { btn in
             middleButtonStackView.addArrangedSubview(btn)
         }
-        muteButton.translatesAutoresizingMaskIntoConstraints = false
+        volumeButton.translatesAutoresizingMaskIntoConstraints = false
         middleButtonStackView.translatesAutoresizingMaskIntoConstraints = false
         ellipsisButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -162,8 +162,8 @@ extension MainLayout {
         }
 
         videoButtonDefaultConstraints = [
-            muteButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            muteButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22),
+            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            volumeButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22),
 
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
             middleButtonStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -173,8 +173,8 @@ extension MainLayout {
         ]
 
         videoButtonIPadLandscapeConstraints = [
-            muteButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            muteButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
+            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            volumeButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
 
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 5),
             middleButtonStackView.centerXAnchor.constraint(equalTo: progressSlider.centerXAnchor),
@@ -274,8 +274,8 @@ extension MainLayout {
                popup.heightAnchor.constraint(equalToConstant: 180),
                popup.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
 
-               popup.centerXAnchor.constraint(equalTo: muteButton.centerXAnchor),
-               popup.bottomAnchor.constraint(equalTo: muteButton.topAnchor, constant: -5),
+               popup.centerXAnchor.constraint(equalTo: volumeButton.centerXAnchor),
+               popup.bottomAnchor.constraint(equalTo: volumeButton.topAnchor, constant: -5),
 
                volumeSlider.centerXAnchor.constraint(equalTo: popup.centerXAnchor),
                volumeSlider.centerYAnchor.constraint(equalTo: popup.centerYAnchor, constant: -10),

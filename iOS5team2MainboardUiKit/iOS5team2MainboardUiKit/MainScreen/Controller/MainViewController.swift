@@ -31,12 +31,12 @@ class MainViewController: UIViewController {
         videoList = videoManager.fetch()
 
         videoList.sort { alpha, beta in
-                let aIsSwift = (alpha.tag == "Swift")
-                let bIsSwift = (beta.tag == "Swift")
+            let aIsSwift = (alpha.tag == "Swift")
+            let bIsSwift = (beta.tag == "Swift")
 
-                if aIsSwift != bIsSwift { return aIsSwift }
-                return (alpha.title ?? "") < (beta.title ?? "")
-            }
+            if aIsSwift != bIsSwift { return aIsSwift }
+            return (alpha.title ?? "") < (beta.title ?? "")
+        }
     }
 
     func setupUI() {
@@ -74,7 +74,7 @@ class MainViewController: UIViewController {
         mainView.forward15sButton.addTarget(self, action: #selector(forward15sButtonTapped(_:)), for: .touchUpInside)
         mainView.rewind15sButton.addTarget(self, action: #selector(rewind15sButtonTapped(_:)), for: .touchUpInside)
         mainView.bottomSearchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
-        mainView.muteButton.addTarget(self, action: #selector(volumeButtonClick(_:)), for: .touchUpInside)
+        mainView.volumeButton.addTarget(self, action: #selector(volumeButtonClick(_:)), for: .touchUpInside)
         mainView.volumeSlider.addTarget(self, action: #selector(volumeChanged(_:)), for: .valueChanged)
         mainView.ellipsisButton.addTarget(self, action: #selector(ellipsButtonClick(_:)), for: .touchUpInside)
         mainView.clipButton.addTarget(self, action: #selector(pushMyClipScreen(_:)), for: .touchUpInside)

@@ -70,10 +70,10 @@ extension MainViewController {
     }
 
     @objc func saveClipButtonClick(_ sender: UIButton) {
-    
+
         print("[save] saveClipButtonClick tapped")
         print("[save] self:", self)
-    
+
         guard let video = selectedVideo else {
             print("클립 저장 실패: 선택된 비디오가 없습니다.")
             return

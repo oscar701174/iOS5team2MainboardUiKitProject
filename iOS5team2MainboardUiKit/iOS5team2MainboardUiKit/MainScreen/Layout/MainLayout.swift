@@ -18,7 +18,7 @@ class MainLayout: UIView {
     let forward15sButton = UIButton()
     let playButton = UIButton()
     let rewind15sButton = UIButton()
-    let muteButton = UIButton()
+    let volumeButton = UIButton()
     let ellipsisButton = UIButton()
     let tagButton = UIButton()
     let clipButton = UIButton()
