@@ -163,3 +163,7 @@ extension ClipPlayerViewController {
     }
 
 }
+
+#Preview() {
+    MyVideoListViewController()
+}
