@@ -211,8 +211,12 @@ final class IntroPageViewController: UIPageViewController {
         button.layer.cornerRadius = 12
         button.layer.borderColor = UIColor.systemGray3.cgColor
 
-        button.configurationUpdateHandler = { button in
-            guard let name = button.configuration?.title else { return }
+        button.configurationUpdateHandler = { [weak self] button in
+            guard
+                let self = self,
+                let name = button.configuration?.title
+            else { return }
+
             if self.selectedNames.contains(name) {
                 button.configuration?.background.backgroundColor = .systemBlue
                 button.layer.borderColor = UIColor.systemBlue.cgColor

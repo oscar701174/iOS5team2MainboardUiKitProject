@@ -42,14 +42,12 @@ final class WeightStore {
         ids.sorted { weight(of: $0) > weight(of: $1) }
     }
 
-    // MARK: - Persistence
-
     private static func save() {
         do {
             let data = try JSONEncoder().encode(WeightStore.shared.weights)
             try data.write(to: fileURL(), options: [.atomic])
         } catch {
-            print("⚠️ Weight save failed:", error)
+            print("Weight save failed:", error)
         }
     }
 
@@ -61,7 +59,7 @@ final class WeightStore {
             let data = try Data(contentsOf: url)
             WeightStore.shared.weights = try JSONDecoder().decode([String: Int].self, from: data)
         } catch {
-            print("⚠️ Weight load failed:", error)
+            print("Weight load failed:", error)
         }
     }
 

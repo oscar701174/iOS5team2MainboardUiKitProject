@@ -10,17 +10,12 @@ import UIKit
 class SplashViewController: UIViewController {
 
     let logoImageView: UIImageView = {
-
-         let imageView = UIImageView()
-         imageView.image = UIImage(named: "IconBlack")?.withRenderingMode(.alwaysTemplate)
-         imageView.contentMode = .scaleAspectFit
-         imageView.tintColor = AppColor.menuIcon
-         return imageView
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "IconBlack")?.withRenderingMode(.alwaysTemplate)
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = AppColor.menuIcon
+        return imageView
     }()
-
-    func setLayout() {
-        view.addSubview(logoImageView)
-    }
 
     private func setupLayout() {
         view.addSubview(logoImageView)
@@ -36,24 +31,31 @@ class SplashViewController: UIViewController {
         ])
     }
 
-    private func switchToMainScreen() {
-        let mainVC = MainViewController()
-        mainVC.modalTransitionStyle = .crossDissolve
-        mainVC.modalPresentationStyle = .fullScreen
-        present(mainVC, animated: true)
+    private func switchToNextScreen() {
+        let next: UIViewController
+
+        if IntroPageViewController.shouldShowIntro() {
+            next = IntroPageViewController()
+        } else {
+            next = MainViewController()
+        }
+
+        next.modalTransitionStyle = .crossDissolve
+        next.modalPresentationStyle = .fullScreen
+        present(next, animated: true)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setLayout()
         setupLayout()
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.switchToMainScreen()
+            self.switchToNextScreen()
         }
     }
 }
 
-#Preview() {
+#Preview {
     SplashViewController()
 }
