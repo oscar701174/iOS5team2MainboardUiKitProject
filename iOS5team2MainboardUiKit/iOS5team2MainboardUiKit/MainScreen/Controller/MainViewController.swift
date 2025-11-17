@@ -139,7 +139,6 @@ class MainViewController: UIViewController {
 
         if let player = playerManager.player {
             mainView.playerView.player = player
-            mainView.volumeSlider.value = player.volume
         }
 
         mainView.collectionView.reloadData()
@@ -305,6 +304,7 @@ class MainViewController: UIViewController {
         setupDelegates()
         setupActions()
         setupCallbacks()
+
     }
 
     // MARK: - Layout & Environment Updates
