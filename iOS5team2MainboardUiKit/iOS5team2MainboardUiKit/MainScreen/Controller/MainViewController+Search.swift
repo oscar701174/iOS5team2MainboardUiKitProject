@@ -91,4 +91,9 @@ extension MainViewController: UISearchBarDelegate {
 
         mainView.collectionView.reloadData()
     }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+
 }
