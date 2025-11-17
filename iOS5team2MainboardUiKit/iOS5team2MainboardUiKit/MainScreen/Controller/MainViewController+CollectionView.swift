@@ -51,7 +51,8 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-        let selectedVideo = videoList[indexPath.item]
+        let dataSource = isSearching ? filteredVideos : videoList
+        let selectedVideo = dataSource[indexPath.item]
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
 
         guard let url = videoManager.bundleURL(for: selectedVideo) else {

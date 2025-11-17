@@ -24,6 +24,7 @@ class MainLayout: UIView {
     let clipButton = UIButton()
     let settingButton = UIButton()
     let bottomSearchButton = UIButton()
+    let saveToClipButton = UIButton()
 
     let playerView = PlayerView()
     let middleButtonStackView = UIStackView()
@@ -65,6 +66,7 @@ class MainLayout: UIView {
     var onSpeedSelected: ((Double) -> Void)?
     var onLanguageSelected: ((String) -> Void)?
 
+    let cfg = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
     let forward15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)
     let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
     let rewind15sButtonCFG = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular)

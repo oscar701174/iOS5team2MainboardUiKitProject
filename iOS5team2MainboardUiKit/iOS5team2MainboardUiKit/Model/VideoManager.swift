@@ -86,7 +86,6 @@ class VideoManager {
     }
 }
 
-
 #Preview {
     MainViewController()
 }
