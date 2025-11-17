@@ -33,6 +33,7 @@ class MyVideoListViewController: UIViewController {
             return VideoModel(
                 title: entity.title ?? "",
                 filePath: url,
+                tag: entity.tag ?? "",
                 clips: clipModels
             )
         }
@@ -105,7 +106,9 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
             try FileManager.default.copyItem(at: url, to: destinationURL)
             print("복사 완료:", destinationURL.path)
 
-            self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
+            self.videos.append(
+                VideoModel(title: fileName, filePath: destinationURL, tag: "", clips: [])
+            )
             // MARK: CoreData
             // VideoManager.create requires: title, url, tag, text
             videoManager.create(
@@ -125,7 +128,12 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
                         title: $0.title
                     )
                 } ?? []
-                return VideoModel(title: entity.title ?? "", filePath: resolvedURL, clips: clipModels)
+                return VideoModel(
+                        title: entity.title ?? "",
+                        filePath: resolvedURL,
+                        tag: entity.tag ?? "",
+                        clips: clipModels
+                    )
             }
         } catch {
             print("파일 복사 실패:", error)

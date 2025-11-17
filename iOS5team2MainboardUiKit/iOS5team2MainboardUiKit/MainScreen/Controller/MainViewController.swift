@@ -265,7 +265,7 @@ class MainViewController: UIViewController {
     func prioritizeLanguage(_ language: String) {
         let tags = Array(Set(videoList.compactMap { $0.tag }))
 
-        var orderedTags = WeightStore.shared.sortedIDs(from: tags)
+        var orderedTags = WeightStore.shared.sortedLanguages(from: tags)
 
         if language != "전체" {
             if let idx = orderedTags.firstIndex(of: language) {

@@ -12,5 +12,6 @@ struct VideoModel: Decodable {
     var id: UUID = UUID()
     let title: String
     let filePath: URL
+    let tag: String
     var clips: [ClipModel]? = []
 }
