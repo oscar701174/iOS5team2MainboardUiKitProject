@@ -119,8 +119,8 @@ final class TagViewController: UIViewController {
     private let buttonStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 12
         stack.distribution = .fillEqually
+        stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
@@ -161,18 +161,19 @@ final class TagViewController: UIViewController {
     private func setupBottomViews() {
         view.addSubview(infoLabel)
         view.addSubview(buttonStack)
-
         buttonStack.addArrangedSubview(customButton)
         buttonStack.addArrangedSubview(deleteButton)
 
+        let fixedWidth: CGFloat = 390  // iPhone 14 기준 세로 너비
+
         NSLayoutConstraint.activate([
             infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            infoLabel.widthAnchor.constraint(equalToConstant: fixedWidth),
 
             buttonStack.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -16),
-            buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonStack.widthAnchor.constraint(equalToConstant: fixedWidth),
             buttonStack.heightAnchor.constraint(equalToConstant: 50),
 
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
