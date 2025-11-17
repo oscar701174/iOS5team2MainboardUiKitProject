@@ -186,7 +186,7 @@ extension MainViewController {
     /// 네비게이션 컨트롤러가 있으면 push 방식으로,
     /// 없으면 NavigationController로 감싼 후 present합니다.
     @objc func pushMyClipScreen(_ sender: UIButton) {
-        let viewController = IntroPageViewController()
+        let viewController = MyVideoListViewController()
 
         if let nav = navigationController {
             nav.pushViewController(viewController, animated: true)

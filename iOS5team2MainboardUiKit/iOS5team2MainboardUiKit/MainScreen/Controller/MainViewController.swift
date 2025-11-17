@@ -104,13 +104,6 @@ class MainViewController: UIViewController {
 
         videoList = videoManager.fetch()
 
-        videoList.sort { alpha, beta in
-            let aIsSwift = (alpha.tag == "Swift")
-            let bIsSwift = (beta.tag == "Swift")
-
-            if aIsSwift != bIsSwift { return aIsSwift }
-            return (alpha.title ?? "") < (beta.title ?? "")
-        }
     }
 
     // MARK: - UI Setup
@@ -328,6 +321,7 @@ class MainViewController: UIViewController {
         setupDelegates()
         setupActions()
         setupCallbacks()
+        prioritizeLanguage("전체")
 
     }
 
