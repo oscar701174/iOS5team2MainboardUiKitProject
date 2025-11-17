@@ -68,12 +68,5 @@ struct IntroModel {
             fontColor: .white
         )
     ]
-
-//    static let languages: [String] = [
-//        "Angular", "C", "Django", "Docker", "Java",
-//        "JavaScript", "Kotlin", "Kubernetes", "NoSQL", "PHP",
-//        "Python", "React", "Spring", "Swift", "Vuejs"
-//    ]
-
     static let introSeenKey = "hasSeenIntro"
 }

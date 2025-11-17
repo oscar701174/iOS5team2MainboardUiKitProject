@@ -244,8 +244,15 @@ final class IntroPageViewController: UIPageViewController {
     }
 
     @objc private func startTapped() {
+        let selected = Array(selectedNames)
+        WeightStore.shared.boost(selected, by: 300)
+
         UserDefaults.standard.set(true, forKey: IntroModel.introSeenKey)
-        dismiss(animated: true)
+
+        let main = MainViewController()
+        main.modalTransitionStyle = .crossDissolve
+        main.modalPresentationStyle = .fullScreen
+        present(main, animated: true)
     }
 
     private func makeSpacer() -> UIView {
