@@ -163,14 +163,33 @@ extension ClipPlayerViewController {
 
 // button event
 extension ClipPlayerViewController {
+    // Resolve the Core Data VideoEntity matching the current self.video by comparing URLs.
+    private func resolveVideoEntity() -> VideoEntity? {
+        let manager = VideoManager()
+        let entities = manager.fetch()
+        guard let currentURL = self.video.filePath as URL? else { return nil }
+
+        for entity in entities {
+            // Try bundle URL first (for seed/bundle assets)
+            if let resolved = manager.bundleURL(for: entity), resolved == currentURL {
+                return entity
+            }
+            // Fallback to raw stored url string (for documents/external)
+            if let raw = entity.url, let rawURL = URL(string: raw), rawURL == currentURL {
+                return entity
+            }
+        }
+        return nil
+    }
+
     @objc func addClip(from start: Double, to end: Double) {
         let clip = ClipModel(start: start, end: end, title: nil)
         clips.append(clip)
         // MARK: CoreData
-        if let videoEntity = self.video.entityReference {
+        if let videoEntity = resolveVideoEntity() {
             clipManager.createClip(
                 video: videoEntity,
-                title: clip.memo ?? "",
+                title: clip.title ?? "",
                 startSeconds: clip.start,
                 endSeconds: clip.end
             )
@@ -210,9 +229,11 @@ extension ClipPlayerViewController {
             guard let self else { return }
             self.clips.remove(at: index)
             // MARK: CoreData, Delete from CoreData
-            if let videoEntity = self.video.entityReference,
-               let clipEntity = clipManager.fetchClips(for: videoEntity)[safe: index] {
-                   clipManager.delete(clipEntity)
+            if let videoEntity = self.resolveVideoEntity() {
+                let clipEntities = clipManager.fetchClips(for: videoEntity)
+                guard index < clipEntities.count else { return }
+                let clipEntity = clipEntities[index]
+                clipManager.delete(clipEntity)
             }
         }))
         self.present(alert, animated: true, completion: nil)
@@ -230,7 +251,7 @@ extension ClipPlayerViewController {
         alert.addTextField { textField in
             textField.placeholder = "memo tag 입력(15자 이내)"
             guard  let index = self.clipIndexTouched, let _ = self.clips[index].title else { return }
-            textField.text = self.clips[index].memo
+            textField.text = self.clips[index].title
         }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -240,11 +261,11 @@ extension ClipPlayerViewController {
             let memo = String(text.prefix(15))
             self.clips[index].title = memo
             // MARK: CoreData Update CoreData memo
-            if let videoEntity = self.video.entityReference {
-                let clipEntities = clipManager.fetchClips(for: videoEntity)
+            if let videoEntity = self.resolveVideoEntity() {
+                let clipEntities = self.clipManager.fetchClips(for: videoEntity)
                 if index < clipEntities.count {
                     clipEntities[index].title = memo
-                    try? clipManager.context.save()
+                    self.clipManager.save()
                 }
             }
             self.memoView.text = memo
@@ -265,15 +286,16 @@ extension Double {
     }
 }
 
-extension ScrollTestUIView {
+extension ClipPlayerViewController {
     // Assuming somewhere in init or setup:
     func loadClipsFromCoreData() {
-        if let videoEntity = video.entityReference {
+        if let videoEntity = resolveVideoEntity() {
             self.clips = clipManager.fetchClips(for: videoEntity).map {
-                ClipModel(start: $0.startSeconds, end: $0.endSeconds, memo: $0.title)
+                ClipModel(start: $0.startSeconds, end: $0.endSeconds, title: $0.title)
             }
         } else {
             self.clips = []
         }
     }
 }
+

@@ -18,8 +18,23 @@ class MyVideoListViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupTableView()
         // MARK: CoreData
-        self.videos = videoManager.fetch().map {
-            VideoModel(title: $0.title, filePath: URL(string: $0.filePath)!, clips: $0.clips.map(\.clipData))
+        let fetched = videoManager.fetch()
+        self.videos = fetched.compactMap { entity in
+            // Resolve URL using manager helper (handles bundle or remote)
+            guard let url = videoManager.bundleURL(for: entity) else { return nil }
+            // Map clips relationship (NSSet -> [ClipModel])
+            let clipModels: [ClipModel] = (entity.clips as? Set<ClipEntity>)?.map {
+                ClipModel(
+                    start: $0.startSeconds,
+                    end: $0.endSeconds,
+                    title: $0.title
+                )
+            } ?? []
+            return VideoModel(
+                title: entity.title ?? "",
+                filePath: url,
+                clips: clipModels
+            )
         }
         navigationItem.rightBarButtonItem = UIBarButtonItem (
             barButtonSystemItem: .add,
@@ -55,7 +70,7 @@ extension MyVideoListViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedVideo = videos[indexPath.row]
 //        let playerVC = ClipPlayerViewController(video:selectedVideo)
-        let playerVC = ScrollTestUIView(video: selectedVideo)
+        let playerVC = ClipPlayerViewController(video: selectedVideo)
         navigationController?.pushViewController(playerVC, animated: true)
     }
 }
@@ -92,20 +107,28 @@ extension MyVideoListViewController: UIDocumentPickerDelegate {
 
             self.videos.append(VideoModel(title: fileName, filePath: destinationURL))
             // MARK: CoreData
+            // VideoManager.create requires: title, url, tag, text
             videoManager.create(
                 title: fileName,
-                filePath: destinationURL.absoluteString
+                url: destinationURL.absoluteString,
+                tag: "",
+                text: ""
             )
             // MARK: CoreData
-            self.videos = videoManager.fetch().map {
-                VideoModel(title: $0.title, filePath: URL(string: $0.filePath)!)
+            let fetched = videoManager.fetch()
+            self.videos = fetched.compactMap { entity in
+                guard let resolvedURL = videoManager.bundleURL(for: entity) ?? URL(string: entity.url ?? "") else { return nil }
+                let clipModels: [ClipModel] = (entity.clips as? Set<ClipEntity>)?.map {
+                    ClipModel(
+                        start: $0.startSeconds,
+                        end: $0.endSeconds,
+                        title: $0.title
+                    )
+                } ?? []
+                return VideoModel(title: entity.title ?? "", filePath: resolvedURL, clips: clipModels)
             }
         } catch {
             print("파일 복사 실패:", error)
         }
     }
-}
-
-#Preview {
-    ViewControllerRepresentable()
 }

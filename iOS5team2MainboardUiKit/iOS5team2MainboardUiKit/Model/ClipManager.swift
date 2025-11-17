@@ -103,4 +103,14 @@ class ClipManager {
         context.delete(clip)
         try? context.save()
     }
+
+    /// # Overview
+    /// 외부에서 컨텍스트 저장이 필요할 때 호출할 수 있는 공개 저장 메서드입니다.
+    ///
+    /// # Discussion
+    /// 컨텍스트 자체를 노출하지 않고도 변경사항을 저장할 수 있게 합니다.
+    func save() {
+        try? context.save()
+    }
 }
+
