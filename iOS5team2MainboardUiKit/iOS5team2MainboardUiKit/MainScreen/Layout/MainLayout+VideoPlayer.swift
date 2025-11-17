@@ -18,12 +18,17 @@ extension MainLayout {
 
         addSubview(playerView)
         addSubview(fullScreenButton)
+        addSubview(saveToClipButton)
 
         playerView.translatesAutoresizingMaskIntoConstraints = false
         fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
+        saveToClipButton.translatesAutoresizingMaskIntoConstraints = false
 
         fullScreenButton.setImage(img, for: .normal)
         fullScreenButton.tintColor = .white
+
+        saveToClipButton.setImage(UIImage(systemName: "square.and.arrow.down", withConfiguration: cfg), for: .normal)
+        saveToClipButton.tintColor = .white
 
         topVideoDefaultConstraints = [
             playerView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -34,7 +39,10 @@ extension MainLayout {
             playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 9/16),
 
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
-            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
+            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10),
+
+            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 0),
+            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 0)
         ]
 
         topVideoIPadLandscapeConstraints = [
@@ -44,7 +52,10 @@ extension MainLayout {
             playerView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.6),
 
             fullScreenButton.trailingAnchor.constraint(equalTo: playerView.trailingAnchor, constant: -10),
-            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
+            fullScreenButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10),
+
+            saveToClipButton.leadingAnchor.constraint(equalTo: playerView.leadingAnchor, constant: 0),
+            saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: 0)
         ]
 
         playerView.playerLayer.videoGravity = .resizeAspectFill
@@ -222,7 +233,6 @@ extension MainLayout {
     }
 
     func setVolumeSlider() {
-        let cfg = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
 
         popup.backgroundColor = AppColor.background
         popup.layer.cornerRadius = 12

@@ -22,38 +22,21 @@ class MainViewController: UIViewController {
 
     let videoManager = VideoManager(context: AppDelegate.viewContext)
 
-    override func loadView() {
-        self.view = mainView
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-
+    func setupData() {
         videoManager.seedIfNeeded()
 
         videoList = videoManager.fetch()
 
         videoList.sort { alpha, beta in
-            let aIsSwift = (alpha.tag == "Swift")
-            let bIsSwift = (beta.tag == "Swift")
+                let aIsSwift = (alpha.tag == "Swift")
+                let bIsSwift = (beta.tag == "Swift")
 
-            if aIsSwift != bIsSwift { return aIsSwift }
-            return (alpha.title ?? "") < (beta.title ?? "")
-        }
+                if aIsSwift != bIsSwift { return aIsSwift }
+                return (alpha.title ?? "") < (beta.title ?? "")
+            }
+    }
 
-        mainView.onLanguageSelected = { [weak self] lang in
-            guard let self else { return }
-            self.prioritizeLanguage(lang)
-        }
-
-        bindPlayerCallbacks()
-
-        if let player = playerManager.player {
-               mainView.playerView.player = player
-               mainView.volumeSlider.value = player.volume
-        }
-
+    func setupUI() {
         mainView.setHeader()
         mainView.configureLanguageMenu()
         mainView.setTopVideo()
@@ -65,12 +48,21 @@ class MainViewController: UIViewController {
         mainView.setSeachBar()
         mainView.setVolumeSlider()
 
-        mainView.collectionView.reloadData()
+        if let player = playerManager.player {
+            mainView.playerView.player = player
+            mainView.volumeSlider.value = player.volume
+        }
 
+        mainView.collectionView.reloadData()
+    }
+
+    func setupDelegates() {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
         mainView.searchBar.delegate = self
+    }
 
+    func setupActions() {
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
         mainView.languageButton.addTarget(self, action: #selector(dropdownClick(_:)), for: .touchUpInside)
@@ -88,12 +80,17 @@ class MainViewController: UIViewController {
         mainView.progressSlider.addTarget(self, action: #selector(scrubChanged(_:)), for: .valueChanged)
         mainView.progressSlider.addTarget(self, action: #selector(scrubEnded(_:)), for: .touchUpInside)
 
-        let sliderTapGesture =  UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
-        mainView.progressSlider.addGestureRecognizer(sliderTapGesture)
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(progressSliderTapped(_:)))
+        mainView.progressSlider.addGestureRecognizer(gesture)
+    }
+
+    func setupCallbacks() {
+        mainView.onLanguageSelected = { [weak self] lang in
+            self?.prioritizeLanguage(lang)
+        }
 
         mainView.onSpeedSelected = { [weak self] speed in
-            guard let self else { return }
-            self.playerManager.changeSpeed(to: speed)
+            self?.playerManager.changeSpeed(to: speed)
         }
 
         playerManager.onVolumeChanged = { [weak self] volume in
@@ -101,21 +98,8 @@ class MainViewController: UIViewController {
             self.mainView.volumeSlider.value = volume
             self.mainView.volumeLabel.text = String(Int(volume * 100))
         }
-    }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: { _ in
-            // 회전 후 실제 size 기준으로 iPad 가로/세로 판단
-            self.mainView.updateForIpad(for: self.traitCollection,
-                                        containerSize: size)
-        })
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
+        bindPlayerCallbacks()
     }
 
     func bindPlayerCallbacks() {
@@ -161,6 +145,35 @@ class MainViewController: UIViewController {
         }
 
         mainView.collectionView.reloadData()
+    }
+
+    override func loadView() {
+        self.view = mainView
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupData()
+        setupUI()
+        setupDelegates()
+        setupActions()
+        setupCallbacks()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(alongsideTransition: { _ in
+            // 회전 후 실제 size 기준으로 iPad 가로/세로 판단
+            self.mainView.updateForIpad(for: self.traitCollection,
+                                        containerSize: size)
+        })
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
     }
 
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {

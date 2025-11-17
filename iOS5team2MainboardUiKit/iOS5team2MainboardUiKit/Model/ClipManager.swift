@@ -48,4 +48,3 @@ class ClipManager {
         try? context.save()
     }
 }
-
