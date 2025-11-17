@@ -186,36 +186,36 @@ extension MainViewController {
     /// 네비게이션 컨트롤러가 있으면 push 방식으로,
     /// 없으면 NavigationController로 감싼 후 present합니다.
     @objc func pushMyClipScreen(_ sender: UIButton) {
-        let vc = IntroPageViewController()
+        let viewController = IntroPageViewController()
 
         if let nav = navigationController {
-            nav.pushViewController(vc, animated: true)
+            nav.pushViewController(viewController, animated: true)
         } else {
-            present(UINavigationController(rootViewController: vc), animated: true)
+            present(UINavigationController(rootViewController: viewController), animated: true)
         }
     }
 
     /// # Overview
     /// 태그 화면으로 이동합니다.
     @objc func pushTagScreen(_ sender: UIButton) {
-        let vc = IntroPageViewController()
+        let viewController = CategoryViewController()
 
         if let nav = navigationController {
-            nav.pushViewController(vc, animated: true)
+            nav.pushViewController(viewController, animated: true)
         } else {
-            present(UINavigationController(rootViewController: vc), animated: true)
+            present(UINavigationController(rootViewController: viewController), animated: true)
         }
     }
 
     /// # Overview
     /// 설정 화면으로 이동합니다.
     @objc func pushSettingScreen(_ sender: UIButton) {
-        let vc = SettingViewController()
+        let viewController = SettingViewController()
 
         if let nav = navigationController {
-            nav.pushViewController(vc, animated: true)
+            nav.pushViewController(viewController, animated: true)
         } else {
-            present(UINavigationController(rootViewController: vc), animated: true)
+            present(UINavigationController(rootViewController: viewController), animated: true)
         }
     }
 
