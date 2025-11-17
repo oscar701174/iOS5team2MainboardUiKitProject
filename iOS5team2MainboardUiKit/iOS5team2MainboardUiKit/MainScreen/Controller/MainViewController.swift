@@ -20,15 +20,19 @@ class MainViewController: UIViewController {
     var videoList: [VideoEntity] = []
     var filteredVideos: [VideoEntity] = []
 
+    let videoManager = VideoManager(context: AppDelegate.viewContext)
+
     override func loadView() {
         self.view = mainView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        VideoManager.seedIfNeeded()
 
-        videoList = VideoManager.fetchVideos()
+
+        videoManager.seedIfNeeded()
+
+        videoList = videoManager.fetch()
 
         videoList.sort { alpha, beta in
             let aIsSwift = (alpha.tag == "Swift")

@@ -7,53 +7,45 @@
 
 import CoreData
 
-enum ClipManager {
+class ClipManager {
 
-    static var context: NSManagedObjectContext {
-        AppDelegate.viewContext
+    private let context: NSManagedObjectContext
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
     }
 
-    static func fetchClips(for video: VideoEntity) -> [ClipEntity] {
+    func saveToClip(video: VideoEntity) {
+        let clip = ClipEntity(context: context)
+        clip.video = video
+        try? context.save()
+    }
 
+    func createClip(
+            video: VideoEntity,
+            title: String,
+            startSeconds: Double,
+            endSeconds: Double
+        ) {
+            let clip = ClipEntity(context: context)
+
+            clip.title = title
+            clip.startSeconds = startSeconds
+            clip.endSeconds = endSeconds
+            clip.video = video
+
+            try? context.save()
+    }
+
+    func fetchClips(for video: VideoEntity) -> [ClipEntity] {
         let request: NSFetchRequest<ClipEntity> = ClipEntity.fetchRequest()
-
-        request.predicate = NSPredicate(
-            format: "video == %@", video
-        )
-
-        do {
-            return try context.fetch(request)
-        } catch {
-            print(" ClipEntity 불러오기 실패:", error)
-            return []
-        }
+        request.predicate = NSPredicate(format: "video == %@", video)
+        return (try? context.fetch(request)) ?? []
     }
 
-    static func createClips(title: String, startSeconds: Double, endSeconds: Double ) {
-
-        let clip = ClipEntity(context: context)
-
-        clip.title = title
-        clip.startSeconds = startSeconds
-        clip.endSeconds = endSeconds
-
-        saveClips()
-    }
-
-    static func saveClips() {
-
-        do {
-            return try context.save()
-        } catch {
-            print("저장 실패", error)
-        }
-    }
-
-    static func deleteClips() {
-        let clip = ClipEntity(context: context)
-
+    func delete(_ clip: ClipEntity) {
         context.delete(clip)
-
-        saveClips()
+        try? context.save()
     }
 }
+
