@@ -13,6 +13,8 @@ class VideoCell: UICollectionViewCell {
     let thumbImageView = UIImageView()
     let titleLabel = UILabel()
 
+    let videoManager = VideoManager(context: AppDelegate.viewContext)
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -84,7 +86,7 @@ class VideoCell: UICollectionViewCell {
     func configure(with video: VideoEntity) {
         titleLabel.text = video.title
 
-        guard let url = VideoManager.bundleURLString(for: video) else {
+        guard let url = videoManager.bundleURL(for: video) else {
             return
         }
 

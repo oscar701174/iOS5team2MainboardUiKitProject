@@ -54,7 +54,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         let selectedVideo = videoList[indexPath.item]
         let playButtonCFG = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
 
-        guard let url = VideoManager.bundleURLString(for: selectedVideo) else {
+        guard let url = videoManager.bundleURL(for: selectedVideo) else {
             print("잘못된 URL:", selectedVideo.url ?? "nil")
             return
         }

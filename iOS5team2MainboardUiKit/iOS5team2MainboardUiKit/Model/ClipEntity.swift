@@ -9,5 +9,8 @@ import UIKit
 import CoreData
 
 class ClipEntity: NSManagedObject {
-
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        id = UUID()
+    }
 }
