@@ -1,6 +1,7 @@
 import UIKit
 import SwiftUI
 
+//clip들을 포함하는 container
 class MyScrollableContainer: UIScrollView {
     private var heightConstraint: NSLayoutConstraint?
     private var widthConstraint: NSLayoutConstraint?
@@ -10,6 +11,7 @@ class MyScrollableContainer: UIScrollView {
             updateCHCR()
             updateSizeConstraints()
             setNeedsLayout()
+//            레이아웃 업데이트 요청
         }
     }
     
@@ -47,7 +49,7 @@ extension MyScrollableContainer {
 }
 
 extension MyScrollableContainer {
-    
+    //subview위치 계산 배치
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -57,9 +59,7 @@ extension MyScrollableContainer {
         let clip = views.first ?? UIView()
         let clipWidth = clip.intrinsicContentSize.width + 6
         let clipHeight = clip.intrinsicContentSize.height + 3
-        
         let spacing: CGFloat = 10
-        
         if scrollMode == .horizontal {
             let totalWidth = CGFloat(views.count) * (clipWidth + spacing)
             
@@ -67,9 +67,7 @@ extension MyScrollableContainer {
                 let x = CGFloat(index) * (clipWidth + spacing)
                 content.frame = CGRect(x: x, y: 0, width: clipWidth, height: clipHeight)
             }
-            
             self.contentSize = CGSize(width: totalWidth, height: clipHeight)
-            
         } else { // .vertical
             let totalHeight = CGFloat(views.count) * (clipHeight + spacing)
             
@@ -89,17 +87,16 @@ extension MyScrollableContainer {
             // 세로 스크롤 모드:
             self.setContentCompressionResistancePriority(.required, for: .horizontal)
             self.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-
+            
             // Hugging(늘어나려는 성향)
             self.setContentHuggingPriority(.defaultLow, for: .horizontal)
             self.setContentHuggingPriority(.defaultHigh, for: .vertical)
-
+            
         } else {
             // 가로 스크롤 모드:
-
             self.setContentCompressionResistancePriority(.required, for: .vertical)
             self.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
+            
             // Hugging
             self.setContentHuggingPriority(.defaultLow, for: .vertical)
             self.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -110,20 +107,20 @@ extension MyScrollableContainer {
         // 기존 제약 제거
         heightConstraint?.isActive = false
         widthConstraint?.isActive = false
-
+        
         if scrollMode == .horizontal {
             // 높이를 itemHeight로 고정
             heightConstraint = self.heightAnchor.constraint(equalToConstant: itemHeight)
             heightConstraint?.isActive = true
-
-            // 너비 제약은 주면 안 됨 (scrollView가 가로로 스크롤해야 하므로)
-
+            
+            )
+            
         } else { // vertical
-            // 너비를 itemWidth로 고정
+            
             widthConstraint = self.widthAnchor.constraint(equalToConstant: itemWidth)
             widthConstraint?.isActive = true
-
-            // 높이 제약은 주지 않는다 (세로 스크롤해야 하므로)
+            
+            
         }
     }
 }
