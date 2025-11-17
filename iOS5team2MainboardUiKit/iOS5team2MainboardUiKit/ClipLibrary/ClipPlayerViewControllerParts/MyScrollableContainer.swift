@@ -64,16 +64,16 @@ extension MyScrollableContainer {
             let totalWidth = CGFloat(views.count) * (clipWidth + spacing)
             
             views.enumerated().forEach { index, content in
-                let x = CGFloat(index) * (clipWidth + spacing)
-                content.frame = CGRect(x: x, y: 0, width: clipWidth, height: clipHeight)
+                let xPosition = CGFloat(index) * (clipWidth + spacing)
+                content.frame = CGRect(x: xPosition, y: 0, width: clipWidth, height: clipHeight)
             }
             self.contentSize = CGSize(width: totalWidth, height: clipHeight)
         } else { // .vertical
             let totalHeight = CGFloat(views.count) * (clipHeight + spacing)
             
             views.enumerated().forEach { index, content in
-                let y = CGFloat(index) * (clipHeight + spacing)
-                content.frame = CGRect(x: 0, y: y, width: clipWidth, height: clipHeight)
+                let yPosition = CGFloat(index) * (clipHeight + spacing)
+                content.frame = CGRect(x: 0, y: yPosition, width: clipWidth, height: clipHeight)
             }
             
             self.contentSize = CGSize(width: clipWidth, height: totalHeight)
@@ -113,8 +113,6 @@ extension MyScrollableContainer {
             heightConstraint = self.heightAnchor.constraint(equalToConstant: itemHeight)
             heightConstraint?.isActive = true
             
-            )
-            
         } else { // vertical
             
             widthConstraint = self.widthAnchor.constraint(equalToConstant: itemWidth)
@@ -132,21 +130,21 @@ enum ScrollViewMode {
 
 #Preview {
     let view1: UIView = {
-        let v = UIView()
-        v.backgroundColor = .systemRed
-        return v
+        let redView = UIView()
+        redView.backgroundColor = .systemRed
+        return redView
     }()
     
     let view2: UIView = {
-        let v = UIView()
-        v.backgroundColor = .systemBlue
-        return v
+        let blueView = UIView()
+        blueView.backgroundColor = .systemBlue
+        return blueView
     }()
     
     let view3: UIView = {
-        let v = UIView()
-        v.backgroundColor = .systemGreen
-        return v
+        let greenView = UIView()
+        greenView.backgroundColor = .systemGreen
+        return greenView
     }()
     
     MyScrollableContainer(contents: [view1, view2, view3], scrollMode: .vertical)
