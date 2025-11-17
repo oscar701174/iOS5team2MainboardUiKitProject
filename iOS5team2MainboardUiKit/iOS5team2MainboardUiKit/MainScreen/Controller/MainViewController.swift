@@ -283,6 +283,7 @@ class MainViewController: UIViewController {
 
     override func loadView() {
         self.view = mainView
+        view.backgroundColor = AppColor.background
     }
 
     /// # Overview
