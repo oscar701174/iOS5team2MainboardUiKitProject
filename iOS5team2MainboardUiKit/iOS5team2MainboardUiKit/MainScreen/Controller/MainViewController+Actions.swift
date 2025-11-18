@@ -130,28 +130,36 @@ extension MainViewController {
         mainView.popup.isHidden.toggle()
     }
 
-    // MARK: - Clip Save
+    // MARK: - Video Save (Export)
 
-    /// # Overview
-    /// 현재 선택된 영상을 클립으로 저장합니다.
-    ///
-    /// # Discussion
-    /// 선택된 `VideoEntity`가 존재하는 경우
-    /// ClipManager를 통해 클립 데이터를 CoreData에 저장합니다.
-    ///
-    /// - Note:
-    ///   선택된 영상이 없을 경우 저장이 수행되지 않습니다.
+    /**
+     # Overview
+     현재 재생 중인 영상 파일을 사용자가 선택한 위치(파일 앱 폴더)에 저장(내보내기)하는 기능입니다.
+
+     # Discussion
+     - iOS의 `UIDocumentPickerViewController`의 `.exportToService` 모드를 사용하여
+       사용자가 직접 저장할 폴더를 선택하도록 합니다.
+     - 선택된 폴더에 영상 파일이 복사되며, 이미 동일한 파일명이 있을 경우 iOS가 자동 처리합니다.
+     - CoreData의 클립 저장 기능과는 별도의 **영상 다운로드 기능**입니다.
+
+     # Note
+     - `playingVideoURL`이 반드시 실제 파일 URL이어야 합니다.
+     - DocumentPicker는 버튼 텍스트가 “저장”으로 표시되기 때문에 유저 경험이 자연스럽습니다.
+     */
     @objc func saveClipButtonClick(_ sender: UIButton) {
-        guard let video = selectedVideo else {
-            print("클립 저장 실패: 선택된 비디오가 없습니다.")
+        guard let videoURL = playingVideoURL else {
+            print("저장 실패: 현재 재생 중인 영상 URL 없음")
             return
         }
 
-        clipManager.saveToClip(video: video)
-
-        let clips = clipManager.fetchClips(for: video)
-        print("현재 비디오의 클립 개수:", clips.count)
+        // 영상 저장(Export) 모드로 DocumentPicker 실행
+        let picker = UIDocumentPickerViewController(url: videoURL, in: .exportToService)
+        picker.delegate = self
+        picker.modalPresentationStyle = .formSheet
+        present(picker, animated: true)
     }
+
+
 
     // MARK: - Volume Slider
 
