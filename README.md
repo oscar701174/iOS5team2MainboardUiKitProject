@@ -1,27 +1,30 @@
 <p align="center">
-  <img src="https://private-user-images.githubusercontent.com/235646571/515226174-43646164-82f9-477b-b110-2153a42167ba.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjMzOTEwMjYsIm5iZiI6MTc2MzM5MDcyNiwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MjI2MTc0LTQzNjQ2MTY0LTgyZjktNDc3Yi1iMTEwLTIxNTNhNDIxNjdiYS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxNDQ1MjZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02M2E2OTVkMzZlY2M5NmZiNjY1M2U4ZGE0NzRkYjIyNTA1NGNjMzRiZjdhMTQwNzU4ZjUzNDE1ZTU2MzVhM2NjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.csqVmXrjN7lBXd_b46Q06iXIrO7uH9vk6FNUB9VfY9s" width="100%">
+  <img src="https://private-user-images.githubusercontent.com/235646571/515469622-e1af3085-d829-4835-a64c-021dcd563797.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MzA0NDQsIm5iZiI6MTc2MzQzMDE0NCwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1NDY5NjIyLWUxYWYzMDg1LWQ4MjktNDgzNS1hNjRjLTAyMWRjZDU2Mzc5Ny5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExOFQwMTQyMjRaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mMTExMzUzMTM1YWNlN2I4NGY2NTliYzlmNWU4ZTI2ZmE4MDllNzlkZWM5Y2MyZDhkMWExZWZiNzYyZTg2MmY0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.yTZaHPR3IoMZjj7oBFa1HU2ENE2JDaMGNJk7Xech7K4">
 </p>
 
 <br>
 
-<h1 align="center">앱 이름 미정</h1>
+<h1 align="center">Cling</h1>
 
 <p align="center">
-  <b>강의 영상을 더 효과적으로 시청하고, 필요한 순간을 바로 저장할 수 있는 학습용 영상 플레이어</b>
+  <b>Clip + Learning = Cling</b><br>
+  <b>강의 속 핵심 순간을 빠르게 저장하고 학습 효율을 극대화하는 영상 플레이어</b>
 </p>
 
 <br>
 
 ## 📱 프로젝트 개요 (Overview)
 
-**Mainboard는 강의 영상을 빠르게 탐색하고, 필요한 구간을 ‘클립’으로 저장해 다시 확인할 수 있는 UIKit 기반 영상 플레이어입니다.**  
-언어 선택, 검색, 15초 이동, 전체화면 재생 등 강의 시청에 필요한 다양한 기능을 제공하며,  
-중요한 학습 구간을 손쉽게 저장하고 관리할 수 있도록 설계되었습니다.
+**Cling은 강의 영상을 학습 목적에 맞게 더 효과적으로 탐색하고, 필요한 구간을 ‘클립(Clip)’으로 저장해 복습할 수 있도록 설계된 UIKit 기반 영상 플레이어입니다.**  
+언어 선택, 검색, 15초 이동, 전체화면 등 강의 시청에 필요한 기능은 물론,  
+중요한 학습 포인트를 클립 단위로 저장하고 기록해 두는 데 최적화되어 있습니다.
 
-> **"학습에 필요한 순간을 놓치지 않고 저장하는 플레이어."**
+> **"Clip the moment, Learn with Cling."**  
+> **필요한 순간을 붙잡아(Cling) 학습으로 연결하는 플레이어.**
 
-Mainboard는 사용자가 강의 영상을 더 효과적으로 보고,  
-원하는 부분을 빠르게 찾아 다시 볼 수 있도록 돕는 앱입니다.
+Cling은 사용자가 강의 영상에서 원하는 부분을 즉시 찾고,  
+그 순간을 놓치지 않도록 저장하여 학습 효율을 높이는 데 집중합니다.
+
 
 
 ---
@@ -56,17 +59,16 @@ Mainboard는 사용자가 강의 영상을 더 효과적으로 보고,
 
 ```
 iOS5team2MainboardUiKitProject
-├── Archive/
-│   ├── SettingViewController.swift
-│   └── TagView.swift
-│
 ├── BottomMenu/
 │   ├── SettingViewController.swift
-│   └── TagView.swift
+│   └── TagViewController.swift
 │
 ├── ClipLibrary/
-│   ├── ClipPlayerViewController.swift
-│   └── MyVideoListViewController.swift
+│   └── ClipPlayerViewControllerParts/
+│       ├── MyScrollableContainer.swift
+│       ├── ClipPlayerViewController.swift
+│       ├── ClipPlayerViewControllerExtension.swift
+│       └── MyVideoListViewController.swift
 │
 ├── ClipPlayer/
 │   ├── ClipPlayer.swift
@@ -88,6 +90,7 @@ iOS5team2MainboardUiKitProject
 │   │   ├── MainViewController.swift
 │   │   ├── MainViewController+Actions.swift
 │   │   ├── MainViewController+CollectionView.swift
+│   │   ├── MainViewController+SaveVideo.swift
 │   │   └── MainViewController+Search.swift
 │   │
 │   ├── Layout/
@@ -106,40 +109,62 @@ iOS5team2MainboardUiKitProject
 │       └── VideoCell.swift
 │
 ├── Model/
-│   ├── ClipEntity.swift
-│   ├── ClipManager.swift
-│   ├── VideoEntity.swift
-│   ├── VideoManager.swift
-│   └── WeightStore.swift
+│   ├── Entities/
+│   │   ├── VideoEntity.swift
+│   │   └── ClipEntity.swift
+│   │
+│   └── Managers/
+│       ├── VideoManager.swift
+│       ├── ClipManager.swift
+│       └── WeightStore.swift
 │
 └── SplashScreen/
     └── SplashViewController.swift
 ```
 
 
+
 ## 🖥️ 화면 소개 (Screen Preview)
 
-<table>
-  <tr>
-    <th align="center">메인 화면</th>
-    <th align="center">클립 화면</th>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="https://private-user-images.githubusercontent.com/235646571/515219501-350bdafa-36ca-4995-9034-57a86c8b8eb4.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjMzOTA3MDUsIm5iZiI6MTc2MzM5MDQwNSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MjE5NTAxLTM1MGJkYWZhLTM2Y2EtNDk5NS05MDM0LTU3YTg2YzhiOGViNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxNDQwMDVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0xODYzNmVhNzk0MjM4MWIwNzkxYTQ3MmQ5N2Q5ODVjMDMzYzczMTIyNTZkOWFmNmNhZTI2NWRmMzUzOGM5OWZlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.bOcoL5dWF6uPnsTjDsI_RJKHyUuwhTxRjYpUuGDIaZs" width="250">
-    </td>
-    <td align="center">
-      <img src="https://private-user-images.githubusercontent.com/235646571/515219501-350bdafa-36ca-4995-9034-57a86c8b8eb4.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjMzOTA3MDUsIm5iZiI6MTc2MzM5MDQwNSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MjE5NTAxLTM1MGJkYWZhLTM2Y2EtNDk5NS05MDM0LTU3YTg2YzhiOGViNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxNDQwMDVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0xODYzNmVhNzk0MjM4MWIwNzkxYTQ3MmQ5N2Q5ODVjMDMzYzczMTIyNTZkOWFmNmNhZTI2NWRmMzUzOGM5OWZlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.bOcoL5dWF6uPnsTjDsI_RJKHyUuwhTxRjYpUuGDIaZs" width="250">
-    </td>
-  </tr>
-  <tr>
-    <td align="center">영상 목록 · 언어 선택 · 검색 기능</td>
-    <td align="center">클립 저장 · 재생 · 메모 작성</td>
-  </tr>
-</table>
+<div style="display: flex; gap: 20px; overflow-x: auto; padding: 10px 0;">
 
+  <div style="text-align:center; min-width: 260px;">
+    <p><b>관심분야 설정 화면</b></p>
+    <img 
+      src="https://private-user-images.githubusercontent.com/235646571/515335947-eee4ee6f-8bf1-4531-a046-3c9d5cd5bee4.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU2MTEsIm5iZiI6MTc2MzQwNTMxMSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM1OTQ3LWVlZTRlZTZmLThiZjEtNDUzMS1hMDQ2LTNjOWQ1Y2Q1YmVlNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ4MzFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hMDhjZjVhMjAwNmRmZjJmY2ZlM2YyMWI1MmZlNTgwNDE2ZmI0NzZiMzViYjJhYTBjNThiODYzYmE0NWQxZTYyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.-di4mlQWs3I4SGQ4HFXTcdsJ7uX2Wux4sgmOs7llmbM"
+      style="max-height: 500px; width: auto; border-radius: 10px;">
+  </div>
 
+  <div style="text-align:center; min-width: 260px;">
+    <p><b>메인 화면</b></p>
+    <img 
+      src="https://private-user-images.githubusercontent.com/235646571/515337886-5b4243c5-d1d9-4783-aeac-8aeb86c9030e.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU1NzgsIm5iZiI6MTc2MzQwNTI3OCwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM3ODg2LTViNDI0M2M1LWQxZDktNDc4My1hZWFjLThhZWI4NmM5MDMwZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ3NThaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03NWIwYzVlZmE0MjBiNTRlMzU2ZThhM2Y4ZDE0MjRlMTBmYzE1OGQ2NTg5MjU0YTQ0ZmFhYzk1ZTg3Mzc2YjM5JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.dVMzRXFS-izSOesvjbAdU5I_fbDhVg1H9wBoWLf0ifc"
+      style="max-height: 500px; width: auto; border-radius: 10px;">
+  </div>
 
+  <div style="text-align:center; min-width: 260px;">
+    <p><b>클립 화면</b></p>
+    <img 
+      src="https://private-user-images.githubusercontent.com/235646571/515336563-12feb68b-d717-443b-9dde-607e48221ada.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU1NTksIm5iZiI6MTc2MzQwNTI1OSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM2NTYzLTEyZmViNjhiLWQ3MTctNDQzYi05ZGRlLTYwN2U0ODIyMWFkYS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ3MzlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lMTA2NjY3NTcxZjE4MThiYWQ3MDBlNGZjYmRlMmVkZWY3M2NhYjYwMjJjNWFmZjk3NzBjNjEyNWExMGVlNGQ0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.eoVrsFmcKooa_YubU6por3uq_eTSK-SWaKCunWN5n_8"
+      style="max-height: 500px; width: auto; border-radius: 10px;">
+  </div>
+
+  <div style="text-align:center; min-width: 260px;">
+    <p><b>커스텀 태그 추가 화면</b></p>
+  <img 
+      src="https://private-user-images.githubusercontent.com/235646571/515383141-f046f261-1117-4810-8554-f58ac29761c2.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MTI0MzYsIm5iZiI6MTc2MzQxMjEzNiwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzgzMTQxLWYwNDZmMjYxLTExMTctNDgxMC04NTU0LWY1OGFjMjk3NjFjMi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QyMDQyMTZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1iYmJhMzgyYmZhNmRhZTVmMzUwYmUyMzc3ODdjOWEyYmNjNTI5MjFmOWM5MTU1Zjg1NmM4ZjQwMjAwOGJkMmY1JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.k2a7QbNHtmC2Ua1GuJGMdH4SQBfB2MERMNTfDOLX3Lo"
+      style="max-height: 500px; width: auto; border-radius: 10px;">
+
+  </div>
+
+  <div style="text-align:center; min-width: 260px;">
+    <p><b>설정 화면</b></p>
+  <img 
+      src="https://private-user-images.githubusercontent.com/235646571/515349094-216e8412-b478-4fdc-9937-47e584bac738.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDY1ODUsIm5iZiI6MTc2MzQwNjI4NSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzQ5MDk0LTIxNmU4NDEyLWI0NzgtNGZkYy05OTM3LTQ3ZTU4NGJhYzczOC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxOTA0NDVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yNzhiOTY1MjdiOWVkNTMwMDNlNmY1M2NjNzcxN2Q5MTdiYzMyYjk5ZTAxNjM5NzhjZmE4N2IwNDAwYjljMWJhJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fIvA7RkYcAGg0SEvjRji5GYV_eoJFystYXZztU3Nbc4"
+      style="max-height: 500px; width: auto; border-radius: 10px;">
+
+  </div>
+</div>
 
 ---
 
@@ -174,4 +199,4 @@ iOS5team2MainboardUiKitProject
 | <img width="200" height="200" alt="image" src="https://avatars.githubusercontent.com/u/235646788?v=4" alt="김대현" /> | <img width="200" height="200" alt="image" src="https://avatars.githubusercontent.com/u/235645278?v=4" alt="김태윤" /> | <img width="200" height="200" alt="image" src="https://avatars.githubusercontent.com/u/235646562?v=4" alt="김찬영"/> | <img width="200" height="200" alt="image" src="https://avatars.githubusercontent.com/u/235646533?v=4" alt="여승위"/> | <img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/e2bfd524-b4ed-4ecf-9656-7e133cad6f6f" alt="천용휘" /> |
 | **iOS** | **iOS** | **iOS** | **iOS** | **iOS** |
 | **[김대현](https://github.com/Lala-roid)**<br> | **[김태윤](https://github.com/oscar701174)**<br> | **[김찬영](https://github.com/cymoseskim)**<br> | **[여승위](https://github.com/yeobare-blip)**<br> | **[천용휘](https://github.com/CheonYH)**<br> |
-|  | |  |  |   |
+| 개발 / 기획 | 개발 / 기획 | 개발 / 회의록 작성 | 개발 / 디자인 | 개발 / 데이터 관리 |
