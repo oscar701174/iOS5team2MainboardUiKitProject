@@ -60,7 +60,9 @@ Cling은 사용자가 강의 영상에서 원하는 부분을 즉시 찾고,
 ```
 iOS5team2MainboardUiKitProject
 ├── BottomMenu/
+│   ├── CustomTagModel.swift
 │   ├── SettingViewController.swift
+│   ├── TagIconViewController.swift
 │   └── TagViewController.swift
 │
 ├── ClipLibrary/
