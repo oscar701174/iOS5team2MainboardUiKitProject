@@ -92,6 +92,7 @@ extension MainLayout {
     func updateLanguageMenuItems() {
             let defaultCategories = CategoryRepository.allCategories.map(\.name)
             let customCategories = CustomTagStore.shared.load().map(\.name)
+            itemList = defaultCategories + customCategories
             langauageDropDown.dataSource = ["전체"] + defaultCategories + customCategories
             langauageDropDown.reloadAllComponents()
         }
@@ -157,7 +158,8 @@ extension MainLayout {
         // MARK: DropDown 선택 동작
         langauageDropDown.selectionAction = { [weak self] (index, item) in
             guard let self else { return }
-            
+
+            // index 0 = "전체"
             if index == 0 {
                 self.languageButton.setTitle("전체", for: .normal)
                 self.languageButton.setImage(
@@ -170,31 +172,34 @@ extension MainLayout {
                 self.onLanguageSelected?("전체")
                 return
             }
-            
+
+            // 실제 카테고리 index는 -1 보정
+            let actualIndex = index - 1
+            let allDefaults = CategoryRepository.allCategories.map(\.name)
+            let customTags = CustomTagStore.shared.load()
+
             self.languageButton.setTitle(item, for: .normal)
-            
-            // 시스템 태그 선택
-            if index <= systemTags.count {
-                let actualIndex = index - 1
-                let categoryName = systemTags[actualIndex]
-                
+            self.onLanguageSelected?(item)
+
+            if actualIndex < allDefaults.count {
+                // 기본 카테고리 → 아이콘만 설정
+                let categoryName = allDefaults[actualIndex]
                 if let category = CategoryRepository.allCategories.first(where: { $0.name == categoryName }) {
                     let icon = UIImage(named: category.iconName)?
                         .resized(to: .init(width: 34, height: 34))
                     self.languageButton.setImage(icon, for: .normal)
                     self.languageButton.tintColor = AppColor.menuIcon
-                } else {
-                    self.languageButton.setImage(nil, for: .normal)
                 }
-                
             } else {
-                // 사용자 태그 선택
-                let customIndex = index - 1 - systemTags.count
-                let custom = customTags[customIndex]
-                let icon = UIImage(systemName: custom.iconName)?
-                    .resized(to: .init(width: 34, height: 34))
-                self.languageButton.setImage(icon, for: .normal)
-                self.languageButton.tintColor = UIColor(hex: custom.colorHex)
+                // 사용자 태그 → SF Symbol + 색상
+                let customIndex = actualIndex - allDefaults.count
+                if customIndex < customTags.count {
+                    let tag = customTags[customIndex]
+                    let icon = UIImage(systemName: tag.iconName)?
+                        .resized(to: .init(width: 34, height: 34))
+                    self.languageButton.setImage(icon, for: .normal)
+                    self.languageButton.tintColor = tag.color
+                }
             }
             
             self.onLanguageSelected?(item)

@@ -152,16 +152,16 @@ final class TagViewController: UIViewController {
         let modal = TagIconPickerViewController { [weak self] name, iconName, color in
             guard let self else { return }
 
-            let newItem = CustomIconCategory(
-                name: name,
-                iconName: iconName,
-                color: color,
-                isCustom: true
-            )
+            let newItem = CustomIconCategory(name: name, iconName: iconName, color: color, isCustom: true)
 
-            CustomTagStore.shared.add(newItem)   // 저장
+            CustomTagStore.shared.add(newItem)
             self.customCategories = CustomTagStore.shared.load()
             self.collectionView.reloadData()
+            
+            if let nav = self.navigationController?.viewControllers.first(where: { $0 is MainViewController }),
+               let vc = nav as? MainViewController {
+                vc.mainView.updateLanguageMenuItems()
+            }
         }
 
         modal.modalPresentationStyle = .pageSheet

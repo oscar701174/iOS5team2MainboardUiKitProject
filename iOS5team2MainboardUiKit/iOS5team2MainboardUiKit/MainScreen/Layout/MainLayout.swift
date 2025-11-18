@@ -129,7 +129,7 @@ class MainLayout: UIView {
     let speedDropDown = DropDown()
 
     // MARK: - Data
-    let itemList = CategoryRepository.allCategories.map(\.name)
+    var itemList = CategoryRepository.allCategories.map(\.name)
 
     // MARK: - Constraint Groups
     /// iPad 대응을 위해 레이아웃 그룹을 분리 관리합니다.
