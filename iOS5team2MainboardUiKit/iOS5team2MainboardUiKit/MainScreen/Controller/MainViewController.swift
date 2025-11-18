@@ -17,10 +17,8 @@ import CoreData
 /// 실제 영상 재생 동작은 `VideoPlayerManager`에 위임합니다.
 ///
 /// 즉,
-/// - **MainViewController → UI·상태·이벤트 관리**
-/// - **VideoPlayerManager → 영상 재생 로직 관리**
-///
-/// 역할이 분리되어 있어 유지보수와 확장이 용이한 구조입니다.
+/// - MainViewController → UI·상태·이벤트 관리
+/// - VideoPlayerManager → 영상 재생 로직 관리
 ///
 /// 또한, 언어 태그 정렬, 영상 목록 갱신, 슬라이더 이동 등
 /// 화면과 데이터 사이의 연결을 담당하는 허브 역할을 합니다.
@@ -31,24 +29,23 @@ import CoreData
 class MainViewController: UIViewController {
 
     // MARK: - State Flags
-    // 화면 상태 관리에 필요한 다양한 플래그들입니다.
 
-    /// 검색 UI(SearchBar)의 활성화 여부입니다.
+    /// 검색 UI(SearchBar) 표시/숨김 상태를 관리합니다.
     var isSearchButtonActive = true
 
-    /// AVPlayer의 시간 진행 상태를 관찰하기 위한 객체입니다.
+    /// AVPlayer의 주기적 시간 업데이트 옵저버 토큰입니다.
     var timeObserver: Any?
 
-    /// 영상이 끝까지 재생되었는지 여부입니다.
+    /// 현재 아이템이 끝까지 재생되었는지 여부입니다.
     var didReachEnd = false
 
-    /// 사용자가 슬라이더를 조작 중인지 여부입니다.
+    /// 사용자가 진행 슬라이더를 조작 중인지 여부입니다.
     var isScrubbing = false
 
-    /// 슬라이더 조작 시작 직전 영상이 재생 중이었는지 저장합니다.
+    /// 슬라이더 조작 시작 직전 재생 상태를 저장합니다.
     var wasPlayingBeforeScrub = false
 
-    /// 전체화면 진입 직전 영상 재생 여부를 기록합니다.
+    /// 전체화면 진입 직전 재생 상태를 저장합니다.
     var wasPlayingBeforeFullScreen = false
 
     /// 검색 모드 활성화 여부입니다.
@@ -57,61 +54,70 @@ class MainViewController: UIViewController {
     /// 현재 재생 중인 영상의 URL입니다.
     var playingVideoURL: URL?
 
-    /// 선택된 영상 엔티티입니다.
-    /// 클립 저장 등 후속 작업에 필요합니다.
+    /// 현재 선택된 영상 엔티티입니다. (클립 저장 등에 사용)
     var selectedVideo: VideoEntity?
 
     // MARK: - View & Managers
 
-    /// 화면 UI 전체를 담고 있는 MainLayout 인스턴스입니다.
+    /// 메인 화면 전체 UI를 담당하는 레이아웃 뷰
     let mainView = MainLayout()
 
-    /// AVPlayer 관련 기능(재생, 일시정지, 배속, 전체화면 등)을 담당하는 매니저입니다.
+    /// AVPlayer 제어(재생/일시정지/배속/전체화면 등)를 담당하는 매니저
     let playerManager = VideoPlayerManager()
 
-    /// CoreData에서 불러온 전체 영상 목록입니다.
+    /// CoreData에서 불러온 전체 영상 목록
     var videoList: [VideoEntity] = []
 
-    /// 검색 결과를 담는 배열입니다.
+    /// 검색 결과 목록(필요 시 사용)
     var filteredVideos: [VideoEntity] = []
 
-    /// CoreData 기반 영상 데이터를 관리하는 매니저입니다.
+    /// CoreData 영상 CRUD 매니저
     let videoManager = VideoManager()
 
-    /// 사용자가 저장한 클립 데이터를 관리하는 매니저입니다.
+    /// CoreData 클립 CRUD 매니저
     let clipManager = ClipManager()
-
 
     // MARK: - Data Setup
 
     /// # Overview
-    /// CoreData에서 영상 목록을 불러오고 초기 데이터를 준비합니다.
+    /// CoreData에서 영상 목록을 불러오고, 메인 화면에서 사용할 데이터로 정제합니다.
     ///
     /// # Discussion
-    /// - 앱 첫 실행 시 기본 영상 데이터를 자동으로 생성합니다.
-    /// - 저장된 데이터를 불러와 `videoList`에 저장합니다.
+    /// - 앱 최초 실행 시 seed 데이터를 주입합니다.
+    /// - Main 화면에서는 "로컬(사용자 문서 파일)"로 추가된 항목(file://)은 제외합니다.
     ///
-    /// 이 함수는 화면이 로드될 때 가장 먼저 호출됩니다.
+    /// - Note:
+    ///   사용자가 파일로 추가한 로컬 영상은 별도의 “내 클립/내 영상” 화면에서 관리하도록 하고,
+    ///   메인 화면은 샘플/원격/번들 기반 목록만 보여주도록 설계했습니다.
     func setupData() {
         videoManager.seedIfNeeded()
-        videoList = videoManager.fetch()
+        var fetched = videoManager.fetch()
 
+        // 메인 화면에서는 "로컬(사용자 문서 파일)"로 추가된 항목을 제외한다.
+        // 기준: url이 "file://" 로 시작하면 로컬로 간주.
+        fetched.removeAll { entity in
+            guard let urlString = entity.url else { return false }
+            return urlString.lowercased().hasPrefix("file://")
+        }
+
+        videoList = fetched
     }
-
 
     // MARK: - UI Setup
 
     /// # Overview
-    /// 메인 화면을 구성하는 모든 UI 요소를 초기화합니다.
+    /// 메인 화면의 모든 UI 요소를 초기화하고 배치합니다.
     ///
     /// # Discussion
-    /// - 헤더 구성
-    /// - 언어/배속 드롭다운
-    /// - 영상 리스트(CollectionView) 설정
-    /// - 플레이어 뷰, 슬라이더, 버튼 구성
-    /// - 볼륨 UI 연결
+    /// - 헤더(언어 버튼/검색 버튼)
+    /// - 플레이어 뷰 및 컨트롤(슬라이더/버튼)
+    /// - 배속 드롭다운, 언어 드롭다운
+    /// - 영상 리스트(CollectionView)
+    /// - 하단 메뉴 바
+    /// - 볼륨 UI
     ///
-    /// MainLayout이 제공하는 여러 구성 함수를 호출해 전체 화면을 완성합니다.
+    /// - Note:
+    ///   `MainLayout`의 구성 메서드를 호출하여 화면을 완성합니다.
     func setupUI() {
         mainView.setHeader()
         mainView.configureLanguageMenu()
@@ -131,34 +137,26 @@ class MainViewController: UIViewController {
         mainView.collectionView.reloadData()
     }
 
-
     // MARK: - Delegates
 
     /// # Overview
-    /// UICollectionView 및 UISearchBar의 delegate를 구성합니다.
-    ///
-    /// # Discussion
-    /// 영상 리스트 표시, 셀 선택, 검색어 입력 등에 대한 처리를 위해 필요합니다.
+    /// UICollectionView 및 UISearchBar의 delegate/dataSource를 연결합니다.
     func setupDelegates() {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
         mainView.searchBar.delegate = self
     }
 
-
     // MARK: - Actions
 
     /// # Overview
-    /// 화면의 모든 버튼·슬라이더 등 UI 이벤트를 기능 함수와 연결합니다.
+    /// UI 컨트롤들(버튼/슬라이더)의 Target-Action을 등록합니다.
     ///
     /// # Discussion
-    /// Target-Action 패턴을 통해
-    /// “사용자 입력 → 실제 동작 실행” 과정이 연결됩니다.
-    ///
-    /// 예:
-    /// - 재생 버튼 탭 → `playButtonTapped` 실행
-    /// - 전체화면 버튼 탭 → `goFullScreen` 실행
-    /// - 슬라이더 조작 → 영상 위치 변경
+    /// - 검색 버튼 → 검색바 토글
+    /// - 재생/일시정지/앞뒤로 이동/전체화면 → 플레이어 제어
+    /// - 슬라이더 조작 → 현재 재생 위치 이동
+    /// - 언어 버튼 → 드롭다운 표시
     func setupActions() {
         mainView.searchButton.addTarget(self, action: #selector(searchButtonTapped(_:)), for: .touchUpInside)
         mainView.playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
@@ -183,18 +181,15 @@ class MainViewController: UIViewController {
         mainView.progressSlider.addGestureRecognizer(gesture)
     }
 
-
     // MARK: - Callbacks
 
     /// # Overview
-    /// DropDown 메뉴와 PlayerManager의 콜백을 화면(UI)과 연결합니다.
+    /// MainLayout과 VideoPlayerManager의 콜백을 바인딩합니다.
     ///
     /// # Discussion
-    /// - 언어 변경 → 영상 리스트 재정렬
-    /// - 배속 변경 → Player 속도 조정
-    /// - 볼륨 변경 → UI 표시값 갱신
-    ///
-    /// 플레이어의 진행률, 상태 변화 등도 UI에 즉시 반영되도록 설정합니다.
+    /// - 언어 선택 콜백 → 리스트 정렬(prioritizeLanguage)
+    /// - 배속 선택 콜백 → 플레이어 속도 변경
+    /// - 볼륨 변경 콜백 → 볼륨 UI 동기화
     func setupCallbacks() {
 
         mainView.onLanguageSelected = { [weak self] lang in
@@ -215,13 +210,13 @@ class MainViewController: UIViewController {
     }
 
     /// # Overview
-    /// PlayerManager가 전달하는 영상품질·위치·상태 변화를 UI에 업데이트합니다.
+    /// 플레이어 진행률/길이/상태 변화 콜백을 UI에 반영합니다.
     ///
     /// # Discussion
-    /// - 재생 종료 → 다음 행동 처리
-    /// - 영상 진행률 변경 → 슬라이더 업데이트
-    /// - 영상 길이 로드 완료 → 총 재생 시간 표시
-    /// - 재생/일시정지 상태 → 버튼 아이콘 변경
+    /// - onPlayEnded: 재생 종료 처리
+    /// - onProgressChanged: 슬라이더/현재시간 갱신
+    /// - onDurationLoaded: 총 길이 표시
+    /// - onPlayStateChanged: 재생/일시정지 아이콘 변경 및 가중치 업데이트
     func bindPlayerCallbacks() {
 
         playerManager.onPlayEnded = { [weak self] in
@@ -257,14 +252,14 @@ class MainViewController: UIViewController {
     // MARK: - Video Sorting
 
     /// # Overview
-    /// 선택한 언어 태그를 기준으로 영상 목록을 다시 정렬합니다.
-    ///
-    /// # Discussion
-    /// - 사용자가 클릭한 언어 태그를 목록 최상단으로 배치합니다.
-    /// - `WeightStore`를 활용하여 “선호도 높은 태그”가 더 앞에 오도록 합니다.
+    /// 선택한 언어를 우선순위로 두고 영상 리스트를 정렬합니다.
     ///
     /// # Parameters
-    /// - language: 사용자가 선택한 언어 태그입니다.
+    /// - language: 선택된 언어(또는 "전체")
+    ///
+    /// # Discussion
+    /// 사용자 선호도 가중치(WeightStore)를 반영하여 태그 우선순위를 계산하고,
+    /// 동일 우선순위일 경우 제목 알파벳 순으로 정렬합니다.
     func prioritizeLanguage(_ language: String) {
         let tags = Array(Set(videoList.compactMap { $0.tag }))
 
@@ -289,25 +284,20 @@ class MainViewController: UIViewController {
         mainView.collectionView.reloadData()
     }
 
-
     // MARK: - Life Cycle
 
+    /// # Overview
+    /// view를 MainLayout으로 교체하고 기본 배경색을 설정합니다.
     override func loadView() {
         self.view = mainView
         view.backgroundColor = AppColor.background
     }
 
     /// # Overview
-    /// 화면 로드 시 필요한 모든 초기 작업을 실행합니다.
+    /// 초기 데이터/UI/이벤트/콜백을 설정하고 기본 정렬을 적용합니다.
     ///
     /// # Discussion
-    /// 이 시점에 다음을 모두 처리합니다:
-    /// - 데이터 불러오기
-    /// - UI 구성
-    /// - delegate 연결
-    /// - 이벤트 연결
-    /// - 콜백 설정
-    /// - 기본 언어 정렬 적용
+    /// - customTagsDidUpdate 노티를 구독하여 언어 드롭다운을 즉시 갱신합니다.
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -317,21 +307,32 @@ class MainViewController: UIViewController {
         setupActions()
         setupCallbacks()
         prioritizeLanguage("전체")
+
         NotificationCenter.default.addObserver(
-                forName: .customTagsDidUpdate,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                self?.mainView.updateLanguageMenuItems()
-            }
-
+            forName: .customTagsDidUpdate,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            // 열려있을 수 있는 드롭다운을 우선 닫고
+            self.mainView.langauageDropDown.hide()
+            // 드롭다운 데이터소스 갱신 + 즉시 리로드 보장
+            self.mainView.updateLanguageMenuItems()
+            self.mainView.langauageDropDown.reloadAllComponents()
+            self.mainView.languageButton.layoutIfNeeded()
+            // 필요 시 정렬 재적용
+            self.prioritizeLanguage("전체")
+        }
     }
-
 
     // MARK: - Layout & Environment
 
     /// # Overview
-    /// 화면 회전 또는 크기 변경 시 레이아웃을 갱신합니다.
+    /// 화면 회전/크기 변경 시 iPad 전용 레이아웃 전환을 트리거합니다.
+    ///
+    /// - Parameters:
+    ///   - size: 변경될 크기
+    ///   - coordinator: 전환 애니메이션 코디네이터
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -340,6 +341,8 @@ class MainViewController: UIViewController {
         })
     }
 
+    /// # Overview
+    /// 서브뷰 레이아웃 완료 후 iPad 레이아웃을 재평가합니다.
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
@@ -347,7 +350,10 @@ class MainViewController: UIViewController {
     
 
     /// # Overview
-    /// 라이트/다크모드 등 환경 변화에 따라 UI 표시를 업데이트합니다.
+    /// 라이트/다크모드 등 환경 변화에 따라 DropDown/버튼/푸터 색상을 갱신합니다.
+    ///
+    /// - Parameters:
+    ///   - previous: 이전 traitCollection
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
@@ -359,14 +365,11 @@ class MainViewController: UIViewController {
     }
 
     /// # Overview
-    /// 기기 종류(iPhone / iPad)에 따라 지원하는 화면 회전 방향을 결정합니다.
+    /// 지원하는 화면 회전 방향을 기기 종류에 따라 다르게 지정합니다.
     ///
     /// # Discussion
-    /// - iPhone: 세로 방향(Portrait)만 허용
+    /// - iPhone: 세로(Portrait)만 허용
     /// - iPad: 모든 방향(.all) 허용
-    ///
-    /// 해당 속성은 ViewController가 어떤 방향으로 회전할 수 있는지
-    /// 시스템에게 알려주는 역할을 합니다.
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .portrait       // iPhone은 세로 고정
@@ -376,26 +379,17 @@ class MainViewController: UIViewController {
     }
 
     /// # Overview
-    /// ViewController가 처음 표시될 때 기본적으로 사용할 화면 방향을 지정합니다.
-    ///
-    /// # Discussion
-    /// iPhone에서는 세로 방향만 지원하므로 `.portrait`를 기본값으로 설정합니다.
-    /// iPad에서도 특별히 강제할 필요가 없지만, 통일성을 위해 동일 값 사용합니다.
-    ///
-    /// - Returns: 기본 화면 방향 (Portrait)
+    /// 기본 표시 방향을 지정합니다. (Portrait)
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         .portrait
     }
 
     /// # Overview
-    /// 현재 ViewController에서 회전(Autorotate)을 허용할 것인지 결정합니다.
+    /// 자동 회전(Autorotate) 허용 여부를 기기별로 지정합니다.
     ///
     /// # Discussion
     /// - iPhone: 회전 금지 (false)
     /// - iPad: 회전 허용 (true)
-    ///
-    /// 이는 실제 디바이스의 회전 방향 변경 이벤트를 처리할 수 있는지를 결정합니다.
-    /// iPhone에서는 UI 설계상 세로 고정을 유지하기 위해 회전을 비활성화합니다.
     override var shouldAutorotate: Bool {
         return UIDevice.current.userInterfaceIdiom != .phone
         // iPhone일 땐 회전 금지
