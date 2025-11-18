@@ -67,7 +67,7 @@ class ClipManager {
     /// - endSeconds: 종료 시각(초 단위)
     func createClip(
         video: VideoEntity,
-        title: String,
+        title: String?,
         startSeconds: Double,
         endSeconds: Double
     ) {
