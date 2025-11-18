@@ -240,6 +240,10 @@ class MainViewController: UIViewController {
         playerManager.onPlayStateChanged = { [weak self] isPlaying in
             guard let self else { return }
 
+            if isPlaying, let tag = self.selectedVideo?.tag, !tag.isEmpty {
+                WeightStore.shared.add(1, to: tag)
+            }
+
             let cfg = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
             let icon = isPlaying ? "pause.fill" : "play.fill"
 
