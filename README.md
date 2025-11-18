@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="iOS5team2MainboardUiKit/ReadMeImage/IntroImage.png" width="260"> 
+   <img src="iOS5team2MainboardUiKit/ReadMeImage/IntroImage.png"> 
 </p>
 
 <br>
@@ -128,7 +128,7 @@ iOS5team2MainboardUiKitProject
 
 | 관심분야 설정 화면 | 메인 화면 | 클립 화면 | 커스텀 태그 추가 화면 | 설정 화면 |
 | :---------------: | :-------: | :-------: | :-------------------: | :-------: |
-| <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Interest.png" width="260"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Main.png" width="260"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Clip.png" width="260"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/CustomTag.png" width="260"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Setting.png" width="260"> |
+| <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Interest.png"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Main.png"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Clip.png"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/CustomTag.png"> | <img src="iOS5team2MainboardUiKit/ReadMeImage/ReadMeImage/Setting.png"> |
 
 
 
