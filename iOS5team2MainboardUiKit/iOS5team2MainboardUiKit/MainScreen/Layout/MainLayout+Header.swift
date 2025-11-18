@@ -92,7 +92,7 @@ extension MainLayout {
     func updateLanguageMenuItems() {
             let defaultCategories = CategoryRepository.allCategories.map(\.name)
             let customCategories = CustomTagStore.shared.load().map(\.name)
-            itemList = defaultCategories + customCategories
+            itemList = defaultCategories
             langauageDropDown.dataSource = ["전체"] + defaultCategories + customCategories
             langauageDropDown.reloadAllComponents()
         }
@@ -117,15 +117,8 @@ extension MainLayout {
     func configureLanguageMenu() {
         
         // 사용자 태그 로딩
-        let customTags = CustomTagStore.shared.load()
-        let customNames = customTags.map { $0.name }
-        
-        // "전체" + 시스템 태그 + 사용자 태그
-        let systemTags = itemList
-        let dataSource = ["전체"] + systemTags + customNames
-        
+        updateLanguageMenuItems()
         langauageDropDown.dismissMode = .automatic
-        langauageDropDown.dataSource = dataSource
         langauageDropDown.anchorView = languageButton
         langauageDropDown.textFont = .boldSystemFont(ofSize: UIFont.labelFontSize)
         langauageDropDown.direction = .bottom

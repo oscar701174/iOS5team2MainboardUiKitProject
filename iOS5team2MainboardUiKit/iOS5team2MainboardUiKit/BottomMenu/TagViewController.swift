@@ -24,6 +24,9 @@ final class TagViewController: UIViewController {
 
     /// 사용자 정의 태그 목록
     private var customCategories: [CustomIconCategory] = []
+    
+    /// 메인 뷰 컨트롤러 참조 (드롭다운 갱신용)
+    weak var mainViewController: MainViewController?
 
     /// 현재 선택된 셀의 indexPath
     private var selectedIndexPath: IndexPath?
