@@ -14,20 +14,24 @@ extension MainLayout {
     // MARK: - Top Video Player Area
 
     /// # Overview
-    /// 상단 영상 영역(플레이어 뷰)을 초기 구성합니다.
+    /// 상단 영상 재생 영역(Top Video Player)을 초기화하고 구성합니다.
+    ///
+    /// 이 영역은 전체 화면에서 가장 중요한 **메인 비디오 뷰(playerView)**를 포함하며,
+    /// 사용자는 이 영역을 통해 영상 재생을 확인하고 전체 화면 전환 또는 클립 저장 기능을 사용할 수 있습니다.
     ///
     /// # Discussion
-    /// 이 영역은 전체 UI 중 가장 먼저 사용자 눈에 들어오는 주요 콘텐츠로,
-    /// 다음 구성 요소를 포함합니다:
-    /// - **영상 재생 뷰 (`playerView`)**
-    /// - **전체 화면 버튼 (`fullScreenButton`)**
-    /// - **현재 영상 클립 저장 버튼 (`saveToClipButton`)**
+    /// 구성 요소:
+    /// - `playerView`: 영상 플레이어 레이어를 포함한 커스텀 뷰
+    /// - `fullScreenButton`: 전체 화면으로 전환하는 버튼
+    /// - `saveToClipButton`: 현재 영상을 클립 목록에 저장하는 버튼
     ///
-    /// 플레이어는 16:9 비율을 기반으로 하고,
-    /// `.resizeAspectFill` 모드를 사용하여 화면을 꽉 채우되
-    /// 좌우 또는 상하 일부가 잘릴 수 있는 형태로 구성됩니다.
+    /// 영상은 기본적으로 **16:9 비율**을 유지하며
+    /// `.resizeAspectFill` 모드를 통해 화면을 꽉 채운 형태로 표시됩니다.
     ///
-    /// iPhone/세로 레이아웃과 iPad 가로 레이아웃을 별도 제약으로 관리합니다.
+    /// iPhone/세로 레이아웃과 iPad/가로 레이아웃을 별도의 제약으로 관리합니다.
+    ///
+    /// > Note: 버튼 이미지 색상은 라이트/다크 모드 변화에 따라
+    /// `updateButtonColors(for:)`에서 동적으로 조정됩니다.
     func setTopVideo() {
         let img = UIImage(named: "FullScreen")?
             .resized(to: CGSize(width: 24, height: 24))
@@ -41,14 +45,16 @@ extension MainLayout {
         fullScreenButton.translatesAutoresizingMaskIntoConstraints = false
         saveToClipButton.translatesAutoresizingMaskIntoConstraints = false
 
+        // Fullscreen button image
         fullScreenButton.setImage(img, for: .normal)
-        fullScreenButton.tintColor = .white
 
-        saveToClipButton.setImage(
-            UIImage(systemName: "square.and.arrow.down", withConfiguration: cfg),
-            for: .normal
-        )
-        saveToClipButton.tintColor = .white
+        // Save-to-clip button image
+        let saveImg = UIImage(
+            systemName: "square.and.arrow.down",
+            withConfiguration: cfg
+        )?.withRenderingMode(.alwaysTemplate)
+
+        saveToClipButton.setImage(saveImg, for: .normal)
 
         // MARK: 기본(iPhone 세로 / iPad 세로)
         topVideoDefaultConstraints = [
@@ -79,25 +85,45 @@ extension MainLayout {
             saveToClipButton.bottomAnchor.constraint(equalTo: playerView.bottomAnchor, constant: -10)
         ]
 
-        // 플레이어 영상 비율 설정
+        // 플레이어 영상 비율 및 표시 방식 설정
         playerView.playerLayer.videoGravity = .resizeAspectFill
         playerView.layer.masksToBounds = true
+    }
+
+    /// # Overview
+    /// 라이트/다크 모드에 따라 전체 화면 버튼 및 클립 저장 버튼의 색상을 업데이트합니다.
+    ///
+    /// # Discussion
+    /// UIKit의 `UITraitCollection`을 기반으로 현재 테마(light/dark)를 판단하여
+    /// 두 버튼의 `tintColor`를 동적으로 변경합니다.
+    ///
+    /// - Light Mode  → **검정색(.black)**
+    /// - Dark Mode   → **흰색(.white)**
+    ///
+    /// 이 메서드는 `traitCollectionDidChange` 또는 레이아웃 초기화 시 호출됩니다.
+    ///
+    /// - Parameter trait: 현재 적용할 `UITraitCollection`
+    func updateButtonColors(for trait: UITraitCollection) {
+        let isLight = trait.userInterfaceStyle == .light
+        let color: UIColor = isLight ? .black : .white
+
+        fullScreenButton.tintColor = color
+        saveToClipButton.tintColor = color
     }
 
     // MARK: - Progress Slider
 
     /// # Overview
-    /// 영상의 재생 위치, 현재 시각, 총 길이를 표시하는 진행 UI를 구성합니다.
+    /// 영상 재생 진행도(시작 시간, 종료 시간, 진행 슬라이더)를 표시하는 UI를 구성합니다.
     ///
     /// # Discussion
-    /// 이 영역은 다음을 포함합니다:
-    /// - 현재 재생 시각(`start`)
-    /// - 총 재생 시간(`end`)
-    /// - 영상 위치 이동 슬라이더(`progressSlider`)
+    /// 구성 요소:
+    /// - `start`: 현재 재생 시각(Label)
+    /// - `end`: 총 영상 길이(Label)
+    /// - `progressSlider`: 사용자 드래그 및 탭으로 이동 가능한 슬라이더
     ///
-    /// 슬라이더는 드래그 및 탭 제스처를 통해 사용자가 원하는 지점으로 이동할 수 있습니다.
+    /// 기본(iPhone/세로) 레이아웃과 iPad/가로 레이아웃을 각각 별도 제약으로 관리합니다.
     func setProgressSlider() {
-
         start.text = "00:00:00"
         end.text = "00:00:00"
 
@@ -145,9 +171,12 @@ extension MainLayout {
 
         NSLayoutConstraint.activate(progressSliderDefaultConstraints)
 
-        // Thumb 설정 (조작하기 쉬운 원형)
+        // 슬라이더 Thumb 설정
         let thumbCfg = UIImage.SymbolConfiguration(pointSize: 10, weight: .regular)
-        progressSlider.setThumbImage(UIImage(systemName: "circle.fill", withConfiguration: thumbCfg), for: .normal)
+        progressSlider.setThumbImage(
+            UIImage(systemName: "circle.fill", withConfiguration: thumbCfg),
+            for: .normal
+        )
 
         progressSlider.thumbTintColor = AppColor.menuIcon
         progressSlider.maximumTrackTintColor = AppColor.menuIcon.withAlphaComponent(0.5)
@@ -156,14 +185,17 @@ extension MainLayout {
     // MARK: - Middle Video Buttons (재생/앞뒤 이동/볼륨/배속)
 
     /// # Overview
-    /// 재생/일시정지, 되감기/앞으로, 볼륨, 배속 메뉴 버튼을 구성합니다.
+    /// 영상 재생과 조작을 위한 중앙 버튼 영역을 설정합니다.
     ///
     /// # Discussion
-    /// - 중앙: 재생 관련 3개 버튼(되감기 / 재생 / 앞으로)
+    /// 구성 요소:
+    /// - 중앙(스택뷰):
+    ///   되감기 15초, 재생/일시정지, 앞으로 15초
     /// - 좌측: 볼륨 버튼
-    /// - 우측: 배속 메뉴 버튼 (DropDown 표시용)
+    /// - 우측: 배속 설정 버튼(ellipsisButton - DropDown 표시)
     ///
-    /// 구성 형태는 iPhone/세로와 iPad 가로에서 각각 다르게 제약 설정됩니다.
+    /// 버튼은 iPhone/세로 기준 기본 제약과
+    /// iPad/가로 기준 별도 제약을 통해 구성됩니다.
     func setVideoButton() {
         let playButtons: [UIButton] = [rewind15sButton, playButton, forward15sButton]
 
@@ -211,7 +243,7 @@ extension MainLayout {
 
         // MARK: 기본 레이아웃
         videoButtonDefaultConstraints = [
-            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 12),
             volumeButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 22),
 
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
@@ -223,7 +255,7 @@ extension MainLayout {
 
         // MARK: iPad 가로 레이아웃
         videoButtonIPadLandscapeConstraints = [
-            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            volumeButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 13),
             volumeButton.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 15),
 
             middleButtonStackView.topAnchor.constraint(equalTo: progressSlider.bottomAnchor, constant: 5),
@@ -235,17 +267,19 @@ extension MainLayout {
         ]
     }
 
-    // MARK: - Speed Menu
+    // MARK: - Speed Menu (DropDown)
 
     /// # Overview
-    /// 영상 배속 선택 드롭다운을 구성합니다.
+    /// 영상 배속을 설정하는 드롭다운 메뉴를 초기화합니다.
     ///
     /// # Discussion
-    /// 지원 배속: **1x, 1.25x, 1.5x, 2x**
-    /// 선택 시 `onSpeedSelected` 콜백을 통해 선택값을 외부(MainViewController)로 전달합니다.
+    /// 선택 가능한 배속: **1.0x, 1.25x, 1.5x, 2.0x**
+    /// 선택된 값은 `onSpeedSelected` 콜백을 통해 MainViewController로 전달됩니다.
     ///
-    /// iPad 가로 환경에서는 더 넓은 항목 표시를 위해
-    /// 드롭다운의 width가 자동 조정됩니다.
+    /// iPad 가로 환경에서는 메뉴 width를 넓게 설정하여 가독성을 확보합니다.
+    ///
+    /// - Important: DropDown은 UIKit 레이아웃 변화에 민감하므로
+    ///   표시 직전(`willShowAction`)에 anchor 및 width 조정을 수행합니다.
     func configureVideoSpeed() {
         let speedList: [Double] = [1, 1.25, 1.5, 2]
 
@@ -258,7 +292,6 @@ extension MainLayout {
         speedDropDown.textFont = .boldSystemFont(ofSize: 14)
         speedDropDown.direction = .bottom
 
-        // DropDown 표시 직전 width/position 조정
         speedDropDown.willShowAction = { [weak self] in
             guard let self, self.ellipsisButton.window != nil else { return }
             self.ellipsisButton.layoutIfNeeded()
@@ -295,16 +328,19 @@ extension MainLayout {
     // MARK: - Volume Popup
 
     /// # Overview
-    /// 볼륨 조절 팝업 UI를 구성합니다.
+    /// 볼륨 조절 팝업 UI를 초기화하고 구성합니다.
     ///
     /// # Discussion
     /// 구성 요소:
-    /// - 세로 방향 볼륨 슬라이더 (`UISlider`)
-    /// - 현재 볼륨 퍼센트 표시 라벨
-    /// - 시스템 볼륨을 제어할 수 있는 숨겨진 `MPVolumeView`
+    /// - `volumeSlider`: 세로형 슬라이더(회전된 UISlider)
+    /// - `systemVolumeView`: 시스템 볼륨을 제어하는 숨겨진 MPVolumeView
+    /// - `volumeLabel`: 현재 볼륨 값(%) 표시
+    /// - `popup`: 볼륨 조절 팝업 컨테이너
     ///
-    /// 슬라이더는 -.pi/2 회전하여 세로 형태로 표시되며
-    /// 팝업은 기본적으로 숨김 상태(`isHidden = true`)입니다.
+    /// 기본적으로 팝업은 숨겨진 상태(`isHidden = true`)이며
+    /// 필요 시 볼륨 버튼 액션을 통해 표시/숨김이 전환됩니다.
+    ///
+    /// 슬라이더 thumb 및 색상은 AppColor.theme에 맞춰 구성됩니다.
     func setVolumeSlider() {
 
         popup.backgroundColor = AppColor.background
@@ -312,7 +348,7 @@ extension MainLayout {
         popup.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         popup.layer.borderWidth = 1.5
 
-        // 슬라이더 (세로)
+        // 세로 슬라이더
         volumeSlider.transform = CGAffineTransform(rotationAngle: -.pi / 2)
         volumeSlider.minimumValue = 0
         volumeSlider.maximumValue = 1
@@ -330,7 +366,7 @@ extension MainLayout {
         popup.addSubview(volumeSlider)
         popup.addSubview(volumeLabel)
 
-        // MPVolumeView는 화면에 보이지 않도록 숨김 처리
+        // 시스템 볼륨 컨트롤(화면에 표시되지 않도록 위치 숨김)
         systemVolumeView.frame = CGRect(x: -1000, y: -1000, width: 0, height: 0)
         systemVolumeView.alpha = 0.01
         addSubview(systemVolumeView)
@@ -364,4 +400,8 @@ extension MainLayout {
         popup.isHidden = true
     }
 
+}
+
+#Preview() {
+    MainViewController()
 }
