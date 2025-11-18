@@ -131,7 +131,7 @@ iOS5team2MainboardUiKitProject
   <div style="text-align:center; min-width: 260px;">
     <p><b>관심분야 설정 화면</b></p>
     <img 
-      src="https://private-user-images.githubusercontent.com/235646571/515335947-eee4ee6f-8bf1-4531-a046-3c9d5cd5bee4.png"
+    src="https://private-user-images.githubusercontent.com/235646571/515335947-eee4ee6f-8bf1-4531-a046-3c9d5cd5bee4.png?  jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU2MTEsIm5iZiI6MTc2MzQwNTMxMSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM1OTQ3LWVlZTRlZTZmLThiZjEtNDUzMS1hMDQ2LTNjOWQ1Y2Q1YmVlNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ4MzFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hMDhjZjVhMjAwNmRmZjJmY2ZlM2YyMWI1MmZlNTgwNDE2ZmI0NzZiMzViYjJhYTBjNThiODYzYmE0NWQxZTYyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.-di4mlQWs3I4SGQ4HFXTcdsJ7uX2Wux4sgmOs7llmbM"
       width="260"
       style="border-radius: 10px;">
   </div>
@@ -139,7 +139,7 @@ iOS5team2MainboardUiKitProject
   <div style="text-align:center; min-width: 260px;">
     <p><b>메인 화면</b></p>
     <img 
-      src="https://private-user-images.githubusercontent.com/235646571/515337886-5b4243c5-d1d9-4783-aeac-8aeb86c9030e.png"
+      src="https://private-user-images.githubusercontent.com/235646571/515337886-5b4243c5-d1d9-4783-aeac-8aeb86c9030e.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU1NzgsIm5iZiI6MTc2MzQwNTI3OCwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM3ODg2LTViNDI0M2M1LWQxZDktNDc4My1hZWFjLThhZWI4NmM5MDMwZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ3NThaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03NWIwYzVlZmE0MjBiNTRlMzU2ZThhM2Y4ZDE0MjRlMTBmYzE1OGQ2NTg5MjU0YTQ0ZmFhYzk1ZTg3Mzc2YjM5JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.dVMzRXFS-izSOesvjbAdU5I_fbDhVg1H9wBoWLf0ifc"
       width="260"
       style="border-radius: 10px;">
   </div>
@@ -147,7 +147,7 @@ iOS5team2MainboardUiKitProject
   <div style="text-align:center; min-width: 260px;">
     <p><b>클립 화면</b></p>
     <img 
-      src="https://private-user-images.githubusercontent.com/235646571/515336563-12feb68b-d717-443b-9dde-607e48221ada.png"
+       src="https://private-user-images.githubusercontent.com/235646571/515336563-12feb68b-d717-443b-9dde-607e48221ada.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDU1NTksIm5iZiI6MTc2MzQwNTI1OSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzM2NTYzLTEyZmViNjhiLWQ3MTctNDQzYi05ZGRlLTYwN2U0ODIyMWFkYS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxODQ3MzlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lMTA2NjY3NTcxZjE4MThiYWQ3MDBlNGZjYmRlMmVkZWY3M2NhYjYwMjJjNWFmZjk3NzBjNjEyNWExMGVlNGQ0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.eoVrsFmcKooa_YubU6por3uq_eTSK-SWaKCunWN5n_8"
       width="260"
       style="border-radius: 10px;">
   </div>
@@ -155,7 +155,7 @@ iOS5team2MainboardUiKitProject
   <div style="text-align:center; min-width: 260px;">
     <p><b>커스텀 태그 추가 화면</b></p>
     <img 
-      src="https://private-user-images.githubusercontent.com/235646571/515383141-f046f261-1117-4810-8554-f58ac29761c2.png"
+       src="https://private-user-images.githubusercontent.com/235646571/515383141-f046f261-1117-4810-8554-f58ac29761c2.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MTI0MzYsIm5iZiI6MTc2MzQxMjEzNiwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzgzMTQxLWYwNDZmMjYxLTExMTctNDgxMC04NTU0LWY1OGFjMjk3NjFjMi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QyMDQyMTZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1iYmJhMzgyYmZhNmRhZTVmMzUwYmUyMzc3ODdjOWEyYmNjNTI5MjFmOWM5MTU1Zjg1NmM4ZjQwMjAwOGJkMmY1JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.k2a7QbNHtmC2Ua1GuJGMdH4SQBfB2MERMNTfDOLX3Lo"
       width="260"
       style="border-radius: 10px;">
   </div>
@@ -163,7 +163,7 @@ iOS5team2MainboardUiKitProject
   <div style="text-align:center; min-width: 260px;">
     <p><b>설정 화면</b></p>
     <img 
-      src="https://private-user-images.githubusercontent.com/235646571/515349094-216e8412-b478-4fdc-9937-47e584bac738.png"
+      src="https://private-user-images.githubusercontent.com/235646571/515349094-216e8412-b478-4fdc-9937-47e584bac738.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjM0MDY1ODUsIm5iZiI6MTc2MzQwNjI4NSwicGF0aCI6Ii8yMzU2NDY1NzEvNTE1MzQ5MDk0LTIxNmU4NDEyLWI0NzgtNGZkYy05OTM3LTQ3ZTU4NGJhYzczOC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUxMTE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MTExN1QxOTA0NDVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yNzhiOTY1MjdiOWVkNTMwMDNlNmY1M2NjNzcxN2Q5MTdiYzMyYjk5ZTAxNjM5NzhjZmE4N2IwNDAwYjljMWJhJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fIvA7RkYcAGg0SEvjRji5GYV_eoJFystYXZztU3Nbc4"
       width="260"
       style="border-radius: 10px;">
   </div>
