@@ -338,6 +338,7 @@ class MainViewController: UIViewController {
         super.viewDidLayoutSubviews()
         mainView.updateForIpad(for: traitCollection, containerSize: view.bounds.size)
     }
+    
 
     /// # Overview
     /// 라이트/다크모드 등 환경 변화에 따라 UI 표시를 업데이트합니다.
@@ -345,10 +346,55 @@ class MainViewController: UIViewController {
         super.traitCollectionDidChange(previous)
         mainView.updateDropdownColors(for: traitCollection)
         mainView.updateFooterView(for: traitCollection)
+        mainView.updateButtonColors(for: traitCollection)
         mainView.langauageDropDown.reloadAllComponents()
         mainView.speedDropDown.reloadAllComponents()
         view.backgroundColor = AppColor.background
     }
+
+    /// # Overview
+    /// 기기 종류(iPhone / iPad)에 따라 지원하는 화면 회전 방향을 결정합니다.
+    ///
+    /// # Discussion
+    /// - iPhone: 세로 방향(Portrait)만 허용
+    /// - iPad: 모든 방향(.all) 허용
+    ///
+    /// 해당 속성은 ViewController가 어떤 방향으로 회전할 수 있는지
+    /// 시스템에게 알려주는 역할을 합니다.
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .portrait       // iPhone은 세로 고정
+        } else {
+            return .all            // iPad는 자유롭게 회전
+        }
+    }
+
+    /// # Overview
+    /// ViewController가 처음 표시될 때 기본적으로 사용할 화면 방향을 지정합니다.
+    ///
+    /// # Discussion
+    /// iPhone에서는 세로 방향만 지원하므로 `.portrait`를 기본값으로 설정합니다.
+    /// iPad에서도 특별히 강제할 필요가 없지만, 통일성을 위해 동일 값 사용합니다.
+    ///
+    /// - Returns: 기본 화면 방향 (Portrait)
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        .portrait
+    }
+
+    /// # Overview
+    /// 현재 ViewController에서 회전(Autorotate)을 허용할 것인지 결정합니다.
+    ///
+    /// # Discussion
+    /// - iPhone: 회전 금지 (false)
+    /// - iPad: 회전 허용 (true)
+    ///
+    /// 이는 실제 디바이스의 회전 방향 변경 이벤트를 처리할 수 있는지를 결정합니다.
+    /// iPhone에서는 UI 설계상 세로 고정을 유지하기 위해 회전을 비활성화합니다.
+    override var shouldAutorotate: Bool {
+        return UIDevice.current.userInterfaceIdiom != .phone
+        // iPhone일 땐 회전 금지
+    }
+
 }
 
 #Preview() {
