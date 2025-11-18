@@ -8,24 +8,261 @@
 import UIKit
 import SwiftUI
 
-/// # IconCategory
-/// 사용자 정의 아이콘 카테고리를 표현하는 데이터 모델입니다.
+/// # TagViewController
+/// 사용자 정의 태그(이름 + 아이콘 + 색상)를 생성·저장·삭제·표시하는 화면.
 ///
-/// - name: 사용자 지정 이름
-/// - iconName: SF Symbol 이름
-/// - color: 아이콘 색상
-/// - isCustom: 커스텀 여부
-struct IconCategory: Hashable {
-    let id = UUID()
-    let name: String
-    let iconName: String
-    let color: UIColor
-    let isCustom: Bool
+/// ## 기능
+/// - CustomTagStore(UserDefaults 기반)에 저장된 사용자 태그 로드
+/// - 태그 추가(커스텀 태그 모달 호출)
+/// - 태그 삭제
+/// - UICollectionView를 이용한 태그 리스트 UI 표시
+///
+/// 앱의 "사용자 취향 기반 추천"에서 사용되는 태그 데이터를 관리합니다.
+final class TagViewController: UIViewController {
+
+    // MARK: - Properties
+
+    /// 사용자 정의 태그 목록
+    private var customCategories: [CustomIconCategory] = []
+
+    /// 현재 선택된 셀의 indexPath
+    private var selectedIndexPath: IndexPath?
+
+    /// 태그를 보여주는 컬렉션뷰
+    private var collectionView: UICollectionView!
+
+    // MARK: - Buttons
+
+    /// 태그 추가 버튼
+    private let customButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("커스텀 아이콘 만들기", for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 10
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    /// 태그 삭제 버튼
+    private let deleteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("삭제하기", for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemRed
+        button.layer.cornerRadius = 10
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = false
+        return button
+    }()
+
+    /// 하단 버튼 스택
+    private let buttonStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        stack.spacing = 12
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+
+    /// 도움말 라벨
+    private let infoLabel: UILabel = {
+        let label = UILabel()
+        label.text = "아이콘을 직접 만들어 주세요.\n동영상 취향 추천에 사용됩니다."
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    // MARK: - Life Cycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+
+        /// 저장된 커스텀 태그 불러오기
+        customCategories = CustomTagStore.shared.load()
+
+        setupCollectionView()
+        setupBottomViews()
+    }
+
+
+    // MARK: - Collection Setup
+
+    /// 태그 리스트 UI(CollectionView) 구성
+    private func setupCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumInteritemSpacing = 12
+        layout.minimumLineSpacing = 20
+
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
+
+        view.addSubview(collectionView)
+    }
+
+
+    // MARK: - Bottom UI
+
+    /// 하단 버튼 및 라벨 UI 구성
+    private func setupBottomViews() {
+        view.addSubview(infoLabel)
+        view.addSubview(buttonStack)
+        buttonStack.addArrangedSubview(customButton)
+        buttonStack.addArrangedSubview(deleteButton)
+
+        let fixedWidth: CGFloat = 360
+
+        NSLayoutConstraint.activate([
+            infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+            infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            infoLabel.widthAnchor.constraint(equalToConstant: fixedWidth),
+
+            buttonStack.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -16),
+            buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonStack.widthAnchor.constraint(equalToConstant: fixedWidth),
+            buttonStack.heightAnchor.constraint(equalToConstant: 50),
+
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -20)
+        ])
+
+        customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(confirmDelete), for: .touchUpInside)
+    }
+
+
+    // MARK: - Add Tag
+
+    /// 커스텀 태그 생성 모달 열기
+    @objc private func openCustomModal() {
+        let modal = TagIconPickerViewController { [weak self] name, iconName, color in
+            guard let self else { return }
+
+            let newItem = CustomIconCategory(
+                name: name,
+                iconName: iconName,
+                color: color,
+                isCustom: true
+            )
+
+            CustomTagStore.shared.add(newItem)   // 저장
+            self.customCategories = CustomTagStore.shared.load()
+            self.collectionView.reloadData()
+        }
+
+        modal.modalPresentationStyle = .pageSheet
+        modal.preferredContentSize = CGSize(width: 0, height: 330)
+
+        if let sheet = modal.sheetPresentationController {
+            if #available(iOS 16.0, *) {
+                sheet.detents = [
+                    .custom { _ in modal.preferredContentSize.height }
+                ]
+            } else {
+                sheet.detents = [.medium()]
+            }
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(modal, animated: true)
+    }
+
+
+    // MARK: - Delete Tag
+
+    /// 태그 삭제 확인 알림 → 삭제 실행
+    @objc private func confirmDelete() {
+        guard let indexPath = selectedIndexPath else { return }
+
+        let alert = UIAlertController(
+            title: "삭제 확인",
+            message: "선택한 아이콘을 삭제하시겠습니까?",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+            let item = self.customCategories[indexPath.item]
+            CustomTagStore.shared.delete(item)
+
+            self.customCategories = CustomTagStore.shared.load()
+            self.selectedIndexPath = nil
+            self.deleteButton.isEnabled = false
+            self.collectionView.reloadData()
+        })
+
+        present(alert, animated: true)
+    }
 }
 
-/// # CategoryCell
-/// 태그 아이콘을 표시하는 UICollectionView 셀입니다.
+
+// MARK: - UICollectionView Delegate + DataSource
+
+extension TagViewController:
+    UICollectionViewDelegate,
+    UICollectionViewDataSource,
+    UICollectionViewDelegateFlowLayout
+{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        customCategories.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CategoryCell.identifier,
+            for: indexPath
+        ) as? CategoryCell else { return UICollectionViewCell() }
+
+        cell.configure(with: customCategories[indexPath.item])
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndexPath = indexPath
+        deleteButton.isEnabled = true
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        selectedIndexPath = nil
+        deleteButton.isEnabled = false
+    }
+
+    /// 화면 비율에 따라 적절한 셀 크기 계산
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let spacing: CGFloat = 12 * 3
+        let totalInset: CGFloat = 40
+        let columns: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 6 : 4
+        let availableWidth = collectionView.bounds.width - spacing - totalInset
+        let width = floor(availableWidth / columns)
+
+        return CGSize(width: width, height: width + 20)
+    }
+}
+
+
+// MARK: - CategoryCell
+/// 커스텀 태그 하나를 표현하는 셀 (아이콘 + 이름)
 final class CategoryCell: UICollectionViewCell {
+
     static let identifier = "CategoryCell"
 
     private let containerView = UIView()
@@ -41,7 +278,7 @@ final class CategoryCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    /// 셀의 UI 구성
+    /// 셀 UI 레이아웃 구성
     private func setupUI() {
         contentView.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -80,228 +317,20 @@ final class CategoryCell: UICollectionViewCell {
         ])
     }
 
-    /// 셀에 모델 데이터 설정
-    func configure(with category: IconCategory) {
+    /// 셀에 태그 데이터 적용
+    func configure(with category: CustomIconCategory) {
         nameLabel.text = category.name
         iconView.image = UIImage(systemName: category.iconName)
         iconView.tintColor = category.color
         containerView.backgroundColor = .systemBackground
     }
 
-    /// 셀 선택 상태 시 테두리 강조
+    /// 선택 시 테두리 표시
     override var isSelected: Bool {
         didSet {
             containerView.layer.borderWidth = isSelected ? 2 : 0
             containerView.layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
         }
-    }
-}
-
-/// # TagViewController
-/// 사용자가 커스텀 태그 아이콘을 생성, 선택, 삭제할 수 있는 화면입니다.
-///
-/// - 커스텀 태그를 리스트로 보여줌
-/// - 새 태그 추가를 위한 모달 제공
-/// - 선택 시 삭제 가능
-final class TagViewController: UIViewController {
-
-    private var customCategories: [IconCategory] = []
-    private var selectedIndexPath: IndexPath?
-    private var collectionView: UICollectionView!
-
-    // MARK: - 하단 버튼 및 라벨 구성
-
-    private let customButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("커스텀 아이콘 만들기", for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemBlue
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private let deleteButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("삭제하기", for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemRed
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.isEnabled = false
-        return button
-    }()
-
-    private let buttonStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.spacing = 12
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        return stack
-    }()
-
-    private let infoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "아이콘을 직접 만들어 주세요.\n동영상 취향 추천에 사용됩니다."
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 14)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    // MARK: - 생명주기
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        setupCollectionView()
-        setupBottomViews()
-    }
-
-    // MARK: - CollectionView 설정
-
-    private func setupCollectionView() {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 12
-        layout.minimumLineSpacing = 20
-
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .clear
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.identifier)
-
-        view.addSubview(collectionView)
-    }
-
-    // MARK: - 하단 UI 설정
-
-    private func setupBottomViews() {
-        view.addSubview(infoLabel)
-        view.addSubview(buttonStack)
-        buttonStack.addArrangedSubview(customButton)
-        buttonStack.addArrangedSubview(deleteButton)
-
-        let fixedWidth: CGFloat = 360
-
-        NSLayoutConstraint.activate([
-            infoLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            infoLabel.widthAnchor.constraint(equalToConstant: fixedWidth),
-
-            buttonStack.bottomAnchor.constraint(equalTo: infoLabel.topAnchor, constant: -16),
-            buttonStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            buttonStack.widthAnchor.constraint(equalToConstant: fixedWidth),
-            buttonStack.heightAnchor.constraint(equalToConstant: 50),
-
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            collectionView.bottomAnchor.constraint(equalTo: buttonStack.topAnchor, constant: -20)
-        ])
-
-        customButton.addTarget(self, action: #selector(openCustomModal), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(confirmDelete), for: .touchUpInside)
-    }
-
-    // MARK: - 모달 열기
-
-    @objc private func openCustomModal() {
-        let modal = TagIconPickerViewController { [weak self] name, iconName, color in
-            guard let self else { return }
-
-            let newItem = IconCategory(name: name, iconName: iconName, color: color, isCustom: true)
-            self.customCategories.append(newItem)
-            self.collectionView.reloadData()
-        }
-
-        modal.modalPresentationStyle = .pageSheet
-        modal.preferredContentSize = CGSize(width: 0, height: 330)
-
-        if let sheet = modal.sheetPresentationController {
-            if #available(iOS 16.0, *) {
-                sheet.detents = [
-                    .custom { _ in modal.preferredContentSize.height }
-                ]
-            } else {
-                sheet.detents = [.medium()]
-            }
-            sheet.prefersGrabberVisible = true
-        }
-
-        present(modal, animated: true)
-    }
-
-    // MARK: - 삭제 처리
-
-    @objc private func confirmDelete() {
-        guard let indexPath = selectedIndexPath else { return }
-
-        let alert = UIAlertController(
-            title: "삭제 확인",
-            message: "선택한 아이콘을 삭제하시겠습니까?",
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
-            self.customCategories.remove(at: indexPath.item)
-            self.selectedIndexPath = nil
-            self.deleteButton.isEnabled = false
-            self.collectionView.reloadData()
-        })
-
-        present(alert, animated: true)
-    }
-}
-
-// MARK: - CollectionView Delegate & FlowLayout
-
-extension TagViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        customCategories.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: CategoryCell.identifier,
-            for: indexPath
-        ) as? CategoryCell else { return UICollectionViewCell() }
-
-        cell.configure(with: customCategories[indexPath.item])
-        return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selectedIndexPath = indexPath
-        deleteButton.isEnabled = true
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        selectedIndexPath = nil
-        deleteButton.isEnabled = false
-    }
-
-    /// 셀 크기 계산 (기기 및 방향 대응)
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-
-        let spacing: CGFloat = 12 * 3
-        let totalInset: CGFloat = 40
-        let columns: CGFloat = traitCollection.userInterfaceIdiom == .pad ? 6 : 4
-        let availableWidth = collectionView.bounds.width - spacing - totalInset
-        let width = floor(availableWidth / columns)
-
-        return CGSize(width: width, height: width + 20)
     }
 }
 

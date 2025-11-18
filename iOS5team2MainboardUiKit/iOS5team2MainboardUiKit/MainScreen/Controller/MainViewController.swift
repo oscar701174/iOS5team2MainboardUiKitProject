@@ -254,7 +254,6 @@ class MainViewController: UIViewController {
         }
     }
 
-
     // MARK: - Video Sorting
 
     /// # Overview

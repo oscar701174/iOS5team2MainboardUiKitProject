@@ -9,9 +9,9 @@ import UIKit
 import DropDown
 
 extension MainLayout {
-
+    
     // MARK: - Header Layout
-
+    
     /// # Overview
     /// 화면 상단 헤더 영역(언어 선택 버튼 + 검색 버튼)을 구성합니다.
     ///
@@ -28,24 +28,24 @@ extension MainLayout {
     func setHeader() {
         addSubview(languageButton)
         addSubview(searchButton)
-
+        
         languageButton.translatesAutoresizingMaskIntoConstraints = false
         searchButton.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // MARK: 기본(iPhone, iPad 세로) 제약
         headerDefaultConstriants = [
             languageButton.topAnchor.constraint(equalTo: topAnchor, constant: 60),
             languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
-
+            
             /// widthAnchor = widthAnchor + 30
             /// → 실제 width 고정이 아니라, intrinsicContentSize 사용 시
             ///   레이아웃 경고를 피하기 위한 "여유 폭" 확보용 제약입니다.
             languageButton.widthAnchor.constraint(equalTo: widthAnchor, constant: 30),
-
+            
             searchButton.topAnchor.constraint(equalTo: topAnchor, constant: 62),
             searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
         ]
-
+        
         // MARK: iPad 가로 전용 제약
         /// iPad 가로에서는 화면 폭이 커지기 때문에
         /// 언어 버튼의 높이/폭을 더 넓게 사용합니다.
@@ -54,11 +54,11 @@ extension MainLayout {
             languageButton.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 15),
             languageButton.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor, multiplier: 0.6),
             languageButton.heightAnchor.constraint(equalToConstant: 90),
-
+            
             searchButton.topAnchor.constraint(equalTo: topAnchor, constant: 45),
             searchButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -15)
         ]
-
+        
         // MARK: 언어 버튼 기본 스타일
         languageButton.setTitle("전체", for: .normal)
         languageButton.setImage(
@@ -68,7 +68,7 @@ extension MainLayout {
             for: .normal
         )
         languageButton.tintColor = AppColor.menuIcon
-
+        
         // 텍스트/아이콘 정렬 설정
         languageButton.contentHorizontalAlignment = .leading
         languageButton.titleEdgeInsets.left = 5
@@ -76,7 +76,7 @@ extension MainLayout {
         languageButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         languageButton.setTitleColor(.main, for: .normal)
         languageButton.titleLabel?.font = .boldSystemFont(ofSize: UIFont.labelFontSize)
-
+        
         // MARK: 검색 버튼 스타일
         let cfg = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         searchButton.setImage(
@@ -84,13 +84,13 @@ extension MainLayout {
             for: .normal
         )
         searchButton.tintColor = .main
-
+        
         languageButton.showsMenuAsPrimaryAction = false
         languageButton.clipsToBounds = true
     }
-
+    
     // MARK: - Language DropDown
-
+    
     /// # Overview
     /// 언어 선택 드롭다운 메뉴를 설정합니다.
     ///
@@ -107,36 +107,37 @@ extension MainLayout {
     /// DropDown의 width 및 bottomOffset이 다르게 계산됩니다.
     /// (버튼의 크기가 다르기 때문에 위치 보정 필요)
     func configureLanguageMenu() {
-
-        // "전체" + 카테고리 목록
-        let dataSource = ["전체"] + itemList
-
+        
+        // 사용자 태그 로딩
+        let customTags = CustomTagStore.shared.load()
+        let customNames = customTags.map { $0.name }
+        
+        // "전체" + 시스템 태그 + 사용자 태그
+        let systemTags = itemList
+        let dataSource = ["전체"] + systemTags + customNames
+        
         langauageDropDown.dismissMode = .automatic
         langauageDropDown.dataSource = dataSource
         langauageDropDown.anchorView = languageButton
         langauageDropDown.textFont = .boldSystemFont(ofSize: UIFont.labelFontSize)
         langauageDropDown.direction = .bottom
-
+        
         // MARK: DropDown 표시 직전 레이아웃 조정
-        /// DropDown은 표시 직전에 언어 버튼의 실제 frame을 기준으로
-        /// width / position을 재계산해야 정확히 UI가 맞습니다.
         langauageDropDown.willShowAction = { [weak self] in
             guard let self, self.languageButton.window != nil else { return }
             self.languageButton.layoutIfNeeded()
-
+            
             let isIPadLandscape =
-                self.traitCollection.userInterfaceIdiom == .pad &&
-                self.bounds.width > self.bounds.height
-
+            self.traitCollection.userInterfaceIdiom == .pad &&
+            self.bounds.width > self.bounds.height
+            
             if isIPadLandscape {
-                // iPad 가로 모드 → 넓은 width 사용
                 self.langauageDropDown.width = self.languageButton.bounds.width * 0.6
                 self.langauageDropDown.bottomOffset = CGPoint(
                     x: 0,
                     y: self.languageButton.bounds.height - 20
                 )
             } else {
-                // iPhone & iPad 세로 → 적절한 width (버튼의 30%)
                 let contentWidth = self.languageButton.bounds.width * 0.3
                 self.langauageDropDown.width = min(contentWidth, self.bounds.width)
                 self.langauageDropDown.bottomOffset = CGPoint(
@@ -145,12 +146,11 @@ extension MainLayout {
                 )
             }
         }
-
+        
         // MARK: DropDown 선택 동작
         langauageDropDown.selectionAction = { [weak self] (index, item) in
             guard let self else { return }
-
-            // index 0 = "전체"
+            
             if index == 0 {
                 self.languageButton.setTitle("전체", for: .normal)
                 self.languageButton.setImage(
@@ -163,27 +163,37 @@ extension MainLayout {
                 self.onLanguageSelected?("전체")
                 return
             }
-
-            // 실제 카테고리 index는 -1 보정
-            let actualIndex = index - 1
-            let categoryName = self.itemList[actualIndex]
-
+            
             self.languageButton.setTitle(item, for: .normal)
-            self.onLanguageSelected?(item)
-
-            // 카테고리 이미지 적용
-            if let category = CategoryRepository.allCategories.first(where: { $0.name == categoryName }) {
-                let icon = UIImage(named: category.iconName)?
+            
+            // 시스템 태그 선택
+            if index <= systemTags.count {
+                let actualIndex = index - 1
+                let categoryName = systemTags[actualIndex]
+                
+                if let category = CategoryRepository.allCategories.first(where: { $0.name == categoryName }) {
+                    let icon = UIImage(named: category.iconName)?
+                        .resized(to: .init(width: 34, height: 34))
+                    self.languageButton.setImage(icon, for: .normal)
+                    self.languageButton.tintColor = AppColor.menuIcon
+                } else {
+                    self.languageButton.setImage(nil, for: .normal)
+                }
+                
+            } else {
+                // 사용자 태그 선택
+                let customIndex = index - 1 - systemTags.count
+                let custom = customTags[customIndex]
+                let icon = UIImage(systemName: custom.iconName)?
                     .resized(to: .init(width: 34, height: 34))
                 self.languageButton.setImage(icon, for: .normal)
-            } else {
-                self.languageButton.setImage(nil, for: .normal)
+                self.languageButton.tintColor = UIColor(hex: custom.colorHex)
             }
+            
+            self.onLanguageSelected?(item)
         }
-
-        // 테마(dark/light)에 맞춰 색상 적용
+        
         updateDropdownColors(for: languageButton.traitCollection)
-
         langauageDropDown.reloadAllComponents()
     }
 }
