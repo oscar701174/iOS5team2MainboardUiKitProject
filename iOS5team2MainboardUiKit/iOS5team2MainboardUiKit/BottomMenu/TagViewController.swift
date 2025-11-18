@@ -203,12 +203,16 @@ final class TagViewController: UIViewController {
             self.selectedIndexPath = nil
             self.deleteButton.isEnabled = false
             self.collectionView.reloadData()
+            NotificationCenter.default.post(name: .customTagsDidUpdate, object: nil)
         })
 
         present(alert, animated: true)
     }
 }
 
+extension Notification.Name {
+    static let customTagsDidUpdate = Notification.Name("customTagsDidUpdate")
+}
 
 // MARK: - UICollectionView Delegate + DataSource
 

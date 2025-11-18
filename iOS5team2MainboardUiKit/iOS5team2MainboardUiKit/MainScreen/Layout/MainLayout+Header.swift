@@ -89,6 +89,13 @@ extension MainLayout {
         languageButton.clipsToBounds = true
     }
     
+    func updateLanguageMenuItems() {
+            let defaultCategories = CategoryRepository.allCategories.map(\.name)
+            let customCategories = CustomTagStore.shared.load().map(\.name)
+            langauageDropDown.dataSource = ["전체"] + defaultCategories + customCategories
+            langauageDropDown.reloadAllComponents()
+        }
+    
     // MARK: - Language DropDown
     
     /// # Overview

@@ -317,6 +317,13 @@ class MainViewController: UIViewController {
         setupActions()
         setupCallbacks()
         prioritizeLanguage("전체")
+        NotificationCenter.default.addObserver(
+                forName: .customTagsDidUpdate,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.mainView.updateLanguageMenuItems()
+            }
 
     }
 
