@@ -285,23 +285,32 @@ extension ClipPlayerViewController {
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
             guard let self else { return }
 
-            self.clips.remove(at: index)
+            // 1) 삭제할 target 먼저 저장
+            let target = self.clips[index]
 
-            // CoreData 삭제
+            // 2) CoreData에서 삭제
             if let videoEntity = self.resolveVideoEntity() {
-                let clipEntities = clipManager.fetchClips(for: videoEntity)
-                guard index < clipEntities.count else { return }
-                clipManager.delete(clipEntities[index])
+                let clipEntities = self.clipManager.fetchClips(for: videoEntity)
+
+                if let entity = clipEntities.first(where: {
+                    abs($0.startSeconds - target.start) < 0.001 &&
+                    abs($0.endSeconds - target.end) < 0.001
+                }) {
+                    self.clipManager.delete(entity)
+                }
             }
-        })
 
-        present(alert, animated: true)
+            // 3) 마지막에 배열에서 제거
+            self.clips.remove(at: index)
+        }))
+
+        self.present(alert, animated: true, completion: nil)
     }
-
     /// # memoViewTapped
     /// 메모 영역을 터치하면 편집 UI를 띄웁니다.
     @objc func memoViewTapped(_ sender: UIView) {

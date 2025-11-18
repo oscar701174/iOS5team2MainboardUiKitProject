@@ -52,9 +52,7 @@ class ClipPlayerViewController: UIViewController {
     /// 영상의 전체 길이(종료 시각). 최초 로드시 자동 세팅됨.
     var playingTime: Double = 0.0 {
         didSet {
-            // 첫 클립이 없으면 자동으로 0~전체 길이 클립 생성
             if clips.isEmpty {
-                video.clips?.append(ClipModel(start: 0.0, end: playingTime))
                 addClip(from: 0.0, to: playingTime)
             }
         }
@@ -97,15 +95,10 @@ class ClipPlayerViewController: UIViewController {
 
     init(video: VideoModel) {
         self.video = video
-        self.clips = video.clips ?? []
+        self.clips = []
         self.clippedVideo = []
         super.init(nibName: nil, bundle: nil)
-
-        // ClipPlayer Delegate 등록
         ClipPlayer.shared.delegate = self
-
-        // 디버깅용 출력
-        clips.forEach { print("clip: \($0.start) - \($0.end)") }
     }
 
     deinit {
@@ -130,11 +123,13 @@ extension ClipPlayerViewController {
         ClipPlayer.shared.video = self.video
 
         // UI 구성
+        loadClipsFromCoreData()
         loadMainStack()
         loadMainStackConstraint()
         loadClipStackContainer()
         loadClippingButton()
         loadMemoView()
+      
     }
 
     /// View가 화면에 표시된 이후 영상 컨테이너 삽입 + 전체 길이 측정

@@ -58,6 +58,16 @@ class VideoManager {
     func bundleURL(for video: VideoEntity) -> URL? {
         guard let raw = video.url, !raw.isEmpty else { return nil }
 
+        // 1) Local absolute file URL (Documents)
+        if raw.hasPrefix("file:///") {
+            if let url = URL(string: raw) {
+                return FileManager.default.fileExists(atPath: url.path) ? url : nil
+            }
+        }
+
+        // 2) Remote http URL
+        
+        
         // 완전한 URL일 경우
         if raw.hasPrefix("http://") || raw.hasPrefix("https://") {
             return URL(string: raw)
@@ -145,6 +155,21 @@ class VideoManager {
         save()
     }
 
+    
+    
+    func create(from model: VideoModel) {
+        let entity = VideoEntity(context: context)
+        entity.id = model.id
+        entity.title = model.title
+        entity.url = model.filePath.absoluteString
+        entity.tag = model.tag
+        entity.isPlay = 0
+        entity.text = ""
+
+        save()
+    }
+    
+    
     // MARK: - Update
 
     /// # Overview
